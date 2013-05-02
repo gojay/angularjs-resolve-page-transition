@@ -1,0 +1,24 @@
+<div class="span2">
+	Search:
+	<input ng-model="query">
+	Sort By :
+	<select ng-model="orderProp">
+		<option value="name">
+			Alphabetical
+		</option>
+		<option value="age">
+			Newest
+		</option>
+	</select>
+</div>
+<div class="span10">
+	<ul class="phones">
+		<li ng-repeat="phone in phones | filter:query | orderBy:orderProp" class="thumbnail">
+			<a ng-href="#/phone/{{phone.id}}" class="thumb"><img ng-src="{{phone.imageUrl}}"></a>
+			<a ng-href="#/phone/{{phone.id}}">{{phone.name}}</a>
+			<p>
+				{{phone.snippet}}
+			</p>
+		</li>
+	</ul>
+</div>

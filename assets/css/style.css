@@ -1,0 +1,72 @@
+@charset "UTF-8";
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+	display: none;
+}
+
+ng\:form {
+	display: block;
+}
+
+.container-fluid {
+	height: 100%;
+	overflow: auto;
+}
+
+#ngView {
+	overflow: hidden;
+}
+
+.navbar {
+	margin-bottom: 45px;
+}
+
+#loading {
+	position: absolute;
+	top: 40px;
+}
+
+#loading .span2 {
+	z-index: 1;
+	position: relative;
+	left: 42%;
+	padding-right: 18px;
+	text-align: center;
+}
+
+#loading .alert {
+	height: 40px;
+}
+
+#loading.load .span2:before {
+	position: absolute;
+	left: 33%;
+	top: 10px;
+	content: 'Loading';
+	font-weight: normal;
+}
+
+#loading.loaded .span2:before {
+	position: absolute;
+	left: 38%;
+	top: 9px;
+	content: 'Loaded';
+	font-weight: bold;
+}
+
+#loading.error .span2:before {
+	left: 38%;
+	top: 5px;
+	content: 'Error';
+	font-weight: bold;
+}
+
+#loading .progress,
+		#loading .progress .bar {
+	height: 40px;
+}
+
+#loading.error .progress,
+		#loading.loaded .progress {
+	display: none;
+}

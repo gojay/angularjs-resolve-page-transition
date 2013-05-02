@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" ng-app="MyApp">
+<head>
+	<meta charset="UTF-8">
+	<title>AngularJS Phonecat | Resolve Page Transition</title>
+	<!-- Le styles -->
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.css"/>
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap-responsive.css"/>
+	<link rel="stylesheet" type="text/css" href="assets/css/app.css"/>
+
+	<link rel="stylesheet" type="text/css" href="assets/css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="assets/css/animation.css"/>
+	
+	<script type="text/javascript" src="libs/jquery.min.js"></script>
+	<script type="text/javascript" src="libs/angular.min.js"></script>
+	<script type="text/javascript" src="libs/angular-resource.min.js"></script>
+	<script type="text/javascript" src="assets/js/app.js"></script>
+</head>
+<body>
+	<div class="navbar">
+		<div class="navbar-inner">
+			<div class="container" style="width: auto;">
+				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</a>
+				<a class="brand" href="http://dev.angularjs/_learn_/resolve/">AngularJS Resolve Page Transition</a>
+			</div>
+		</div><!-- /navbar-inner -->
+	</div>
+	<div class="container-fluid">
+		<div class="row-fluid">
+
+			<loader></loader>
+
+			<div id="ngView" ng-view></div>
+		</div>
+	</div>
+</body>
+</html>
