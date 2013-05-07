@@ -71,6 +71,11 @@ MyApp.provider('pageTransition', function(){
 			},
 			start: function(){
 				$('body').addClass(startTransition);
+				setTimeout(function(){
+					console.log('change body css');
+					$('html').css({'height':'auto', 'overflow':'auto'});
+					$('body').css({'height':'auto', 'overflow':'auto'});
+				}, 1200);
 			},
 			change: function(){
 				var self = this;
@@ -101,7 +106,7 @@ MyApp.config(['$routeProvider', 'pageTransitionProvider', function($routeProvide
 	// transition config
 	pageTransitionProvider.setStartTransition('rotateInLeft');
 	pageTransitionProvider.setPage('#ngView');
-	pageTransitionProvider.setPageTransition('whirl');
+	pageTransitionProvider.setPageTransition('slide');
 	// route
 	$routeProvider.
 		when('/phones', {
@@ -138,6 +143,7 @@ angular.module('PhoneDirectives', []).
 					$scope.isShow = true;
 					$scope.loaderClass = 'load';
 					$scope.alertClass = '';
+					$scope.textInfo = 'Loading';
 
 					/*$transtionPage.addClass("slideOutSkew").delay(1000).queue(function(next) {
 						$(this).removeClass("slideOutSkew");
@@ -168,6 +174,47 @@ angular.module('PhoneDirectives', []).
 					$scope.loaderClass = 'error';
 					$scope.alertClass = 'alert alert-error';
 				});
+			}
+		};
+	})
+	.directive('tabs', function(){
+		// Runs during compile
+		return {
+			restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
+			scope: {}, // {} = isolate, true = child, false/undefined = no change
+			replace: true,
+			transclude: true,
+			templateUrl: 'partials/tabs.html',
+			controller: function($scope, $element, $attrs) {
+				var panes = $scope.panes = [];
+
+				$scope.select = function(pane){
+					angular.forEach(panes, function(pane){
+						pane.selected = false;
+					});
+					pane.selected = true;
+				};
+
+				this.addPane = function(pane){
+					if(panes.length === 0) $scope.select(pane);
+					panes.push(pane);
+				};
+			}
+		};
+	})
+	.directive('pane', function(){
+		// Runs during compile
+		return {
+			require: '^tabs', // Array = multiple requires, ? = optional, ^ = check parent elements
+			restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
+			scope: {
+				title: '@'
+			}, // {} = isolate, true = child, false/undefined = no change
+			template: '<div class="tab-pane" ng-class="{active:selected}" ng-transclude></div>',
+			replace: true,
+			transclude: true,
+			link: function($scope, iElm, iAttrs, tabsCtrl) {
+				tabsCtrl.addPane($scope);
 			}
 		};
 	});

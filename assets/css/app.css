@@ -4,6 +4,14 @@ body {
   padding-top: 20px;
 }
 
+.thumbnails {
+  margin-top: 10px;
+}
+
+.thumbnails li:nth-child(4n) {
+  margin-left: 0;
+}
+
 .phones {
   list-style: none;
 }
@@ -20,6 +28,8 @@ body {
   clear: both;
   height: 100px;
   padding-top: 15px;
+  border: 0;
+  border-bottom: 1px solid #DDD;
 }
 
 /** Detail View **/
