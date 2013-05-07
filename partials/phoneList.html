@@ -1,8 +1,8 @@
-<div class="span2">
-	Search :
-	<input type="text" ng-model="query">
-	Sort By :
-	<select ng-model="orderProp">
+<div class="span3 margin-top">
+	<label>Search</label>
+	<input type="text" ng-model="query" class="span12">
+	<label>Sort by</label>
+	<select ng-model="orderProp" class="span12">
 		<option value="name">
 			Alphabetical
 		</option>
@@ -11,7 +11,7 @@
 		</option>
 	</select>
 </div>
-<div class="span10">
+<div class="span9">
 	<ul class="phones">
 		<li ng-repeat="phone in phones | filter:query | orderBy:orderProp" class="thumbnail">
 			<a ng-href="#/phone/{{phone.id}}" class="thumb"><img ng-src="{{phone.imageUrl}}"></a>

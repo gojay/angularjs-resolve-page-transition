@@ -1,14 +1,21 @@
 /* app css stylesheet */
 
 body {
-  padding-top: 20px;
+  padding-top: 40px;
+}
+
+.margin-top {
+  margin-top: 20px;
+}
+.margin-top-bottom {
+  margin: 10px 0;
 }
 
 .thumbnails {
   margin-top: 10px;
 }
 
-.thumbnails li:nth-child(4n) {
+.thumbnails li:nth-child(7n) {
   margin-left: 0;
 }
 
@@ -89,6 +96,6 @@ ul.specs dt {
   font-weight: bold;
 }
 
-h1 {
+#content hgroup {
   border-bottom: 1px solid gray;
 }

@@ -72,9 +72,9 @@ MyApp.provider('pageTransition', function(){
 			start: function(){
 				$('body').addClass(startTransition);
 				setTimeout(function(){
-					console.log('change body css');
-					$('html').css({'height':'auto', 'overflow':'auto'});
-					$('body').css({'height':'auto', 'overflow':'auto'});
+					console.log('change html, body css');
+					$('html').css({'height':'auto', 'overflow':'auto', 'background':'#fff'});
+					$('body').css({'height':'auto', 'overflow':'auto'}).removeClass(startTransition);
 				}, 1200);
 			},
 			change: function(){
@@ -104,7 +104,7 @@ MyApp.provider('pageTransition', function(){
 
 MyApp.config(['$routeProvider', 'pageTransitionProvider', function($routeProvider, pageTransitionProvider) {
 	// transition config
-	pageTransitionProvider.setStartTransition('rotateInLeft');
+	pageTransitionProvider.setStartTransition('expandIn');
 	pageTransitionProvider.setPage('#ngView');
 	pageTransitionProvider.setPageTransition('slide');
 	// route
@@ -119,6 +119,11 @@ MyApp.config(['$routeProvider', 'pageTransitionProvider', function($routeProvide
 			controller: PhoneDetailController,
 			resolve: PhoneDetailController.resolve
 		}).
+		when('/phone/edit/:phoneId', {
+			templateUrl: 'partials/phoneEdit.html',
+			controller: PhoneEditController,
+			resolve: PhoneEditController.resolve
+		}).
 		otherwise({
 			redirectTo: '/phones'
 		});
@@ -126,8 +131,19 @@ MyApp.config(['$routeProvider', 'pageTransitionProvider', function($routeProvide
 
 /* ========================================= Directive ========================================= */
 
-angular.module('PhoneDirectives', []).
-	directive('loader', function($rootScope, $timeout, $log, pageTransition) {
+angular.module('PhoneDirectives', [])
+	.directive('theheader', function(){
+		// Runs during compile
+		return {
+			scope: {
+				title: '@'
+			}, // {} = isolate, true = child, false/undefined = no change
+			restrict: 'EAC', // E = Element, A = Attribute, C = Class, M = Comment
+			templateUrl: 'partials/header-nav.html',
+			replace: true
+		};
+	})
+	.directive('loader', function($rootScope, $timeout, $log, pageTransition) {
 		// Runs during compile
 		return {
 			restrict: 'EAC', // E = Element, A = Attribute, C = Class, M = Comment
@@ -157,6 +173,7 @@ angular.module('PhoneDirectives', []).
 				$rootScope.$on('$routeChangeSuccess', function(event, current, previous) {
 					$log.info('route success');
 					$scope.isShow = false;
+					$scope.textInfo = 'Loaded';
 
 					/*
 					 * tampilkan 'message' saat page sudah tampil
@@ -173,6 +190,7 @@ angular.module('PhoneDirectives', []).
 					$scope.isShow = true;
 					$scope.loaderClass = 'error';
 					$scope.alertClass = 'alert alert-error';
+					$scope.textInfo = 'Error Occured';
 				});
 			}
 		};
@@ -216,6 +234,16 @@ angular.module('PhoneDirectives', []).
 			link: function($scope, iElm, iAttrs, tabsCtrl) {
 				tabsCtrl.addPane($scope);
 			}
+		};
+	})
+	.directive('thefooter', function(){
+		// Runs during compile
+		return {
+			scope: {}, // {} = isolate, true = child, false/undefined = no change
+			restrict: 'EAC', // E = Element, A = Attribute, C = Class, M = Comment
+			templateUrl: 'partials/footer.html',
+			transclude: true,
+			replace: true
 		};
 	});
 
@@ -290,7 +318,8 @@ function PhoneListController($scope, phones) {
 		$scope.phones = result.data;
 	});*/
 
-	$scope.phones = phones;
+	$scope.cart      = 'Empty';
+	$scope.phones    = phones;
 	$scope.orderProp = 'age';
 }
 
@@ -323,7 +352,7 @@ function PhoneDetailController($scope, phone) {
 	});
 	*/
 
-	$scope.phone = phone;
+	$scope.phone        = phone;
 	$scope.mainImageUrl = phone.images[0];
 	$scope.setImage = function(img) {
 		$scope.mainImageUrl = img;
@@ -331,6 +360,29 @@ function PhoneDetailController($scope, phone) {
 }
 
 PhoneDetailController.resolve = {
+	phone: function($q, $route, Phone) {
+		var deffered = $q.defer();
+		Phone.get({
+			phoneId: $route.current.params.phoneId
+		}, function(data) {
+			deffered.resolve(data);
+		}, function(err) {
+			deffered.rejection(err);
+		});
+		return deffered.promise;
+	},
+	delay: function($q, $timeout) {
+		var delay = $q.defer();
+		$timeout(delay.resolve, 1000);
+		return delay.promise;
+	}
+};
+
+function PhoneEditController($scope, phone){
+	$scope.phone = phone;
+}
+
+PhoneEditController.resolve = {
 	phone: function($q, $route, Phone) {
 		var deffered = $q.defer();
 		Phone.get({

@@ -9,7 +9,7 @@ ng\:form {
 }
 
 .prefix {
-	margin-left: 0px;
+	margin-left: 0px !important;
 }
 
 .container-fluid {
