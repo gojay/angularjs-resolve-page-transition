@@ -2,18 +2,9 @@
 <form class="form-horizontal">
 	<fieldset>
 		<legend>Edit {{phone.name}}</legend>
-		<div class="span12 prefix input-prepend input-append">
-			<button class="btn" disabled>Preview</button>
-			<button class="btn">Editor</button>
-		</div>
-		<div class="span12 prefix margin-top">
-			<div class="span6">
-				<textarea class="span12" id="textarea" rows="25">{{phone.description}}</textarea>
-			</div>
-			<div class="span6 well">
-				
-			</div>
-		</div>
+		
+		<markdownmce ng-model="phone"></markdownmce>
+		
 	</fieldset>
 	<div class="form-actions">
 		<button type="submit" class="btn btn-primary">Save changes</button>

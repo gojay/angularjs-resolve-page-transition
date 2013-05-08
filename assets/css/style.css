@@ -17,6 +17,11 @@ ng\:form {
 	overflow: auto;
 }
 
+.markdown-mce {
+	border: none;
+	padding: 10px;
+}
+
 #ngView {
 	/*overflow: hidden;*/
 	margin-top: 40px;
@@ -25,6 +30,8 @@ ng\:form {
 .navbar {
 	margin-bottom: 0;
 }
+
+/* Loading */
 
 #loading {
 	/*position: absolute;

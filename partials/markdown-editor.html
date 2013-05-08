@@ -1,0 +1,40 @@
+<div id="markdown">
+	<div class="span12 prefix input-prepend input-append">
+		<button class="btn" ng-disabled="isPreviewMode" ng-click="swicthToPreview(true)">Preview</button>
+		<button class="btn" ng-disabled="!isPreviewMode" ng-click="swicthToPreview(false)">Editor</button>
+	</div>
+	<div class="span12 prefix margin-top">
+		<div id="editor" class="span6">
+			<table class="table table-bordered">
+				<tr>
+					<td>
+						<div class="btn-group" ng-class="{open:isShowHeader}">
+						  	<button class="btn dropdown-toggle" ng-click="toggleHeader()">
+						    	Header
+						    	<span class="caret"></span>
+						  	</button>
+						  	<ul class="dropdown-menu">
+						    	<li><a href ng-click="replaceTo('h1')">Header 1</a></li>
+						    	<li><a href ng-click="replaceTo('h2')">Header 2</a></li>
+						    	<li><a href ng-click="replaceTo('h3')">Header 3</a></li>
+						    	<li><a href ng-click="replaceTo('h4')">Header 4</a></li>
+						    	<li><a href ng-click="replaceTo('h5')">Header 5</a></li>
+						    	<li><a href ng-click="replaceTo('h6')">Header 6</a></li>
+						 	</ul>
+						</div>
+						<div class="btn-group">
+						  	<button class="btn" ng-click="replaceTo('b')"><i class="icon-bold"></i></button>
+						  	<button class="btn" ng-click="replaceTo('i')"><i class="icon-italic"></i></button>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td style="padding: 0;">
+						<textarea class="span12 markdown-mce" rows="15" ng-model="markdown"></textarea>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="preview" class="span6 well" ng-show="isPreviewMode"></div>
+	</div>
+</div>
