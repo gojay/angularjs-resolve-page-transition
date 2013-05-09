@@ -8,6 +8,42 @@ ng\:form {
 	display: block;
 }
 
+.text-center {
+	text-align: center;
+}
+
+/* Placeholder */
+
+::-webkit-input-placeholder {
+   opacity: 0.7;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   opacity: 0.7;  
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   opacity: 0.7;  
+}
+
+:-ms-input-placeholder {  
+   opacity: 0.7; 
+}
+
+input:focus::-webkit-input-placeholder,
+textarea:focus::-webkit-input-placeholder { 
+	opacity:0; 
+}
+input:focus:-moz-placeholder,
+textarea:focus::-webkit-input-placeholder { 
+	opacity:0; 
+}
+
+input:focus::-ms-input-placeholder,
+textarea:focus::-ms-input-placeholder { 
+	opacity:0; 
+}
+
 .prefix {
 	margin-left: 0px !important;
 }

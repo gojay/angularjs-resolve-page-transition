@@ -1,8 +1,15 @@
-angular.module('PhoneDirectives', [])
+
+/**
+ * PhoneDirectives Module
+ *
+ * Description
+ */
+
+ angular.module('PhoneDirectives', [])
 
 /* header component */
 
-.directive('theheader', function() {
+.directive('appheader', function() {
 	// Runs during compile
 	return {
 		scope: {
@@ -16,7 +23,7 @@ angular.module('PhoneDirectives', [])
 
 /* footer component */
 
-.directive('thefooter', function() {
+.directive('appfooter', function() {
 	// Runs during compile
 	return {
 		scope: {}, // {} = isolate, true = child, false/undefined = no change
@@ -88,7 +95,9 @@ angular.module('PhoneDirectives', [])
 	// Runs during compile
 	return {
 		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
-		scope: {}, // {} = isolate, true = child, false/undefined = no change
+		scope: {
+			class: '@'
+		}, // {} = isolate, true = child, false/undefined = no change
 		replace: true,
 		transclude: true,
 		templateUrl: 'partials/tabs.html',
@@ -109,7 +118,7 @@ angular.module('PhoneDirectives', [])
 		}
 	};
 })
-	.directive('pane', function() {
+.directive('pane', function() {
 	// Runs during compile
 	return {
 		require: '^tabs', // Array = multiple requires, ? = optional, ^ = check parent elements
@@ -126,7 +135,14 @@ angular.module('PhoneDirectives', [])
 	};
 })
 
-/* markdown component */
+/**
+ * markdownmce component 
+ * restrict Element
+ * 
+ * markdown editor secara live preview
+ * beserta beberapa tombol command sederhana utk konversi ke markdown syntax
+ * yaitu header(h1->h6), bold, italic dan blockquote
+ */
 
 .directive('markdownmce', function() {
 	var markdownConverter = new Showdown.converter();
@@ -137,213 +153,252 @@ angular.module('PhoneDirectives', [])
 		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
 		templateUrl: 'partials/markdown-editor.html',
 		controller: function($scope, $element) {
+
 			var self = this;
 
 			this.editorEl  = $('#editor', $element);
 			this.previewEl = $('#preview', $element);
 
+			$scope.isShowHeader = false;
+
 			$scope.swicthToPreview = function(isPreview) {
-				$scope.isPreviewMode = isPreview;
+				var preview = self.previewEl.parent();
 				// change class
-				if (isPreview) self.editorEl.switchClass('span12', 'span6', 'slow');
-				else self.editorEl.switchClass('span6', 'span12', 'slow');
+				if (isPreview) preview.show('slow');
+				else preview.hide('slow');
+
+				$scope.isPreviewMode = isPreview;
 			};
 
-			$scope.isShowHeader = false;
 			$scope.toggleHeader = function(){
 				$scope.isShowHeader = $scope.isShowHeader ? false : true ;
 				console.log($scope.isShowHeader);
 			};
 
-			this.makeHtml = function(text){
+			var el = $('textarea', $element)[0];
+
+			$scope.refreshPreview = function(){
+				var makeHtml = markdownConverter.makeHtml(el.value);
+				self.previewEl.html(makeHtml);
+			};
+
+			$scope.replaceTo = function(type) {
+				var replaceText;
+
+				// set textarea text selection
+				// http://stackoverflow.com/questions/275761/how-to-get-selected-text-from-textbox-control-with-javascript
+				var startPos     = el.selectionStart;
+				var endPos       = el.selectionEnd;
+				var selectedText = $.trim(el.value.substring(startPos, endPos));
+
+				// set kedalam object utk manipulasi replace text selection 
+				var selection = {
+					'start' : startPos,
+					'end'   : endPos,
+					'value' : el.value
+				};
+
+				var isSingle = false, isFocus = true, regex = {};
+
+				// set preselection value
+				// memungkinkan melakukan konversi balik, jika markdon syntax tdk ter-'text selection'
+				var preselection = $.trim(selection.value.substring((startPos-2), startPos));
+				switch(type){
+					// untuk header
+					// markdown syntax '#{text}'
+					// inject scope 'isShowHeader' utk 'hidden' tombol dropdown header pd markdown editor
+					// seteleah melakukan pemilihan header
+					// set single true
+					case 'h1':
+						$scope.isShowHeader = false;
+						isSingle            = true;
+
+						// buat regex global utk header 1
+						regex['global'] = new RegExp("(\\#){1}");
+						// jika text selection match dgn regex lakukan konversi balik
+						// sebaliknya lakukan konversi utk markdown syntax
+						replaceText     = (regex['global'].test(selectedText)) ? selectedText.replace(regex['global'], '') : '#'+selectedText;
+						break;
+					// markdown syntax '##{text}'
+					// sama seperti 'header'
+					case 'h2':
+						$scope.isShowHeader = false;
+						isSingle            = true;
+
+						regex['global'] = new RegExp("(\\#){2}");
+						replaceText     = (regex['global'].test(selectedText)) ? selectedText.replace(regex['global'], '') : '##'+selectedText;
+						break;
+					// markdown syntax '###{text}'
+					// sama seperti 'header'
+					case 'h3':
+						$scope.isShowHeader = false;
+						isSingle            = true;
+
+						regex['global'] = new RegExp("(\\#){3}");
+						replaceText     = (regex['global'].test(selectedText)) ? selectedText.replace(regex['global'], '') : '###'+selectedText;
+						break;
+					// markdown syntax '####{text}'
+					// sama seperti 'header'
+					case 'h4':
+						$scope.isShowHeader = false;
+						isSingle            = true;
+
+						regex['global'] = new RegExp("(\\#){4}");
+						replaceText     = (regex['global'].test(selectedText)) ? selectedText.replace(regex['global'], '') : '####'+selectedText;
+						break;
+					// markdown syntax '#####{text}'
+					// sama seperti 'header'
+					case 'h5':
+						$scope.isShowHeader = false;
+						isSingle            = true;
+
+						regex['global'] = new RegExp("(\\#){5}");
+						replaceText     = (regex['global'].test(selectedText)) ? selectedText.replace(regex['global'], '') : '#####'+selectedText;
+						break;
+					// markdown syntax '######{text}'
+					case 'h6':
+						$scope.isShowHeader = false;
+						isSingle            = true;
+
+						regex['global'] = new RegExp("(\\#){6}");
+						replaceText     = (regex['global'].test(selectedText)) ? selectedText.replace(regex['global'], '') : '######'+selectedText;
+						break;
+					// markdown syntax '**{text}**'
+					// ada 2 tipe regex, yaitu single dan global
+					// regex single utk pengecekan pd text pre-selection
+					// regex global utk pengecekan jika pd text selection memilikin markdown syntax
+					// pd awal dan akhir
+					case 'b':
+						regex['single'] = new RegExp("(\\*){2}");
+						regex['global'] = new RegExp("(\\*){2}", 'g');
+
+						if (regex['global'].test(selectedText)) {
+							replaceText = selectedText.replace(regex['global'], '');
+						} else if (regex['single'].test(preselection)) {
+							// match dgn pre-selection (konversi balik)
+							// update perhitungan selection bersasar 'length' markdown syntax
+							// text replacement adalah text selection
+							selection['start'] = startPos - 2;
+							selection['end']   = endPos + 2;
+							replaceText        = selectedText;
+						} else {
+							replaceText = '**' + selectedText + '**';
+						}
+						break;
+					// markdown syntax '_{text}_'
+					// sama seperti 'bold'
+					case 'i':
+						regex['single'] = new RegExp("(\\_)");
+						regex['global'] = new RegExp("(\\_)", 'g');
+
+						if (regex['global'].test(selectedText)) {
+							replaceText = selectedText.replace(regex['global'], '');
+						} else if (regex['single'].test(preselection)) {
+							selection['start'] = startPos - 1;
+							selection['end']   = endPos + 1;
+							replaceText        = selectedText;
+						} else {
+							replaceText = '_' + selectedText + '_';
+						}
+						break;
+					// markdown syntax '>{text}'
+					// sama seperti 'header'
+					// hanya saja tidak perlu inject scope 'isShowHeader'
+					case 'quote':
+						regex['global'] = new RegExp("(\\>)");
+						replaceText     = (regex['global'].test(selectedText)) ? selectedText.replace(regex['global'], '') : '>'+selectedText;
+						isSingle = true;
+						break;
+					case 'more':
+						replaceText = '\r\r***\r\r';
+						isFocus = false;
+						break;
+				}
+
+				// replace text selection
+				self.replaceSelectedText(selection, replaceText, isSingle, isFocus);
+			};
+
+			this.replaceSelectedText = function(selection, replaceText, isSingle, isFocus) {
+				var val = selection.value;
+				var strBuffer;
+
+				// cara replacing ada 3 bagian
+				// bagian pertama, potong text dari 0 hingga start position
+				// bagian kedua, sisipkan text replacement. 
+				// (untuk single, tambahkan new line \r)
+				// bagian ketiga, potong text hingga end position
+				// -----------------------------------------------
+				// khusus utk single, tdk memerlukan trim(), 
+				// yg memungkinkan text tdk terkoversi secara live preview
+				if( isSingle ){
+					strBuffer = val.slice(0, selection.start) + replaceText;
+					if(isSingle)
+						strBuffer += '\r\r';
+					strBuffer += $.trim(val.slice(selection.end));
+				} else {
+					strBuffer = $.trim(val.slice(0, selection.start)) + ' ' + replaceText;
+					strBuffer += ' ' + $.trim(val.slice(selection.end));
+				}
+
+				// set textarea value
+				el.value = strBuffer;
+				// set focus selection setelah di replace
+				if(isFocus){
+					el.selectionStart = selection.start;
+					el.selectionEnd   = selection.start + replaceText.length;
+					el.focus();
+				} else {
+					el.selectionStart = selection.start + replaceText.length;
+				}
+				// konversi markdown syntax ke html
+				self.markdownMakeHtml(el.value);
+			};
+
+			this.markdownMakeHtml = function(text){
 				var makeHtml = markdownConverter.makeHtml(text);
 				self.previewEl.html(makeHtml);
 			};
 
-			var el = $('textarea', $element)[0];
-
-			// http://stackoverflow.com/questions/3964710/replacing-selected-text-in-the-textarea
-			var getInputSelection = function() {
-
-				var start = 0,
-					end = 0,
-					normalizedValue, range,
-					textInputRange, len, endRange;
-
-				if (typeof el.selectionStart == "number" && typeof el.selectionEnd == "number") {
-					start = el.selectionStart;
-					end = el.selectionEnd;
-				} else {
-					range = document.selection.createRange();
-
-					if (range && range.parentElement() == el) {
-						len = el.value.length;
-						normalizedValue = el.value.replace(/\r\n/g, "\n");
-
-						// Create a working TextRange that lives only in the input
-						textInputRange = el.createTextRange();
-						textInputRange.moveToBookmark(range.getBookmark());
-
-						// Check if the start and end of the selection are at the very end
-						// of the input, since moveStart/moveEnd doesn't return what we want
-						// in those cases
-						endRange = el.createTextRange();
-						endRange.collapse(false);
-
-						if (textInputRange.compareEndPoints("StartToEnd", endRange) > -1) {
-							start = end = len;
-						} else {
-							start = -textInputRange.moveStart("character", -len);
-							start += normalizedValue.slice(0, start).split("\n").length - 1;
-
-							if (textInputRange.compareEndPoints("EndToEnd", endRange) > -1) {
-								end = len;
-							} else {
-								end = -textInputRange.moveEnd("character", -len);
-								end += normalizedValue.slice(0, end).split("\n").length - 1;
-							}
-						}
-					}
-				}
-
-				return {
-					start: start,
-					end: end
-				};
-			};
-
-			var replaceSelectedText = function(data, replaceText, isHeader) {
-				var val = data.value;
-
-				// reverse
-				var start = (data.start !== undefined) ? data.start : data.selection.start;
-				var end   = (data.end !== undefined) ? data.end : data.selection.end;
-
-				var strbuffer;
-				if( isHeader ){
-					strbuffer = val.slice(0, start) + replaceText;
-					if(isHeader)
-						strbuffer += '\r\r';
-
-					strbuffer += val.slice(end);
-				} else {
-					strbuffer = val.slice(0, start).rtrim() + ' ' + replaceText;
-					if(isHeader)
-						strbuffer += '\r\r';
-
-					strbuffer += ' ' + val.slice(end).ltrim();
-				}
-
-				el.value = strbuffer;
-				self.makeHtml(el.value);
-			};
-
-			// http://stackoverflow.com/questions/275761/how-to-get-selected-text-from-textbox-control-with-javascript
-			$scope.replaceTo = function(type) {
-				var selectedText, replaceText;
-				var startPos, endPos;
-				// IE version
-				if (document.selection !== undefined) {
-					textComponent.focus();
-					var sel      = document.selection.createRange();
-					selectedText = sel.text;
-				}
-				// Mozilla version
-				else if (el.selectionStart !== undefined) {
-					startPos     = el.selectionStart;
-					endPos       = el.selectionEnd;
-					selectedText = el.value.substring(startPos, endPos);
-				}
-				else return;
-
-				selectedText = selectedText.trim();
-				var data = {
-					'selection':getInputSelection(),
-					'value' : el.value
-				};
-
-				var isHeader = false, regex = {};
-				var preselection = data.value.substring((startPos-2), startPos).trim();
-				switch(type){
-					case 'h1':
-						regex['global'] = new RegExp("(\\#){1}");
-						replaceText     = (regex['global'].test(selectedText)) ? selectedText.replace(regex['global'], '') : '#'+selectedText;
-
-						$scope.isShowHeader = false;
-						isHeader            = true;
-						break;
-					case 'h2':
-						regex['global'] = new RegExp("(\\#){2}");
-						replaceText     = (regex['global'].test(selectedText)) ? selectedText.replace(regex['global'], '') : '##'+selectedText;
-
-						$scope.isShowHeader = false;
-						isHeader            = true;
-						break;
-					case 'h3':
-						regex['global'] = new RegExp("(\\#){3}");
-						replaceText     = (regex['global'].test(selectedText)) ? selectedText.replace(regex['global'], '') : '###'+selectedText;
-
-						$scope.isShowHeader = false;
-						isHeader            = true;
-						break;
-					case 'h4':
-						regex['global'] = new RegExp("(\\#){4}");
-						replaceText     = (regex['global'].test(selectedText)) ? selectedText.replace(regex['global'], '') : '####'+selectedText;
-
-						$scope.isShowHeader = false;
-						isHeader            = true;
-						break;
-					case 'h5':
-						regex['global'] = new RegExp("(\\#){5}");
-						replaceText     = (regex['global'].test(selectedText)) ? selectedText.replace(regex['global'], '') : '#####'+selectedText;
-
-						$scope.isShowHeader = false;
-						isHeader            = true;
-						break;
-					case 'h6':
-						regex['global'] = new RegExp("(\\#){6}");
-						replaceText     = (regex['global'].test(selectedText)) ? selectedText.replace(regex['global'], '') : '######'+selectedText;
-
-						$scope.isShowHeader = false;
-						isHeader            = true;
-						break;
-					case 'b':
-						regex['test'] = new RegExp("(\\*){2}");
-						regex['replace'] = new RegExp("(\\*){2}", 'g');
-
-						if (regex['test'].test(selectedText)) {
-							replaceText = selectedText.replace(regex['replace'], '');
-						} else if (regex['test'].test(preselection)) {
-							data['start'] = startPos - 2;
-							data['end']   = endPos + 2;
-							replaceText   = selectedText;
-						} else {
-							replaceText = '**' + selectedText + '**';
-						}
-
-						// replaceText = (regex['test'].test(selectedText)) ? selectedText.replace(regex['replace'], '') : '**'+selectedText+'**';
-						break;
-					case 'i':
-						regex['test'] = new RegExp("(\\_)");
-						regex['replace'] = new RegExp("(\\_)", 'g');
-
-						if (regex['test'].test(selectedText)) {
-							replaceText = selectedText.replace(regex['replace'], '');
-						} else if (regex['test'].test(preselection)) {
-							data['start'] = startPos - 1;
-							data['end']   = endPos + 1;
-							replaceText   = selectedText;
-						} else {
-							replaceText = '_' + selectedText + '_';
-						}
-						// replaceText = (regex['test'].test(selectedText)) ? selectedText.replace(regex['replace'], '') : '*'+selectedText+'*';
-						break;
-				}
-
-				replaceSelectedText(data, replaceText, isHeader);
-			};
 		},
-		/*compile: function(tElement, tAttrs, transclude) {
+		link: function($scope, iElement, iAttrs, ctrl) {
+
+			// add event listener 'keydown' 
+			// tabbify markdown editor textare
+			// http://stackoverflow.com/questions/6637341/use-tab-to-indent-in-textarea
+			var $editor  = $('textarea', ctrl.editorEl);
+			$editor.bind('keydown', function(e){
+				var keyCode = e.keyCode || e.which;
+
+				if (keyCode == 9) {
+					e.preventDefault();
+					var start = $(this).get(0).selectionStart;
+					var end = $(this).get(0).selectionEnd;
+
+					// set textarea value to: text before caret + tab + text after caret
+					$(this).val($(this).val().substring(0, start) + "\t" + $(this).val().substring(end));
+
+					// put caret at right position again
+					$(this).get(0).selectionStart = $(this).get(0).selectionEnd = start + 1;
+				}
+
+			});
+
+			$scope.name = $scope.phone.name;
+			$scope.$watch('name', function(input) {
+				$('legend > span').html(input);
+			});
+			// inject markdown dr phone description
+			$scope.markdown = $scope.phone.description;
+			// default is preview mode
+			$scope.isPreviewMode = true;
+
+			// update preview setiap perubahan pd editor
+			$scope.$watch('markdown', function(desc) {
+				ctrl.markdownMakeHtml(desc);
+			});
+		}
+		/*,compile: function(tElement, tAttrs, transclude) {
 			var $editor = $('#editor', tElement);
 			var $preview = $('#preview', tElement);
 			return function($scope, iElement, iAttrs) {
@@ -363,17 +418,5 @@ angular.module('PhoneDirectives', [])
 				};
 			};
 		}*/
-		link: function($scope, iElement, iAttrs, ctrl) {
-
-			var $editor = ctrl.editorEl;
-			var $preview = ctrl.previewEl;
-
-			$scope.markdown = $scope.phone.description;
-			$scope.isPreviewMode = true;
-
-			$scope.$watch('markdown', function(desc) {
-				ctrl.makeHtml(desc);
-			});
-		}
 	};
 });

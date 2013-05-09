@@ -10,23 +10,33 @@
 
 	<link rel="stylesheet" type="text/css" href="assets/css/style.css"/>
 	<link rel="stylesheet" type="text/css" href="assets/css/animation.css"/>
+
+	<script>
+		String.prototype.trim = function(){return this.replace(/^\s+|\s+$/g, '');};
+
+		String.prototype.ltrim = function(){return this.replace(/^\s+/,'');};
+
+		String.prototype.rtrim = function(){return this.replace(/\s+$/,'');};
+	</script>
 	
 	<!-- libs -->
 	<script type="text/javascript" src="libs/jquery.min.js"></script>
-	<script type="text/javascript" src="libs/jquery-ui-1.8.18.custom.min.js"></script>
+	<!-- <script type="text/javascript" src="libs/jquery-ui-1.8.18.custom.min.js"></script> -->
 	<script type="text/javascript" src="libs/angular.min.js"></script>
 	<script type="text/javascript" src="libs/angular-resource.min.js"></script>
 	<script type="text/javascript" src="libs/showdown-0.9.js"></script>
+	<script type="text/javascript" src="http://bootstrap/docs/assets/js/bootstrap-collapse.js"></script>
 
 	<!-- app -->
 	<script type="text/javascript" src="assets/js/app.js"></script>
+	<script type="text/javascript" src="assets/js/provider.js"></script>
+	<script type="text/javascript" src="assets/js/controller.js"></script>
 	<script type="text/javascript" src="assets/js/directive.js"></script>
 	<script type="text/javascript" src="assets/js/service.js"></script>
-	<script type="text/javascript" src="assets/js/controller.js"></script>
 	<script type="text/javascript" src="assets/js/filter.js"></script>
 </head>
 <body>
-	<theheader title="AngularJS Resolve Page Transition"></theheader>
+	<appheader title="AngularJS Resolve Page Transition"></appheader>
 
 	<div class="container-fluid">
 		<div class="row-fluid" style="position: relative">
@@ -38,8 +48,8 @@
 		</div>
 	</div>
 
-	<thefooter>
+	<appfooter>
 		Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis, ad!
-	</thefooter>
+	</appfooter>
 </body>
 </html>
