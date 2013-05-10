@@ -8,8 +8,63 @@ ng\:form {
 	display: block;
 }
 
+
+/* bootstrap */
+
 .text-center {
 	text-align: center;
+}
+.navbar {
+	margin-bottom: 0;
+}
+
+.modal-large{
+   width:940px;
+   margin-left:-470px;
+}
+.modal-header .close {
+	margin-top: 2px;
+}
+button.close {
+	padding: 0;
+	cursor: pointer;
+	background: rgba(0, 0, 0, 0);
+	border: 0;
+	-webkit-appearance: none;
+}
+.modal button.close {
+	float: right;
+	font-size: 20px;
+	font-weight: bold;
+	line-height: 20px;
+	color: #000;
+	text-shadow: 0 1px 0 #FFF;
+	opacity: 0.2;
+	filter: alpha(opacity=20);
+}
+
+.alert.show-message > .message,
+.alert.show-buttons > .buttons {
+	display: block;
+}
+.alert.show-buttons > .message,
+.alert.show-message > .buttons {
+	display: none;
+}
+
+/* accordion upload */
+
+.accordion-body.uploading > img {
+	opacity: 0.3
+}
+.accordion-body.uploading > .progress {
+	display: block;
+}
+.accordion-body.uploading > .alert {
+	display: none;
+}
+#upload-list .accordion-group:first-child {
+	display: none;
 }
 
 /* Placeholder */
@@ -53,18 +108,18 @@ textarea:focus::-ms-input-placeholder {
 	overflow: auto;
 }
 
+.margin-top-bottom {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
 .markdown-mce {
 	border: none;
 	padding: 10px;
 }
 
 #ngView {
-	/*overflow: hidden;*/
 	margin-top: 40px;
-}
-
-.navbar {
-	margin-bottom: 0;
 }
 
 /* Loading */
@@ -94,5 +149,57 @@ textarea:focus::-ms-input-placeholder {
 
 #loading.error .progress,
 #loading.loaded .progress {
+	display: none;
+}
+
+/* drop area */
+
+#drop-area {
+	height: 100px;
+	text-align: center;
+	border: 2px dashed #ddd;
+	padding: 20px 10px;
+}
+#drop-area .drop-instructions {
+	display: block;
+	height: 30px;
+}
+#drop-area .drop-over {
+	display: none;
+	font-size: 25px;
+	height: 30px;
+}
+#drop-area.over {
+	background: #ffffa2;
+	border: 2px dashed #000;
+}
+#drop-area.over .drop-instructions {
+	display: none;
+}
+#drop-area.over .drop-over {
+	display: block;
+}
+#drop-area.over .drop-over {
+	display: block;
+	font-size: 25px;
+}
+
+/* progress */
+
+#upload-list .progress {
+	display: none;
+}
+#upload-list .progress span {
+	position: absolute;
+	right: 50%;
+}
+
+#upload-list .uploading img {
+	opacity: 0.3
+}
+#upload-list .uploading .progress {
+	display: block;
+}
+#upload-list .uploading .alert {
 	display: none;
 }

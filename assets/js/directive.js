@@ -89,7 +89,9 @@
 	};
 })
 
-/* tabs component */
+/* 
+ * Bootstrap tabs component 
+ */
 
 .directive('tabs', function() {
 	// Runs during compile
@@ -135,6 +137,121 @@
 	};
 })
 
+/*
+ * Bootstrap Modal Element
+ * Restrict Element
+ */
+
+.directive('bootstrapModal', function($timeout, $log) {
+	// Runs during compile
+	return {
+		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
+		// replace: true,
+		transclude: true,
+		scope: {
+			modalId: '@'
+		}, // {} = isolate, true = child, false/undefined = no change
+		template: '<div id="{{modalId}}" class="modal modal-large hide" ng-transclude></div>',
+		link: function($scope, element, attrs) {
+
+			$log.log('modal', attrs.modalId);
+
+			var escapeEvent = function(e) {
+				if (e.which == 27) {
+					closeModal();
+				}
+			};
+
+			var openModal = function(e, hasBackdrop, hasEscapeExit) {
+
+				$log.log('hasEscapeExit', hasEscapeExit);
+
+
+				// get modal element
+				var modal = jQuery('#' + attrs.modalId);
+
+				// set backdrop
+				if (hasBackdrop === true) {
+					// buat modal backdrop jika tidak ada
+					if (!document.getElementById('modal-backdrop')) {
+						jQuery('body').append('<div id="modal-backdrop" class="modal-backdrop"></div>');
+					}
+
+					// set display block dan bind modal backdrop untuk close modal
+					jQuery('#modal-backdrop')
+						.css('display', 'block')
+						.bind('click', closeModal);
+				}
+
+				// bind body escape event
+				if (hasEscapeExit === true) {
+					jQuery('body').bind('keyup', escapeEvent);
+				}
+				// add class modal-open pd body
+				jQuery('body').addClass('modal-open');
+
+				// bind .close close modal
+				jQuery('.close', modal).bind('click', closeModal);
+
+				// show modal
+				modal.css('display', 'block');
+			};
+
+			var closeModal = function() {
+				// set 'modal-backdrop' unbind event click & display none
+				jQuery('#modal-backdrop')
+					.unbind('click', closeModal)
+					.css('display', 'none');
+
+				// set 'body' unbind escape event & hapus class modal-open
+				jQuery('body')
+					.unbind('keyup', escapeEvent)
+					.removeClass('modal-open');
+
+				// set 'bootstrap modal' display none
+				jQuery('#' + attrs.modalId).css('display', 'none');
+			};
+
+			//Bind modalOpen and modalClose events, so outsiders can trigger it
+			//We have to wait until the template has been fully put in to do this,
+			//so we will wait 100ms
+			$timeout(function() {
+				jQuery('#' + attrs.modalId)
+					.bind('modalOpen', openModal)
+					.bind('modalClose', closeModal);
+			}, 100);
+		}
+	};
+})
+
+/*
+ * Bootstrap Modal Open
+ * Restrict Attribute
+ */
+
+.directive('bootstrapModalOpen', function() {
+	// Runs during compile
+	return {
+		restrict: 'A', // E = Element, A = Attribute, C = Class, M = Comment
+		link: function($scope, element, attrs) {
+			// define backdrop & escape Key
+			var hasBackdrop = attrs.backdrop === undefined ? true : attrs.backdrop;
+			var hasEscapeExit = attrs.escapeExit === undefined ? true : attrs.escapeExit;
+
+			// define event type
+			var eventType = attrs.modalEvent === undefined ? 'click' : attrs.modalEvent;
+
+			// set element bind event type
+			// panggil trigger modalOpen
+			jQuery(element).bind(eventType, function() {
+				console.log('click', attrs.bootstrapModalOpen);
+				jQuery('#' + attrs.bootstrapModalOpen)
+					.trigger('modalOpen', [hasBackdrop, hasEscapeExit]);
+			});
+		}
+	};
+})
+
 /**
  * markdownmce component 
  * restrict Element
@@ -152,6 +269,7 @@
 		}, // {} = isolate, true = child, false/undefined = no change
 		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
 		templateUrl: 'partials/markdown-editor.html',
+		replace: true,
 		controller: function($scope, $element) {
 
 			var self = this;
@@ -323,11 +441,11 @@
 				var val = selection.value;
 				var strBuffer;
 
-				// cara replacing ada 3 bagian
-				// bagian pertama, potong text dari 0 hingga start position
-				// bagian kedua, sisipkan text replacement. 
+				// cara replacing ada 3 tahap
+				// tahap pertama, potong text dari 0 hingga start position
+				// tahap kedua, sisipkan text replacement. 
 				// (untuk single, tambahkan new line \r)
-				// bagian ketiga, potong text hingga end position
+				// tahap ketiga, potong text hingga end position
 				// -----------------------------------------------
 				// khusus utk single, tdk memerlukan trim(), 
 				// yg memungkinkan text tdk terkoversi secara live preview
@@ -373,7 +491,7 @@
 				if (keyCode == 9) {
 					e.preventDefault();
 					var start = $(this).get(0).selectionStart;
-					var end = $(this).get(0).selectionEnd;
+					var end   = $(this).get(0).selectionEnd;
 
 					// set textarea value to: text before caret + tab + text after caret
 					$(this).val($(this).val().substring(0, start) + "\t" + $(this).val().substring(end));
@@ -418,5 +536,38 @@
 				};
 			};
 		}*/
+	};
+})
+
+/**
+ * iuploads component 
+ * restrict Element
+ * 
+ * multiple image uploads
+ */
+
+.directive('iuploads', function($timeout, iUploads){
+	// Runs during compile
+	return {
+		scope: {
+			phone: '=ngModel',
+			onOk: '&',
+			insertEditor: '&'
+		}, // {} = isolate, true = child, false/undefined = no change
+		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
+		templateUrl: 'partials/image-uploads.html',
+		replace: true,
+		// transclude: true,
+		controller: function($scope, $element, $attrs, $transclude) {
+			iUploads.init();
+		},
+		link: function($scope, iElm, iAttrs, controller) {
+			$scope.onOk = function(){
+				console.log('onOk');
+			};
+			$scope.insertEditor = function(index){
+				console.log('insertEditor', index, iElm);
+			};
+		}
 	};
 });
