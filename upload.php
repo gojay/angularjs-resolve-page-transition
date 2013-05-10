@@ -1,4 +1,6 @@
 <?php
+$upload_directory = 'img/uploads';
+
 $action = $_REQUEST['action'];
 if(!isset($action)) throw new Exception('Action required');
 
@@ -16,7 +18,7 @@ if( $action == 'chunk' )
 	if(!isset($_FILES['file'])) throw new Exception('Upload required');
 	if($_FILES['file']['error'] != 0) throw new Exception('Upload error');
 	
-	$target = "uploads/" . $name . '-' . $index;
+	$target = $upload_directory . "/" . $name . '-' . $index;
 	
 	move_uploaded_file($_FILES['file']['tmp_name'], $target);
 	
@@ -34,7 +36,7 @@ elseif( $action == 'merge' )
 	if(!isset($_REQUEST['index'])) throw new Exception('Index required');
 	if(!preg_match('/^[0-9]+$/', $_REQUEST['index'])) throw new Exception('Index error');
 	
-	$target = "uploads/" . $_REQUEST['name'];
+	$target = $upload_directory . "/" . $_REQUEST['name'];
 	$dst = fopen($target, 'wb');
 	
 	for($i = 0; $i < $_REQUEST['index']; $i++) 
@@ -52,6 +54,9 @@ elseif( $action == 'merge' )
 	// $fileContent = file_get_contents(dirname(__FILE__) . '/' . $target);
 	// $dataUri = 'data:' . $fileType . ';base64,' . base64_encode($fileContent);
 
-	echo json_encode($target);
+	echo json_encode(array(
+		'image' => $target,
+		'name'  => $_REQUEST['name']
+	));
 }
 else throw new Exception('Access forbidden');

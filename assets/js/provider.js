@@ -143,7 +143,8 @@ angular.module('PhoneProvider', [])
 						dropArea   : '#drop-area',
 						inputFile  : '#input-files',
 						uploadList : '#upload-accordion',
-						uploadRow  : '.accordion-group'
+						uploadRow  : '.accordion-group',
+						binding    : {}
 					};
 					// auto merge options
 					var config = self.config = $.extend(defaults, options);
@@ -287,23 +288,20 @@ angular.module('PhoneProvider', [])
 								$uploadList.append($uploadRow);
 
 								// upload file
-								self.createChunkfile(theFile, $progressBar, function(imgUrl) {
+								self.createChunkfile(theFile, $progressBar, function(data) {
+									// upload is done! so remove class uploading
 									$('.accordion-body', $uploadRow).removeClass('uploading');
-									$('img', $uploadImg).attr('src', imgUrl);
-									// button 'insert to editor' 
-									$('.buttons .btn-primary', $uploadRow).bind('click', function(){
-										var textarea = $('textarea');
-										var start    = textarea[0].selectionStart;
-										var end      = textarea[0].selectionEnd;
-										// get title n create markdown img syntax
-										var title       = $('.accordion-toggle', $uploadRow).text();
-										var markdownImg = '![alt text]('+imgUrl+' "'+title+'")';
-										// set value textarea
-										textarea.val(textarea.val().substring(0, start) + '\r\r' + markdownImg + '\r\r' + textarea.val().substring(end));
-										// modal close
-										$('.modal .close').click();
-										// refresh markdown
-										$('#refresh-markdown').click();
+
+									var binding = self.config.binding;
+									// binding 'insert to editor' 
+									$('.buttons .insert-editor', $uploadRow).click(function(evt){
+										console.log('insert-editor clicked !!');
+										var title = $('.accordion-toggle', $uploadRow).text();
+										binding.handleInsertEditor(this, data.image, data.name);
+									});
+									// binding 'delete image' 
+									$('.buttons .delete-image', $uploadRow).click(function(evt){
+										binding.handleDeleteImage(this, $uploadRow);
 									});
 
 									setTimeout(function(){

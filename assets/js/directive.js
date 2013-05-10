@@ -69,14 +69,14 @@
 				$scope.textInfo = 'Loaded';
 
 				/*
-					 * tampilkan 'message' saat page sudah tampil
-					 * 
-					$scope.loaderClass = 'loaded';
-					$scope.alertClass  = 'alert alert-success';
-					$timeout(function(){
-						$scope.isShow = false;
-					}, 3000);
-					*/
+				 * tampilkan 'message' saat page sudah tampil
+				 * 
+				$scope.loaderClass = 'loaded';
+				$scope.alertClass  = 'alert alert-success';
+				$timeout(function(){
+					$scope.isShow = false;
+				}, 3000);
+				*/
 			});
 			$rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
 				$log.error('route error', rejection);
@@ -151,7 +151,7 @@
 		scope: {
 			modalId: '@'
 		}, // {} = isolate, true = child, false/undefined = no change
-		template: '<div id="{{modalId}}" class="modal modal-large hide" ng-transclude></div>',
+		template: '<div id="{{modalId}}" class="modal hide" ng-transclude></div>',
 		link: function($scope, element, attrs) {
 
 			$log.log('modal', attrs.modalId);
@@ -166,7 +166,6 @@
 
 				$log.log('hasEscapeExit', hasEscapeExit);
 
-
 				// get modal element
 				var modal = jQuery('#' + attrs.modalId);
 
@@ -180,7 +179,7 @@
 					// set display block dan bind modal backdrop untuk close modal
 					jQuery('#modal-backdrop')
 						.css('display', 'block')
-						.bind('click', closeModal);
+						.bind('click', closeModal);						
 				}
 
 				// bind body escape event
@@ -189,12 +188,12 @@
 				}
 				// add class modal-open pd body
 				jQuery('body').addClass('modal-open');
+				modal.css('display', 'block');
 
 				// bind .close close modal
 				jQuery('.close', modal).bind('click', closeModal);
 
 				// show modal
-				modal.css('display', 'block');
 			};
 
 			var closeModal = function() {
@@ -549,25 +548,69 @@
 .directive('iuploads', function($timeout, iUploads){
 	// Runs during compile
 	return {
-		scope: {
-			phone: '=ngModel',
-			onOk: '&',
-			insertEditor: '&'
-		}, // {} = isolate, true = child, false/undefined = no change
+		scope: {}, // {} = isolate, true = child, false/undefined = no change
 		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
 		templateUrl: 'partials/image-uploads.html',
 		replace: true,
-		// transclude: true,
-		controller: function($scope, $element, $attrs, $transclude) {
-			iUploads.init();
-		},
-		link: function($scope, iElm, iAttrs, controller) {
-			$scope.onOk = function(){
-				console.log('onOk');
-			};
-			$scope.insertEditor = function(index){
-				console.log('insertEditor', index, iElm);
-			};
+		link: function($scope, iElm, iAttrs, ctrl) {
+			// ambil attribut element
+			var id          = iAttrs.id;
+			var showInModal = iAttrs.modal;
+			var modalId     = iAttrs.modalId;
+			// jika attribute modal set true
+			// letakkan element kedalam modal body
+			if( showInModal !== 'false' ) {
+				// ambil element html
+				var imgUpload = iElm.html();
+				// buat template modal,
+				// set modal id
+				var modalTpl  = '<div id="'+ modalId +'" class="modal modal-large hide fade" tabindex="-1" role="dialog" aria-labelledby="uploadImages" aria-hidden="true">' +
+									'<div class="modal-header">' +
+										'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
+										'<h3 id="uploadImages">Upload Images</h3>' +
+									'</div>' +
+									'<div class="modal-body">' + imgUpload + '</div>' +
+									'<div class="modal-footer">' +
+										'<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>' +
+										'<button class="btn btn-primary">Save changes</button>' +
+									'</div>' +
+								'</div>';
+				// jika dtampilkan, modal akan berada dibelakang backdrop
+				// trik, modal diletakan pd akhir body
+				// kemudian hapus element asli 
+				$('body').append(modalTpl);
+				iElm.remove();
+			}
+
+			// initialize image upload provider thp element
+			// binding untuk button 'insert to editor' n 'delete image'
+			iUploads.init({
+				binding: {
+					handleInsertEditor : function(e, img, title){
+						var textarea = $('textarea');
+						var start    = textarea[0].selectionStart;
+						var end      = textarea[0].selectionEnd;
+						// get title n create markdown img syntax
+						var markdownImg = '![alt text]('+ img +' "'+ title +'")';
+						// set value textarea
+						textarea.val(textarea.val().substring(0, start) + '\r\r' + markdownImg + '\r\r' + textarea.val().substring(end));
+						// modal close
+						$('.modal .close').click();
+						// refresh markdown
+						$('#refresh-markdown').click();
+					},
+					handleDeleteImage  : function(e, $row){
+						console.log('handleDeleteImage', e);
+						// button Stateful
+						$(e).button('loading');
+						setTimeout(function(){
+							$row.fadeOut('slow', function(){
+								$(this).remove();
+							});
+						}, 3000);
+					}
+				}
+			});
 		}
 	};
 });

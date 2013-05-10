@@ -1,4 +1,4 @@
-<div class="tabbable">
+<div id="image-uploads">
   	<ul class="nav nav-tabs">
     	<li class="active"><a href="#tab1" data-toggle="tab">Uploads</a></li>
     	<li><a href="#tab2" data-toggle="tab">Files</a></li>
@@ -36,9 +36,8 @@
 							            <div class="alert alert-success show-message">
 										  	<span class="message"><strong>Success!</strong> upload successfully.</span>
 										  	<span class="buttons">
-											  	<button class="btn btn-primary" ng-click="insertEditor(0)">Insert to Editor</button>
-											  	<button class="btn" ng-click="onOk()">Set featured image</button>
-											  	<button class="pull-right btn btn-danger"><i class="icon-remove"></i> Delete</button>
+											  	<button class="btn btn-primary insert-editor" ng-click="insertEditor(0)">Insert to Editor</button>
+											  	<button type="button" class="pull-right btn btn-danger delete-image" data-loading-text="Loading..."><i class="icon-remove"></i> Delete</button>
 										  	</span>
 										  	<!-- file description -->
 										</div>
