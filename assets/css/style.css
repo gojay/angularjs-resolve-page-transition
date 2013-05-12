@@ -22,7 +22,11 @@ ng\:form {
    width:940px;
    margin-left:-470px;
 }
-.modal-header .close {
+
+.youtube-videos > .media {
+	cursor: pointer;
+}
+/*.modal-header .close {
 	margin-top: 2px;
 }
 button.close {
@@ -41,7 +45,7 @@ button.close {
 	text-shadow: 0 1px 0 #FFF;
 	opacity: 0.2;
 	filter: alpha(opacity=20);
-}
+}*/
 
 .alert.show-message > .message,
 .alert.show-buttons > .buttons {
@@ -202,4 +206,28 @@ textarea:focus::-ms-input-placeholder {
 }
 #upload-list .uploading .alert {
 	display: none;
+}
+
+#feature-image .image ~ a {
+	display: none;
+}
+#feature-image .image:hover ~ a {
+	display: block;
+}
+
+/* loading */
+
+.ajax-loader {
+	display: none;
+	position: absolute;
+	top: 47%;
+	left: 47%;
+}
+.loading {
+	background-color: whitesmoke;
+	opacity: 0.3;
+	pointer-events: none;
+}
+.loading ~ .ajax-loader {
+	display: block;
 }

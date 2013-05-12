@@ -4,7 +4,7 @@
 
 		<markdownmce ng-model="phone"></markdownmce>
 
-		<tabs>
+		<tabs class="span8 prefix">
 			<pane title="General">
 				<tabs class="tabs-left">
 					<pane title="Price">
@@ -53,6 +53,24 @@
 				</tabs>
 			</pane>
 		</tabs>
+
+		<div id="feature-image" class="span4 well" style="position:relative; min-height:250px">
+			<div class="image">
+				<img src="img/phones/nexus-s.0.jpg" alt="">
+				<a href="javascript:void(0)" style="
+				    position: absolute;
+				    top: 19px;
+				    right: 22px;
+				"><i class="icon-remove"></i>
+				</a>
+			</div>
+			<a class="btn btn-primary" href="#modal-image-uploads" data-toggle="modal" style="
+				position: absolute;
+				left: 31%;
+				top: 45%;
+			">Set Featured Image</a>
+		</div>
+
 	</fieldset>
 	<div class="form-actions">
 		<button type="submit" class="btn btn-primary">Save changes</button>

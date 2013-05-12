@@ -1,0 +1,20 @@
+<div id="search-youtube" style="min-height: 100px;">
+  <div class="input-append">
+    <input class="input-medium" type="text" name="query">
+    <div class="btn-group">
+      <button ng-click="searchVideos()" class="btn btn-search" tabindex="-1" data-loading-text="<i class='icon-spinner'></i> Loading...">{{searchTitle}}</button>
+      <button class="btn dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a href="javascript:void(0)" ng-click="changeOrder('relevance')">{{searchTitle}}</a></li>
+        <li><a href="javascript:void(0)" ng-click="changeOrder('viewCount', 'Search by most viewed')">Search by most viewed</a></li>
+        <li><a href="javascript:void(0)" ng-click="changeOrder('published', 'Search by most recent')">Search by most recent</a></li>
+        <li><a href="javascript:void(0)" ng-click="changeOrder('rating', 'Search by top rated')">Search by top rated</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="youtube-videos margin-top">
+
+  </div>
+</div>

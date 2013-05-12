@@ -1,0 +1,84 @@
+<div id="markdown">
+
+	<input type="text" class="input-xxlarge" placeholder="Enter phone title here.." ng-model="name">
+	
+	<div class="span12 prefix margin-top">
+		<table class="table table-bordered">
+			<tr class="well">
+				<td colspan="2">
+					<div class="btn-group" ng-class="{open:isShowHeader}">
+					  	<button class="btn dropdown-toggle" ng-click="toggleHeader()">
+					    	Header
+					    	<span class="caret"></span>
+					  	</button>
+					  	<ul class="dropdown-menu">
+					    	<li><a href ng-click="replaceTo('h1')">Header 1</a></li>
+					    	<li><a href ng-click="replaceTo('h2')">Header 2</a></li>
+					    	<li><a href ng-click="replaceTo('h3')">Header 3</a></li>
+					    	<li><a href ng-click="replaceTo('h4')">Header 4</a></li>
+					    	<li><a href ng-click="replaceTo('h5')">Header 5</a></li>
+					    	<li><a href ng-click="replaceTo('h6')">Header 6</a></li>
+					 	</ul>
+					</div>
+					<div class="btn-group">
+					  	<button class="btn" title="bold" ng-click="replaceTo('b')"><i class="icon-bold"></i></button>
+					  	<button class="btn" title="italic" ng-click="replaceTo('i')"><i class="icon-italic"></i></button>
+					  	<button class="btn" title="quote" ng-click="replaceTo('quote')"><i class="icon-quote-right"></i></button>
+					  	<button class="btn" title="horizontal line" ng-click="replaceTo('more')"><i class="icon-minus"></i></button>
+					</div>
+					<div class="btn-group">
+						<button class="btn" title="Insert image" data-toggle="modal" data-target="#modal-image-uploads"><i class="icon-picture"></i></button>
+					  	<button class="btn" title="Insert youtube video" tb-modal-open="insert-youtube-mce" backdrop="false"><i class="icon-facetime-video"></i></button>
+					  	<button class="btn" title="Insert link" tb-modal-open="insert-anchor-mce" backdrop="false"><i class="icon-link"></i></button>
+					</div>
+					<div class="pull-right">
+						<button id="refresh-markdown" class="btn" title="refresh" ng-disabled="!isPreviewMode" ng-click="refreshPreview()"><i class="icon-refresh"></i></button>
+						<div class="input-prepend input-append">
+							<button class="btn" title="preview" ng-disabled="isPreviewMode" ng-click="swicthToPreview(true)"><i class="icon-eye-open"></i></button>
+							<button class="btn" title="full size" ng-disabled="!isPreviewMode" ng-click="swicthToPreview(false)"><i class="icon-resize-horizontal"></i></button>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td id="editor" style="padding: 0;" class="span6">
+					<textarea class="span12 well markdown-mce" rows="15" ng-model="markdown"></textarea>
+				</td>
+				<td class="span6">
+					<div id="preview" ng-show="isPreviewMode"></div>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<iupload id="{{phone.id}}" modal="true" modal-id="modal-image-uploads" modal-title="Add Images" feature-id="feature-image"></iupload>
+
+	<!-- <iupload id="{{phone.id}}" modal="true" modal-id="modal-image-uploads" modal-title="Add Images"></iupload> -->
+
+	<tbmodal modal-id="insert-anchor-mce" modal-title="Insert Link" modal-btn-ok="Insert Link">
+		<form class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label" for="input01">Title</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" id="input01">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="input02">Alt Text</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" id="input02">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="input03">URL</label>
+				<div class="controls">
+					<input type="url" class="input-xlarge" id="input03">
+				</div>
+			</div>
+		</form>
+  	</tbmodal>
+	<tbmodal class="modal-large" modal-id="insert-youtube-mce" modal-title="Insert Youtube Video" modal-btn-ok="Insert Video">
+		<mceyoutube></mceyoutube>
+  	</tbmodal>
+
+</div>

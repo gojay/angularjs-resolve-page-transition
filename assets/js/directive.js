@@ -16,7 +16,7 @@
 			title: '@'
 		}, // {} = isolate, true = child, false/undefined = no change
 		restrict: 'EAC', // E = Element, A = Attribute, C = Class, M = Comment
-		templateUrl: 'partials/header-nav.html',
+		templateUrl: 'partials/components/appheader.html',
 		replace: true
 	};
 })
@@ -28,7 +28,7 @@
 	return {
 		scope: {}, // {} = isolate, true = child, false/undefined = no change
 		restrict: 'EAC', // E = Element, A = Attribute, C = Class, M = Comment
-		templateUrl: 'partials/footer.html',
+		templateUrl: 'partials/components/appfooter.html',
 		transclude: true,
 		replace: true
 	};
@@ -40,32 +40,27 @@
 	// Runs during compile
 	return {
 		restrict: 'EAC', // E = Element, A = Attribute, C = Class, M = Comment
-		templateUrl: 'partials/loader.html',
+		templateUrl: 'partials/components/loader.html',
 		replace: true,
 		link: function($scope, iElm, iAttrs, controller) {
 
-			// start page transition untuk pertam kali
+			// start page transition untuk pertama kali
 			pageTransition.start();
 
 			$rootScope.$on('$routeChangeStart', function(event, next, current) {
 				$log.info('route starting...');
-				$scope.isShow = true;
+				$scope.isShow      = true;
 				$scope.loaderClass = 'load';
-				$scope.alertClass = '';
-				$scope.textInfo = 'Loading';
+				$scope.alertClass  = '';
+				$scope.textInfo    = 'Loading';
 
-				/*$transtionPage.addClass("slideOutSkew").delay(1000).queue(function(next) {
-						$(this).removeClass("slideOutSkew");
-						$(this).addClass("slideInSkew");
-						next();
-					});*/
-
+				// page transition saat pindah halaman
 				pageTransition.change();
 
 			});
 			$rootScope.$on('$routeChangeSuccess', function(event, current, previous) {
 				$log.info('route success');
-				$scope.isShow = false;
+				$scope.isShow   = false;
 				$scope.textInfo = 'Loaded';
 
 				/*
@@ -80,17 +75,17 @@
 			});
 			$rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
 				$log.error('route error', rejection);
-				$scope.isShow = true;
+				$scope.isShow      = true;
 				$scope.loaderClass = 'error';
-				$scope.alertClass = 'alert alert-error';
-				$scope.textInfo = 'Error Occured';
+				$scope.alertClass  = 'alert alert-error';
+				$scope.textInfo    = 'Error Occured';
 			});
 		}
 	};
 })
 
 /* 
- * Bootstrap tabs component 
+ * tabs component 
  */
 
 .directive('tabs', function() {
@@ -102,7 +97,7 @@
 		}, // {} = isolate, true = child, false/undefined = no change
 		replace: true,
 		transclude: true,
-		templateUrl: 'partials/tabs.html',
+		templateUrl: 'partials/components/tabs.html',
 		controller: function($scope, $element, $attrs) {
 			var panes = $scope.panes = [];
 
@@ -137,120 +132,6 @@
 	};
 })
 
-/*
- * Bootstrap Modal Element
- * Restrict Element
- */
-
-.directive('bootstrapModal', function($timeout, $log) {
-	// Runs during compile
-	return {
-		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
-		// replace: true,
-		transclude: true,
-		scope: {
-			modalId: '@'
-		}, // {} = isolate, true = child, false/undefined = no change
-		template: '<div id="{{modalId}}" class="modal hide" ng-transclude></div>',
-		link: function($scope, element, attrs) {
-
-			$log.log('modal', attrs.modalId);
-
-			var escapeEvent = function(e) {
-				if (e.which == 27) {
-					closeModal();
-				}
-			};
-
-			var openModal = function(e, hasBackdrop, hasEscapeExit) {
-
-				$log.log('hasEscapeExit', hasEscapeExit);
-
-				// get modal element
-				var modal = jQuery('#' + attrs.modalId);
-
-				// set backdrop
-				if (hasBackdrop === true) {
-					// buat modal backdrop jika tidak ada
-					if (!document.getElementById('modal-backdrop')) {
-						jQuery('body').append('<div id="modal-backdrop" class="modal-backdrop"></div>');
-					}
-
-					// set display block dan bind modal backdrop untuk close modal
-					jQuery('#modal-backdrop')
-						.css('display', 'block')
-						.bind('click', closeModal);						
-				}
-
-				// bind body escape event
-				if (hasEscapeExit === true) {
-					jQuery('body').bind('keyup', escapeEvent);
-				}
-				// add class modal-open pd body
-				jQuery('body').addClass('modal-open');
-				modal.css('display', 'block');
-
-				// bind .close close modal
-				jQuery('.close', modal).bind('click', closeModal);
-
-				// show modal
-			};
-
-			var closeModal = function() {
-				// set 'modal-backdrop' unbind event click & display none
-				jQuery('#modal-backdrop')
-					.unbind('click', closeModal)
-					.css('display', 'none');
-
-				// set 'body' unbind escape event & hapus class modal-open
-				jQuery('body')
-					.unbind('keyup', escapeEvent)
-					.removeClass('modal-open');
-
-				// set 'bootstrap modal' display none
-				jQuery('#' + attrs.modalId).css('display', 'none');
-			};
-
-			//Bind modalOpen and modalClose events, so outsiders can trigger it
-			//We have to wait until the template has been fully put in to do this,
-			//so we will wait 100ms
-			$timeout(function() {
-				jQuery('#' + attrs.modalId)
-					.bind('modalOpen', openModal)
-					.bind('modalClose', closeModal);
-			}, 100);
-		}
-	};
-})
-
-/*
- * Bootstrap Modal Open
- * Restrict Attribute
- */
-
-.directive('bootstrapModalOpen', function() {
-	// Runs during compile
-	return {
-		restrict: 'A', // E = Element, A = Attribute, C = Class, M = Comment
-		link: function($scope, element, attrs) {
-			// define backdrop & escape Key
-			var hasBackdrop = attrs.backdrop === undefined ? true : attrs.backdrop;
-			var hasEscapeExit = attrs.escapeExit === undefined ? true : attrs.escapeExit;
-
-			// define event type
-			var eventType = attrs.modalEvent === undefined ? 'click' : attrs.modalEvent;
-
-			// set element bind event type
-			// panggil trigger modalOpen
-			jQuery(element).bind(eventType, function() {
-				console.log('click', attrs.bootstrapModalOpen);
-				jQuery('#' + attrs.bootstrapModalOpen)
-					.trigger('modalOpen', [hasBackdrop, hasEscapeExit]);
-			});
-		}
-	};
-})
-
 /**
  * markdownmce component 
  * restrict Element
@@ -267,7 +148,7 @@
 			phone: '=ngModel'
 		}, // {} = isolate, true = child, false/undefined = no change
 		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
-		templateUrl: 'partials/markdown-editor.html',
+		templateUrl: 'partials/components/markdownmce.html',
 		replace: true,
 		controller: function($scope, $element) {
 
@@ -294,16 +175,18 @@
 
 			var el = $('textarea', $element)[0];
 
-			$scope.refreshPreview = function(){
+			this.refreshPreview = $scope.refreshPreview = function(){
 				var makeHtml = markdownConverter.makeHtml(el.value);
 				self.previewEl.html(makeHtml);
+				// buat video player
+				if($('video', self.previewEl).length) $('video', self.previewEl).mediaelementplayer();
 			};
 
 			$scope.replaceTo = function(type) {
 				var replaceText;
 
-				// set textarea text selection
-				// http://stackoverflow.com/questions/275761/how-to-get-selected-text-from-textbox-control-with-javascript
+				// get textarea text selection
+				// source : http://stackoverflow.com/questions/275761/how-to-get-selected-text-from-textbox-control-with-javascript
 				var startPos     = el.selectionStart;
 				var endPos       = el.selectionEnd;
 				var selectedText = $.trim(el.value.substring(startPos, endPos));
@@ -317,7 +200,7 @@
 
 				var isSingle = false, isFocus = true, regex = {};
 
-				// set preselection value
+				// get preselection value
 				// memungkinkan melakukan konversi balik, jika markdon syntax tdk ter-'text selection'
 				var preselection = $.trim(selection.value.substring((startPos-2), startPos));
 				switch(type){
@@ -440,11 +323,10 @@
 				var val = selection.value;
 				var strBuffer;
 
-				// cara replacing ada 3 tahap
-				// tahap pertama, potong text dari 0 hingga start position
-				// tahap kedua, sisipkan text replacement. 
-				// (untuk single, tambahkan new line \r)
-				// tahap ketiga, potong text hingga end position
+				// ada 3 tahap utk replacing 
+				// pertama, potong text dari 0 hingga start position
+				// kedua, sisipkan text replacement. (untuk single, tambahkan new line \r)
+				// ketiga, potong text hingga end position
 				// -----------------------------------------------
 				// khusus utk single, tdk memerlukan trim(), 
 				// yg memungkinkan text tdk terkoversi secara live preview
@@ -469,12 +351,7 @@
 					el.selectionStart = selection.start + replaceText.length;
 				}
 				// konversi markdown syntax ke html
-				self.markdownMakeHtml(el.value);
-			};
-
-			this.markdownMakeHtml = function(text){
-				var makeHtml = markdownConverter.makeHtml(text);
-				self.previewEl.html(makeHtml);
+				self.refreshPreview();
 			};
 
 		},
@@ -492,7 +369,7 @@
 					var start = $(this).get(0).selectionStart;
 					var end   = $(this).get(0).selectionEnd;
 
-					// set textarea value to: text before caret + tab + text after caret
+					// set textarea value : text before caret + tab + text after caret
 					$(this).val($(this).val().substring(0, start) + "\t" + $(this).val().substring(end));
 
 					// put caret at right position again
@@ -501,6 +378,7 @@
 
 			});
 
+			// auto update title saat input name
 			$scope.name = $scope.phone.name;
 			$scope.$watch('name', function(input) {
 				$('legend > span').html(input);
@@ -512,69 +390,184 @@
 
 			// update preview setiap perubahan pd editor
 			$scope.$watch('markdown', function(desc) {
-				ctrl.markdownMakeHtml(desc);
+				ctrl.refreshPreview();
 			});
 		}
-		/*,compile: function(tElement, tAttrs, transclude) {
-			var $editor = $('#editor', tElement);
-			var $preview = $('#preview', tElement);
-			return function($scope, iElement, iAttrs) {
-				$scope.markdown = $scope.phone.description;
-				$scope.isPreviewMode = true;
+	};
+})
 
-				$scope.$watch('markdown', function(desc) {
-					var makeHtml = markdownConverter.makeHtml(desc);
-					$preview.html(makeHtml);
-				});
+/*
+ * Twitter Bootstrap Modal Component
+ * Restrict Element
+ */
 
-				$scope.swicthToPreview = function(isPreview) {
-					$scope.isPreviewMode = isPreview;
-					// change class
-					if (isPreview) $editor.switchClass('span12', 'span6', 'slow');
-					else $editor.switchClass('span6', 'span12', 'slow');
-				};
+.directive('tbmodal', function($timeout, $log) {
+	// Runs during compile
+	return {
+		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
+		replace: true,
+		transclude: true,
+		scope: {
+			modalId    : '@',
+			modalTitle : '@',
+			modalBtnOk : '@',
+			class : '@'
+
+		}, // {} = isolate, true = child, false/undefined = no change
+		templateUrl: 'partials/components/tbmodal.html',
+		controller: function($scope, $element) {
+			this.element = $element;
+		},
+		link: function($scope, element, attrs) {
+
+			$log.log('modal', $scope);
+
+			var escapeEvent = function(e) {
+				if (e.which == 27) {
+					closeModal();
+				}
 			};
-		}*/
+
+			var openModal = function(e, hasBackdrop, hasEscapeExit) {
+
+				$log.log('hasEscapeExit', hasEscapeExit);
+
+				// get modal element
+				var modal = jQuery('#' + attrs.modalId);
+
+				// set backdrop
+				if (hasBackdrop === true) {
+					// buat modal backdrop jika tidak ada
+					if (!document.getElementById('modal-backdrop')) {
+						jQuery('body').append('<div id="modal-backdrop" class="modal-backdrop"></div>');
+					}
+
+					// set display block dan bind modal backdrop untuk close modal
+					jQuery('#modal-backdrop')
+						.css('display', 'block')
+						.bind('click', closeModal);
+				}
+
+				// bind body escape event
+				if (hasEscapeExit === true) {
+					jQuery('body').bind('keyup', escapeEvent);
+				}
+				// add class modal-open pd body
+				jQuery('body').addClass('modal-open');
+				modal.css('display', 'block');
+
+				// bind .close close modal
+				jQuery('.close', modal).bind('click', closeModal);
+				jQuery('.btn-close', modal).bind('click', closeModal);
+
+				// show modal
+			};
+
+			var closeModal = function() {
+				// set 'modal-backdrop' unbind event click & display none
+				jQuery('#modal-backdrop')
+					.unbind('click', closeModal)
+					.css('display', 'none');
+
+				// set 'body' unbind escape event & hapus class modal-open
+				jQuery('body')
+					.unbind('keyup', escapeEvent)
+					.removeClass('modal-open');
+
+				// set 'bootstrap modal' display none
+				jQuery('#' + attrs.modalId).css('display', 'none');
+			};
+
+			//Bind modalOpen and modalClose events, so outsiders can trigger it
+			//We have to wait until the template has been fully put in to do this,
+			//so we will wait 100ms
+			$timeout(function() {
+				jQuery('#' + attrs.modalId)
+					.bind('modalOpen', openModal)
+					.bind('modalClose', closeModal);
+			}, 100);
+		}
+	};
+})
+
+/*
+ * Bootstrap Modal Open
+ * Restrict Attribute
+ */
+
+.directive('tbModalOpen', function() {
+	// Runs during compile
+	return {
+		restrict: 'A', // E = Element, A = Attribute, C = Class, M = Comment
+		link: function($scope, element, attrs) {
+			// define backdrop & escape Key
+			var hasBackdrop = attrs.backdrop === undefined ? true : attrs.backdrop;
+			var hasEscapeExit = attrs.escapeExit === undefined ? true : attrs.escapeExit;
+
+			// define event type
+			var eventType = attrs.modalEvent === undefined ? 'click' : attrs.modalEvent;
+
+			// set element bind event type
+			// panggil trigger modalOpen
+			jQuery(element).bind(eventType, function() {
+				console.log('click', attrs.tbModalOpen);
+				jQuery('#' + attrs.tbModalOpen)
+					.trigger('modalOpen', [hasBackdrop, hasEscapeExit]);
+			});
+		}
 	};
 })
 
 /**
- * iuploads component 
+ * iupload component 
  * restrict Element
+ * require markdownmce (optional)
  * 
- * multiple image uploads
+ * multiple images upload
  */
 
-.directive('iuploads', function($timeout, iUploads){
+.directive('iupload', function($timeout, $compile, multipleImageUpload){
 	// Runs during compile
 	return {
-		scope: {}, // {} = isolate, true = child, false/undefined = no change
+		require: '^markdownmce',
+		scope: {
+			modalId : '@',
+			modalTitle : '@'
+		}, // {} = isolate, true = child, false/undefined = no change
 		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
-		templateUrl: 'partials/image-uploads.html',
-		replace: true,
-		link: function($scope, iElm, iAttrs, ctrl) {
+		templateUrl: 'partials/components/iupload.html',
+		// replace: true,
+		link: function($scope, iElm, iAttrs, markdownmceCtrl) {
 			// ambil attribut element
-			var id          = iAttrs.id;
-			var showInModal = iAttrs.modal;
-			var modalId     = iAttrs.modalId;
+			var id            = iAttrs.id;
+			var featureId     = iAttrs.featureId;
+			var showInModal   = iAttrs.modal;
+			// var modalId       = iAttrs.modalId;
+			// var modalTitle    = iAttrs.modalTitle;
+
+			console.log(markdownmceCtrl);
+
 			// jika attribute modal set true
-			// letakkan element kedalam modal body
+			// wrap dengan modal template
+			// letakkan element pd modal body
+			var modalTpl;
 			if( showInModal !== 'false' ) {
 				// ambil element html
-				var imgUpload = iElm.html();
+				var imgUploadHtml = iElm.html();
 				// buat template modal,
 				// set modal id
-				var modalTpl  = '<div id="'+ modalId +'" class="modal modal-large hide fade" tabindex="-1" role="dialog" aria-labelledby="uploadImages" aria-hidden="true">' +
+				modalTpl  = '<div id="{{modalId}}" class="modal modal-large hide fade" tabindex="-1" role="dialog" aria-labelledby="uploadImages" aria-hidden="true">' +
 									'<div class="modal-header">' +
 										'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
-										'<h3 id="uploadImages">Upload Images</h3>' +
+										'<h3 id="uploadImages">{{modalTitle}}</h3>' +
 									'</div>' +
-									'<div class="modal-body">' + imgUpload + '</div>' +
+									'<div class="modal-body">' + imgUploadHtml + '</div>' +
 									'<div class="modal-footer">' +
 										'<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>' +
-										'<button class="btn btn-primary">Save changes</button>' +
 									'</div>' +
 								'</div>';
+				// compile template
+				modalTpl = $compile(modalTpl)($scope);
 				// jika dtampilkan, modal akan berada dibelakang backdrop
 				// trik, modal diletakan pd akhir body
 				// kemudian hapus element asli 
@@ -582,35 +575,206 @@
 				iElm.remove();
 			}
 
-			// initialize image upload provider thp element
-			// binding untuk button 'insert to editor' n 'delete image'
-			iUploads.init({
-				binding: {
-					handleInsertEditor : function(e, img, title){
-						var textarea = $('textarea');
-						var start    = textarea[0].selectionStart;
-						var end      = textarea[0].selectionEnd;
-						// get title n create markdown img syntax
-						var markdownImg = '![alt text]('+ img +' "'+ title +'")';
-						// set value textarea
-						textarea.val(textarea.val().substring(0, start) + '\r\r' + markdownImg + '\r\r' + textarea.val().substring(end));
-						// modal close
-						$('.modal .close').click();
-						// refresh markdown
-						$('#refresh-markdown').click();
-					},
-					handleDeleteImage  : function(e, $row){
-						console.log('handleDeleteImage', e);
-						// button Stateful
-						$(e).button('loading');
-						setTimeout(function(){
-							$row.fadeOut('slow', function(){
-								$(this).remove();
-							});
-						}, 3000);
-					}
+			// multipleImageUpload, binding uploads button dengan inject $scope
+			$scope.insertEditor = function($event){
+				// ambil title
+				var title = $($event.currentTarget).siblings('input[name="img_title"]').val();
+				// ambil image
+				var image = $($event.currentTarget).siblings('input[name="img_url"]').val();
+				// ambil textarea element dari markdownmce controller
+				var textarea = $('textarea', markdownmceCtrl.editorEl);
+				var start    = textarea[0].selectionStart;
+				var end      = textarea[0].selectionEnd;
+				// get title n create markdown img syntax
+				var markdownImg = '![alt text]('+ image +' "'+ title +'")';
+				// set value textarea
+				textarea.val(textarea.val().substring(0, start) + '\r' + markdownImg + '\r' + textarea.val().substring(end));
+				// close modal
+				$('.close', modalTpl).click();
+				// refresh markdown preview
+				markdownmceCtrl.refreshPreview();
+			};
+			$scope.setFeatureImage = function($event){
+				var image = $($event.currentTarget).siblings('input[type="hidden"]').val();
+				console.log('setFeatureImage image', image);
+			};
+			$scope.deleteImage = function($event){
+				var $btn = $(event.currentTarget);
+				var $group = $btn.parents('.accordion-group');
+				$btn.button('loading');
+				$timeout(function(){
+					$group.fadeOut('slow', function(){
+						$(this).remove();
+					});
+				}, 3000);
+			};
+
+			multipleImageUpload.init({
+				ajaxurl: 'api/upload.php',
+				// compile upload row
+				// setiap upload row yg ditambahkan(append) ke upload list
+				// harus dicompile ulang, utk inject $scope
+				// @return upload row
+				compile: function($uploadList, $uploadRow){
+					console.log('call callback', $uploadRow[0]);
+					return $compile($uploadRow[0])($scope).appendTo($uploadList);
 				}
 			});
+
+			/* 
+			 * multipleImageUpload, binding uploads button dengan provider
+			 *
+			var insertEditor = function(e, img, title){
+				// ambil textarea element dari markdownmce controller
+				var textarea = $('textarea', markdownmceCtrl.editorEl);
+				var start    = textarea[0].selectionStart;
+				var end      = textarea[0].selectionEnd;
+				// get title n create markdown img syntax
+				var markdownImg = '![alt text]('+ img +' "'+ title +'")';
+				// set value textarea
+				textarea.val(textarea.val().substring(0, start) + '\r\r' + markdownImg + '\r\r' + textarea.val().substring(end));
+				// modal close
+				$('.modal .close').click();
+				// refresh markdown
+				$('#refresh-markdown').click();
+			};
+			var setFeatured = function(e, img){};
+			var deleteImage = function(e, $row){
+				console.log('handleDeleteImage', e);
+				// button Stateful
+				$(e).button('loading');
+				$timeout(function(){
+					$row.fadeOut('slow', function(){
+						$(this).remove();
+					});
+				}, 3000);
+			};
+			// initialize image upload provider thp element
+			// binding untuk button 'insert to editor' n 'delete image'
+			multipleImageUpload.init({
+				ajaxurl: 'api/upload.php',
+				binding: {
+					insertEditor : insertEditor,
+					setFeatured  : setFeatured,
+					deleteImage  : deleteImage
+				}
+			});*/
+		}
+	};
+})
+
+/**
+ * mceyoutube component 
+ * restrict Element
+ * requires : markdownmce, tbmodal
+ * 
+ * insert youtube video utk markdown editor
+ * search youtube videos
+ */
+
+.directive('mceyoutube', function($compile){
+	// Runs during compile
+	return {
+		require: ['^markdownmce', '^tbmodal'],
+		scope: {}, // {} = isolate, true = child, false/undefined = no change
+		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
+		templateUrl: 'partials/components/mceyoutube.html',
+		replace: true,
+		link: function($scope, iElm, iAttrs, controller) {
+			// set controller dari require controller
+			var markdownmceCtrl = controller[0];
+			var bootstrapCtrl  = controller[1];
+
+			// set scope dari attributes
+			$scope.orderBy     = iAttrs.order === undefined ? 'relevance' : iAttrs.order;
+			$scope.searchTitle = iAttrs.search === undefined ? 'Search by Relevance' : iAttrs.search;
+
+			// initialize jquery tube
+			jQTubeUtil.init({
+				key: "AI39si6-gftpN8gxptc0AhEiB8__DVzKgS_FNlHruCZaLwZgNbabeNcltQ9nUjyytTmfNqFwNDKBZxI0nllXIXqnEO4unbSCsw",
+				orderby: "viewCount",  // *optional -- "viewCount" is set by default
+				time: "this_month",   // *optional -- "this_month" is set by default
+				maxResults: 10   // *optional -- defined as 10 results by default
+			});
+
+			$scope.changeOrder = function(orderBy, searchTitle){
+				var text  = $(this).text();
+				$scope.orderBy = orderBy;
+				if(searchTitle !== null)
+					$scope.searchTitle = searchTitle;
+			};
+
+			$scope.searchVideos = function(){
+				var inputSearch = $('input[name="query"]', iElm);
+				var search = inputSearch.val().trim();
+				if(search === ''){
+					inputSearch.addClass('invalid');
+					return false;
+				}
+
+				$('.btn-search').button('loading');
+				var param = {
+					"q": search,
+					"orderby": $scope.orderBy
+				};
+				jQTubeUtil.search(param, function(response){
+					$scope.videos = response.videos;
+					console.log($scope.videos);
+					var html = "";
+					for(v in response.videos){
+						var video = response.videos[v]; // this is a 'friendly' YouTubeVideo object
+						var thumb = video.thumbs[0].url;
+						html += '<div class="media" ng-dblclick="insertVideo('+v+')" ng-click="selectVideo('+v+')" ng-class="{\'alert alert-success\':isSelected('+v+')}">' +
+									'<div class="pull-left span2">' +
+										'<img class="media-object" src="' + thumb + '">' +
+									'</div>' +
+									'<div class="media-body">' +
+										'<h4 class="media-heading">' + video.title + '</h4>' +
+										'<small>by ' + video.entry.author[0].name.$t + '&nbsp;|&nbsp;' +
+										video.viewCount + ' views</small><br/>' + video.description +
+									'</div>' +
+								'</div>';
+					}
+					// compile ulang
+					html = $compile(html)($scope);
+					$('.youtube-videos', iElm).html(html);
+					$('.btn-search').button('reset');
+				});
+			};
+
+			var selectedVideo = -1;
+			$scope.selectVideo = function(index){
+				selectedVideo = index;
+			};
+			$scope.isSelected = function(index){
+				return selectedVideo === index;
+			};
+
+			// double click
+			$scope.insertVideo = function(index){
+				// buat youtube url
+				var youtubeURL = 'http://youtube.com/watch?v='+ $scope.videos[index].videoId;
+				// buat youtube video tag
+				var videoTag = '<video width="483" height="269">'+
+									'<source type="video/youtube" src="'+youtubeURL+'" />'+
+								'</video>';
+				// ambil textarea element dari markdownmce controller
+				var textarea   = $('textarea', markdownmceCtrl.editorEl);
+				// tambahkan video tag kedalam textarea
+				var start    = textarea[0].selectionStart;
+				var end      = textarea[0].selectionEnd;
+				textarea.val(
+					textarea.val().substring(0, start) +
+					'\r' + videoTag + '\r' +
+					textarea.val().substring(end)
+				);
+				// ambil modal element dari bootstrapModal controller
+				// close modal
+				$('.close', bootstrapCtrl.element).click();
+				// refresh markdown preview
+				markdownmceCtrl.refreshPreview();
+			};
+
 		}
 	};
 });
