@@ -16,4 +16,12 @@
 				isArray: true
 			}
 		});
+	}).
+	factory('Upload', function($resource){
+		return $resource('api/upload.php?action=get', {}, {
+			get: {
+				method: 'GET',
+				isArray: true
+			}
+		});
 	});

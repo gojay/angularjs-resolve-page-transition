@@ -7,7 +7,12 @@ if(!isset($action)) throw new Exception('Action required');
 if( $action == 'get')
 {
 	$images = glob($upload_directory . "/{*.jpg,*.gif,*.png}", GLOB_BRACE);
-	echo json_encode($images);
+	$data = array();
+	foreach($images as $image){
+		$data[] = $image;
+	}
+	header('Content-Type', 'application/json');
+	echo json_encode((object)$data);
 }
 elseif( $action == 'chunk' )
 {

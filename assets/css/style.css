@@ -228,6 +228,45 @@ textarea:focus::-ms-input-placeholder {
 	opacity: 0.3;
 	pointer-events: none;
 }
-.loading ~ .ajax-loader {
+.loading ~ .ajax-loader,
+.loading > .ajax-loader {
 	display: block;
+}
+
+/* validation */
+
+input ~ .alert {
+	padding-top: 3px;
+	padding-right: 20px;
+	padding-bottom: 3px;
+}
+
+.ng-pristine .alert {
+	display: none;
+}
+		
+.ng-dirty .alert-error {
+	color: red;
+	display: inline-block;
+}
+.ng-dirty .alert-error::before {
+	content: 'x';
+	padding: 3px;
+	background: #FFF;
+	position: relative;
+	left: -35px;
+	top: 2px;
+}
+
+.ng-dirty .checkmark {
+	color: green;
+	display: inline-block;;
+}
+.ng-dirty .checkmark::before {
+	content: '\2713';
+	background: #FFF;
+	padding: 3px;
+	position: relative;
+	left: -25px;
+	top: 2px;
 }

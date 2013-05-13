@@ -1,10 +1,52 @@
-<div class="images-upload loading">
+<div class="images-upload">
   	<ul class="nav nav-tabs">
-    	<li class="active"><a href="#tab1" data-toggle="tab">Uploads</a></li>
-    	<li><a href="#tab2" data-toggle="tab">Files</a></li>
+    	<li class="active"><a href="#tab1" data-toggle="tab">URL</a></li>
+    	<li><a href="#tab2" data-toggle="tab">Uploads</a></li>
+    	<li><a href="#tab3" data-toggle="tab">Files</a></li>
   	</ul>
   	<div class="tab-content">
     	<div class="tab-pane active" id="tab1">
+    		<div class="container-fluid">
+    			<div class="row-fluid">
+		    		<div class="span8">
+			    		<form id="imgForm" class="form-horizontal" name="imgForm" ng-submit="insertImageURL()">
+							<div class="control-group">
+								<label class="control-label" for="input03">URL</label>
+								<div class="controls">
+									<input type="url" id="input03" ng-model="img.url" ng-change="change()" name="url" required>
+									<!-- <span class="alert alert-success hide">Success</span> -->
+									<span ng-show="imgForm.url.$valid" class="checkmark"></span>
+									<span ng-show="imgForm.url.$error.required" class="alert alert-error">URL required</span>
+									<span ng-show="imgForm.url.$error.url" class="alert alert-error">URL Invalid</span>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="input01">Title</label>
+								<div class="controls">
+									<input type="text" id="input01" ng-model="img.title">
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="input02">Alt Text</label>
+								<div class="controls">
+									<input type="text" id="input02" ng-model="img.alt">
+								</div>
+							</div>
+							<div class="control-group">
+								<div class="controls">
+									<button type="submit" class="btn" ng-disabled="imgForm.$invalid">Insert image</button>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="span4 img-preview" style="position:relative; height:200px">
+						<div class="img"></div>
+						<div class="ajax-loader"><img src="img/loading.gif" alt="loading..."></div>
+					</div>
+				</div>
+    		</div>
+    	</div>
+    	<div class="tab-pane" id="tab2">
     		<!-- upload -->
     		<section id="upload" class="row-fluid">
 		      	<div class="margin-top-bottom">
@@ -61,10 +103,11 @@
 	  			</div>
   			</section>
     		<!-- /upload -->
-    	</div>
-    	<div class="tab-pane" id="tab2">
-    		<button class="btn" ng-click="onOk()"></button>
+    	</div>	
+    	<div class="tab-pane" id="tab3">
+			{{phones}}
     	</div>
   	</div>
 </div>
 <div class="ajax-loader"><img src="img/loading.gif" alt="loading..."></div>
+

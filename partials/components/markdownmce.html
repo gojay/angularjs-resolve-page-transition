@@ -32,8 +32,8 @@
 					  	<button class="btn" title="Insert link" tb-modal-open="insert-anchor-mce" backdrop="false"><i class="icon-link"></i></button>
 					</div>
 					<div class="pull-right">
-						<button id="refresh-markdown" class="btn" title="refresh" ng-disabled="!isPreviewMode" ng-click="refreshPreview()"><i class="icon-refresh"></i></button>
 						<div class="input-prepend input-append">
+							<button id="refresh-markdown" class="btn" title="refresh" ng-disabled="!isPreviewMode" ng-click="refreshPreview()"><i class="icon-refresh"></i></button>
 							<button class="btn" title="preview" ng-disabled="isPreviewMode" ng-click="swicthToPreview(true)"><i class="icon-eye-open"></i></button>
 							<button class="btn" title="full size" ng-disabled="!isPreviewMode" ng-click="swicthToPreview(false)"><i class="icon-resize-horizontal"></i></button>
 						</div>
@@ -80,5 +80,6 @@
 	<tbmodal class="modal-large" modal-id="insert-youtube-mce" modal-title="Insert Youtube Video" modal-btn-ok="Insert Video">
 		<mceyoutube></mceyoutube>
   	</tbmodal>
+
 
 </div>
