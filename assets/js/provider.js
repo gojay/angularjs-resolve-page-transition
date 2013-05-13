@@ -292,7 +292,7 @@ angular.module('PhoneProvider', [])
 									// progress bar element
 									$progressBar = $('.progress > .bar', $uploadRow);
 									// upload file
-									/*self.createChunkfile(theFile, $progressBar, function(data) {
+									self.createChunkfile(theFile, $progressBar, function(data) {
 										// set title ke input hidden
 										$('input[name="img_title"]', $uploadRow).val(data.name);
 										// set image url ke input hidden
@@ -304,7 +304,7 @@ angular.module('PhoneProvider', [])
 												.removeClass('show-message')
 												.addClass('show-buttons');
 										}, 3000);
-									});*/
+									});
 								}
 								else {
 									// append to group

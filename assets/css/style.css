@@ -241,7 +241,7 @@ input ~ .alert {
 	padding-bottom: 3px;
 }
 
-.ng-pristine .alert {
+form.ng-pristine .alert {
 	display: none;
 }
 		

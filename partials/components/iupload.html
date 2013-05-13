@@ -1,54 +1,14 @@
 <div class="images-upload">
   	<ul class="nav nav-tabs">
-    	<li class="active"><a href="#tab1" data-toggle="tab">URL</a></li>
-    	<li><a href="#tab2" data-toggle="tab">Uploads</a></li>
-    	<li><a href="#tab3" data-toggle="tab">Files</a></li>
+    	<li class="active"><a href="#tab1" data-toggle="tab">From Computer</a></li>
+    	<li><a href="#tab2" data-toggle="tab">From URL</a></li>
+    	<li><a href="#tab3" data-toggle="tab">Gallery ({{phone.images.length}})</a></li>
   	</ul>
   	<div class="tab-content">
-    	<div class="tab-pane active" id="tab1">
-    		<div class="container-fluid">
-    			<div class="row-fluid">
-		    		<div class="span8">
-			    		<form id="imgForm" class="form-horizontal" name="imgForm" ng-submit="insertImageURL()">
-							<div class="control-group">
-								<label class="control-label" for="input03">URL</label>
-								<div class="controls">
-									<input type="url" id="input03" ng-model="img.url" ng-change="change()" name="url" required>
-									<!-- <span class="alert alert-success hide">Success</span> -->
-									<span ng-show="imgForm.url.$valid" class="checkmark"></span>
-									<span ng-show="imgForm.url.$error.required" class="alert alert-error">URL required</span>
-									<span ng-show="imgForm.url.$error.url" class="alert alert-error">URL Invalid</span>
-								</div>
-							</div>
-							<div class="control-group">
-								<label class="control-label" for="input01">Title</label>
-								<div class="controls">
-									<input type="text" id="input01" ng-model="img.title">
-								</div>
-							</div>
-							<div class="control-group">
-								<label class="control-label" for="input02">Alt Text</label>
-								<div class="controls">
-									<input type="text" id="input02" ng-model="img.alt">
-								</div>
-							</div>
-							<div class="control-group">
-								<div class="controls">
-									<button type="submit" class="btn" ng-disabled="imgForm.$invalid">Insert image</button>
-								</div>
-							</div>
-						</form>
-					</div>
-					<div class="span4 img-preview" style="position:relative; height:200px">
-						<div class="img"></div>
-						<div class="ajax-loader"><img src="img/loading.gif" alt="loading..."></div>
-					</div>
-				</div>
-    		</div>
-    	</div>
-    	<div class="tab-pane" id="tab2">
+  		<!-- Tab Computer -->
+    	<div class="tab-pane" id="tab1">
     		<!-- upload -->
-    		<section id="upload" class="row-fluid">
+    		<div id="upload" class="row-fluid">
 		      	<div class="margin-top-bottom">
 					<div id="drop-area">
 						<input type="file" id="input-files" name="file[]" class="hide" multiple />
@@ -101,13 +61,92 @@
 	                </div>
 	                <!-- /upload group -->
 	  			</div>
-  			</section>
+  			</div>
     		<!-- /upload -->
     	</div>	
+    	<!-- Tab URL -->
+    	<div class="tab-pane active" id="tab2">
+    		<div class="container-fluid">
+    			<div class="row-fluid">
+		    		<div class="span8">
+			    		<form id="imgForm" class="form-horizontal" name="imgForm" ng-submit="insertImageURL()">
+							<div class="control-group">
+								<label class="control-label" for="input03">URL</label>
+								<div class="controls">
+									<input type="url" id="input03" ng-model="img.url" ng-change="change()" name="url" required>
+									<!-- <span class="alert alert-success hide">Success</span> -->
+									<span ng-show="imgForm.url.$valid" class="checkmark"></span>
+									<span ng-show="imgForm.url.$error.required" class="alert alert-error">URL required</span>
+									<span ng-show="imgForm.url.$error.url" class="alert alert-error">URL Invalid</span>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="input01">Title</label>
+								<div class="controls">
+									<input type="text" id="input01" ng-model="img.title">
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="input02">Alt Text</label>
+								<div class="controls">
+									<input type="text" id="input02" ng-model="img.alt">
+								</div>
+							</div>
+							<div class="control-group">
+								<div class="controls">
+									<button type="submit" class="btn" ng-disabled="imgForm.$invalid">Insert image</button>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="span4 img-preview" style="position:relative; height:200px">
+						<div class="img"></div>
+						<div class="ajax-loader"><img src="img/loading.gif" alt="loading..."></div>
+					</div>
+				</div>
+    		</div>
+    	</div>
+    	<!-- Tab Gallery -->
     	<div class="tab-pane" id="tab3">
-			{{phones}}
+			<!-- <p ng-repeat="image in phone.images">{{image}}</p> -->
+			<div class="container-fluid">
+				<div class="row-fluid">
+					<!-- acordion images list -->
+					<div class="accordion" id="images-list">
+						<!-- image row -->
+						<div class="accordion-group" ng-repeat="image in phone.images">
+							<div class="accordion-heading">
+			                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#images-list" href="#image-field-{{$index}}">
+			                     	{{image}}
+			                    </a>
+		                  	</div>
+		                  	<div id="image-field-{{$index}}" class="accordion-body collapse" ng-class="{in:$index == 0}">
+			                    <div class="span12 accordion-inner">
+					          		<div class="span4 upload-img">
+										<img ng-src="{{image}}">
+					          		</div>
+					                <div class="span8">
+							            <div class="alert alert-success show-buttons">
+										  	<span class="buttons">
+											  	<button class="btn btn-primary" ng-click="insertEditor($event)">Insert to Editor</button>
+											  	<button class="btn btn-info" ng-click="setFeatureImage($event)">Set Featured Image</button>
+											  	<span class="pull-right">
+											  		<button class=" btn btn-danger" ng-click="deleteImage($event)" data-loading-text="Loading..."><i class="icon-remove"></i> Delete</button>
+											  	</span>
+											  	<input type="hidden" name="img_title" value="{{image}}" />
+											  	<input type="hidden" name="img_url" value="{{image}}" />
+										  	</span>
+										  	<!-- file description -->
+										</div>
+					            	</div>
+			                    </div>
+		                  	</div>
+						</div>
+						<!-- /image row -->
+					</div>
+					<!-- acordion images list -->
+				</div>
+			</div>
     	</div>
   	</div>
 </div>
-<div class="ajax-loader"><img src="img/loading.gif" alt="loading..."></div>
-

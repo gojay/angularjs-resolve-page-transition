@@ -1,5 +1,6 @@
 <?php
 $upload_directory = '../img/uploads';
+$upload_url = 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/img/uploads';
 
 $action = $_REQUEST['action'];
 if(!isset($action)) throw new Exception('Action required');
@@ -64,9 +65,11 @@ elseif( $action == 'merge' )
 	// $fileContent = file_get_contents(dirname(__FILE__) . '/' . $target);
 	// $dataUri = 'data:' . $fileType . ';base64,' . base64_encode($fileContent);
 
+	$img_url = $upload_url . '/' . $_REQUEST['name'];
+
 	$pathinfo = pathinfo($target);
 	echo json_encode(array(
-		'image' => $target,
+		'image' => $img_url,
 		'name'  => $pathinfo['filename']
 	));
 }

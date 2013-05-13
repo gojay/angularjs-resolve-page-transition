@@ -532,237 +532,248 @@
 	return {
 		require: '^markdownmce',
 		scope: {
+			phone: '=',
 			modalId : '@',
 			modalTitle : '@'
 		}, // {} = isolate, true = child, false/undefined = no change
 		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
 		templateUrl: 'partials/components/iupload.html',
-		controller: function($scope, $element, Phone) {
-			this.phones = [
-				{
-					"age": 0,
-					"id": "motorola-xoom-with-wi-fi",
-					"imageUrl": "img/phones/motorola-xoom-with-wi-fi.0.jpg",
-					"name": "Motorola XOOM\u2122 with Wi-Fi",
-					"snippet": "The Next, Next Generation\r\n\r\nExperience the future with Motorola XOOM with Wi-Fi, the world's first tablet powered by Android 3.0 (Honeycomb)."
-				},
-				{
-					"age": 1,
-					"id": "motorola-xoom",
-					"imageUrl": "img/phones/motorola-xoom.0.jpg",
-					"name": "MOTOROLA XOOM\u2122",
-					"snippet": "The Next, Next Generation\n\nExperience the future with MOTOROLA XOOM, the world's first tablet powered by Android 3.0 (Honeycomb)."
-				}
-			];
-		},
 		// replace: true,
-		link: function($scope, iElm, iAttrs, markdownmceCtrl) {
+		compile: function(element, attrs) {
 			// ambil attribut element
-			var id            = iAttrs.id;
-			var featureId     = iAttrs.featureId;
-			var showInModal   = iAttrs.modal;
-			// var modalId       = iAttrs.modalId;
-			// var modalTitle    = iAttrs.modalTitle;
-
-			// jika attribute modal set true
-			// wrap dengan modal template
-			// letakkan element pd modal body
-			var modalTpl;
-			if( showInModal !== 'false' ) {
-				// ambil element html
-				var imgUploadHtml = iElm.html();
-				// buat template modal,
-				// set modal id
-				modalTpl  = '<div id="{{modalId}}" class="modal modal-large hide fade" tabindex="-1" role="dialog" aria-labelledby="uploadImages" aria-hidden="true">' +
+			var featureId   = attrs.featureId;
+			var showInModal = attrs.modal;
+			var el          = element.html();
+			return function($scope, iElm, iAttrs, markdownmceCtrl) {
+				// jika attribute modal set true
+				// wrap dengan modal template
+				// letakkan element pd modal body
+				if( showInModal !== 'false' ) {
+					// ambil element html
+					// buat template modal,
+					// set modal id
+					var modal  = '<div id="{{modalId}}" class="modal modal-large hide fade" tabindex="-1" role="dialog" aria-labelledby="uploadImages" aria-hidden="true">' +
 								'<div class="modal-header">' +
 									'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
 									'<h3 id="uploadImages">{{modalTitle}}</h3>' +
 								'</div>' +
-								'<div class="modal-body">' + imgUploadHtml + '</div>' +
+								'<div class="modal-body" ng-model="phone">' + el+ '</div>' +
 								'<div class="modal-footer">' +
 									'<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>' +
 								'</div>' +
 							'</div>';
-				// compile template
-				modalTpl = $compile(modalTpl)($scope);
-				// jika dtampilkan, modal akan berada dibelakang backdrop
-				// trik, modal diletakan pd akhir body
-				// kemudian hapus element asli 
-				$('body').append(modalTpl);
-				iElm.remove();
-			}
-			$scope.phones = [
-				{
-					"age": 0,
-					"id": "motorola-xoom-with-wi-fi",
-					"imageUrl": "img/phones/motorola-xoom-with-wi-fi.0.jpg",
-					"name": "Motorola XOOM\u2122 with Wi-Fi",
-					"snippet": "The Next, Next Generation\r\n\r\nExperience the future with Motorola XOOM with Wi-Fi, the world's first tablet powered by Android 3.0 (Honeycomb)."
-				},
-				{
-					"age": 1,
-					"id": "motorola-xoom",
-					"imageUrl": "img/phones/motorola-xoom.0.jpg",
-					"name": "MOTOROLA XOOM\u2122",
-					"snippet": "The Next, Next Generation\n\nExperience the future with MOTOROLA XOOM, the world's first tablet powered by Android 3.0 (Honeycomb)."
+					// compile modal
+					el = $compile(modal)($scope);
+					// jika dtampilkan, modal akan berada dibelakang backdrop
+					// trik, modal diletakan pd akhir body
+					$('body').append(el);
+					// kemudian hapus element asli 
+					iElm.remove();
 				}
-			];
 
-			var insertImageToEditor = function(image){
-				// ambil textarea element dari markdownmce controller
-				var textarea = $('textarea', markdownmceCtrl.editorEl)[0];
-				var start    = textarea.selectionStart;
-				var end      = textarea.selectionEnd;
-				// get title n create markdown img syntax
-				var title = image.title === undefined ? '' : image.alt;
-				var alt   = image.alt === undefined ? title : image.alt;
-				// var markdownImg = '!['+alt+']('+ image.url +' "'+ image.title +'")';
-				var markdownImg = '<img src="'+ image.url +'" alt="'+alt+'" title="'+ title +'" />';
-				// set value textarea
-				textarea.value = textarea.value.substring(0, start) + markdownImg + textarea.value.substring(end);
-				// close modal
-				$('.close', modalTpl).click();
-				// callback resizable
-				var length = markdownImg.length;
-				function az(){
-					var end = start + length;
-					var self = this;
-					textarea.selectionStart = start;
-					textarea.selectionEnd   = end;
-					textarea.focus();
-					// image resizable
-					$('img', this.previewEl)
-						.resizable({
-							stop: function(e, ui) {
-								var parent = ui.element.parent();
-								ui.element.css({
-									width : ui.element.width() / parent.width() * 100 + "%",
-									height: ui.element.width() / parent.width() * 100 + "%"
-								});
-								var w = $('img', ui.element).css('width');
-								var h = $('img', ui.element).css('height');
-								var selectedImg = $(textarea.value.substring(start, end)).css({width:w, height:h});
-								var markdownImg = selectedImg.prop('outerHTML');
-								textarea.value = textarea.value.substring(0, start) + markdownImg + textarea.value.substring(end);
-								length = markdownImg.length;
-								markdownmceCtrl.refreshPreview(az);
-							}
+				var insertImageMarkdownToEditor = function(image, callback){
+					// get textarea element dari markdownmce controller
+					var textarea = $('textarea', markdownmceCtrl.editorEl)[0];
+					var start    = textarea.selectionStart;
+					var end      = textarea.selectionEnd;
+					// get title
+					var title = image.title === undefined ? '' : image.title;
+					// create markdown img syntax
+					var markdownImg = '!['+ title +']('+ image.url +' "'+ title +'")';
+					// set value textarea
+					textarea.value = textarea.value.substring(0, start) + '\r' + markdownImg + '\r' + textarea.value.substring(end);
+					// close modal
+					$('.close', el).click();
+					// refresh markdown preview
+					markdownmceCtrl.refreshPreview();
+					// call callback
+					if(callback) callback();
+				};
+				var insertImageHTMLToEditor = function(image){
+					// ambil textarea element dari markdownmce controller
+					var textarea = $('textarea', markdownmceCtrl.editorEl)[0];
+					var start    = textarea.selectionStart;
+					var end      = textarea.selectionEnd;
+					// get title n create markdown img syntax
+					var title = image.title === undefined ? '' : image.title;
+					var alt   = image.alt === undefined ? title : image.alt;
+					// create img html
+					var imgHTML = '<img src="'+ image.url +'" alt="'+alt+'" title="'+ title +'" />';
+					// set value textarea
+					textarea.value = textarea.value.substring(0, start) + imgHTML + textarea.value.substring(end);
+					// close modal
+					$('.close', el).click();
+					// set length img html 
+					var length = imgHTML.length;
+					// callback resizable
+					var makeResizable = function(){
+						var self = this;
+						// update selectionEnd
+						var end = start + length;
+						// set focus textarea selection 
+						textarea.selectionStart = start;
+						textarea.selectionEnd   = end;
+						textarea.focus();
+						// image resizable (jquery ui)
+						$('img', this.previewEl)
+							.resizable({
+								stop: function(e, ui) {
+									var parent = ui.element.parent();
+									ui.element.css({
+										width : ui.element.width() / parent.width() * 100 + "%",
+										height: ui.element.width() / parent.width() * 100 + "%"
+									});
+									// get img width n height 
+									var w = $('img', ui.element).css('width');
+									var h = $('img', ui.element).css('height');
+									// change img sytle width n height 
+									var selectedImg = $(textarea.value.substring(start, end)).css({width:w, height:h});
+									// get string element
+									var imgHTML = selectedImg.prop('outerHTML');
+									// set textarea value
+									textarea.value = textarea.value.substring(0, start) + imgHTML + textarea.value.substring(end);
+									// update length
+									length = imgHTML.length;
+									// auto resizable
+									// selama img tag masih focus pd editor
+									markdownmceCtrl.refreshPreview(makeResizable);
+								}
+							});
+					};
+					// refresh markdown preview
+					markdownmceCtrl.refreshPreview(makeResizable);
+				};
+
+				/* Tab URL inject scope */
+				$scope.img = {};
+				$scope.insertImageURL = function(){
+					console.log($scope.img);
+					insertImageHTMLToEditor($scope.img);
+				};
+				// event keypress n blur
+				$('input[name="url"]', el)
+					.on('keypress', function(){
+						$('.img-preview').addClass('loading');
+					})
+					.on('blur',function(e){
+						$('.img-preview').removeClass('loading');
+						if($scope.imgForm.url.$valid){
+							var imgUrl = e.currentTarget.value;
+							$('.img-preview > .img').html('<img src="'+imgUrl+'">');
+						}
+					});
+
+				/* Tab Uploads inject scope */
+				// multipleImageUpload
+				// binding uploads button dengan inject $scope
+				$scope.insertEditor = function($event){
+					// get button
+					var $button = $($event.currentTarget);
+					// get image title
+					var img_title  = $button.siblings('input[name="img_title"]').val();
+					// get image url
+					var img_url   = $button.siblings('input[name="img_url"]').val();
+					// create object
+					var image = {
+						url  : img_url,
+						title: img_title
+					};
+					// insert markdown image to editor
+					insertImageMarkdownToEditor(image, function(){
+						// hapus upload rows
+						$button
+							.parents('#upload-list')
+							.find('.accordion-group').not(':first')
+							.remove();
+
+					});
+					// // get textarea element dari markdownmce controller
+					// var textarea = $('textarea', markdownmceCtrl.editorEl)[0];
+					// var start    = textarea.selectionStart;
+					// var end      = textarea.selectionEnd;
+					// // get title n create markdown img syntax
+					// var markdownImg = '![alt text]('+ image +' "'+ title +'")';
+					// // set value textarea
+					// textarea.value = textarea.value.substring(0, start) + '\r' + markdownImg + '\r' + textarea.value.substring(end);
+
+					// // hapus upload rows
+					// $button
+					// 	.parents('#upload-list')
+					// 	.find('.accordion-group').not(':first')
+					// 	.remove();
+
+					// // close modal
+					// $('.close', el).click();
+					// // refresh markdown preview
+					// markdownmceCtrl.refreshPreview();
+				};
+				$scope.setFeatureImage = function($event){
+					var image = $($event.currentTarget).siblings('input[type="hidden"]').val();
+					console.log('setFeatureImage image', image);
+				};
+				$scope.deleteImage = function($event){
+					var $btn   = $(event.currentTarget);
+					var $group = $btn.parents('.accordion-group');
+					$btn.button('loading');
+					$timeout(function(){
+						$group.fadeOut('slow', function(){
+							$(this).remove();
 						});
-				}
-				// refresh markdown preview
-				markdownmceCtrl.refreshPreview(az);
-			};
+					}, 3000);
+				};
 
-			/* tab url */
-			$scope.img = {};
-			$scope.insertImageURL = function(){
-				console.log($scope.img);
-				insertImageToEditor($scope.img);
-			};
-
-			$('input[name="url"]', modalTpl)
-				.on('keypress', function(){
-					$('.img-preview').addClass('loading');
-				})
-				.on('blur',function(e){
-					$('.img-preview').removeClass('loading');
-					if($scope.imgForm.url.$valid){
-						var imgUrl = e.currentTarget.value;
-						$('.img-preview > .img').html('<img src="'+imgUrl+'">');
+				multipleImageUpload.init({
+					ajaxurl: 'api/upload.php',
+					// compile upload row
+					// setiap upload row yg ditambahkan(append) ke upload list
+					// harus dicompile ulang, utk inject $scope
+					// @return upload row
+					compile: function($uploadList, $uploadRow){
+						console.log('call callback', $uploadRow[0]);
+						return $compile($uploadRow[0])($scope).appendTo($uploadList);
 					}
 				});
 
-			/* tab uploads */
-			// multipleImageUpload, binding uploads button dengan inject $scope
-			$scope.insertEditor = function($event){
-				// ambil title
-				var title_url = $($event.currentTarget).siblings('input[name="img_title"]').val();
-				// ambil image
-				var image_url = $($event.currentTarget).siblings('input[name="img_url"]').val();
-				var image = {
-					'url'  : image_url,
-					'title': title_url
+				/* 
+				 * multipleImageUpload
+				 * binding uploads button dengan provider
+				 *
+				var insertEditor = function(e, img, title){
+					// ambil textarea element dari markdownmce controller
+					var textarea = $('textarea', markdownmceCtrl.editorEl);
+					var start    = textarea[0].selectionStart;
+					var end      = textarea[0].selectionEnd;
+					// get title n create markdown img syntax
+					var markdownImg = '![alt text]('+ img +' "'+ title +'")';
+					// set value textarea
+					textarea.val(textarea.val().substring(0, start) + '\r\r' + markdownImg + '\r\r' + textarea.val().substring(end));
+					// modal close
+					$('.modal .close').click();
+					// refresh markdown
+					$('#refresh-markdown').click();
 				};
-				// insert mardown image to editor
-				insertImageToEditor(image);
-				// // ambil textarea element dari markdownmce controller
-				// var textarea = $('textarea', markdownmceCtrl.editorEl);
-				// var start    = textarea[0].selectionStart;
-				// var end      = textarea[0].selectionEnd;
-				// // get title n create markdown img syntax
-				// var markdownImg = '![alt text]('+ image +' "'+ title +'")';
-				// // set value textarea
-				// textarea.val(textarea.val().substring(0, start) + '\r' + markdownImg + '\r' + textarea.val().substring(end));
-				// // close modal
-				// $('.close', modalTpl).click();
-				// // refresh markdown preview
-				// markdownmceCtrl.refreshPreview();
+				var setFeatured = function(e, img){};
+				var deleteImage = function(e, $row){
+					console.log('handleDeleteImage', e);
+					// button Stateful
+					$(e).button('loading');
+					$timeout(function(){
+						$row.fadeOut('slow', function(){
+							$(this).remove();
+						});
+					}, 3000);
+				};
+				// initialize image upload provider thp element
+				// binding untuk button 'insert to editor' n 'delete image'
+				multipleImageUpload.init({
+					ajaxurl: 'api/upload.php',
+					binding: {
+						insertEditor : insertEditor,
+						setFeatured  : setFeatured,
+						deleteImage  : deleteImage
+					}
+				});*/
 			};
-			$scope.setFeatureImage = function($event){
-				var image = $($event.currentTarget).siblings('input[type="hidden"]').val();
-				console.log('setFeatureImage image', image);
-			};
-			$scope.deleteImage = function($event){
-				var $btn = $(event.currentTarget);
-				var $group = $btn.parents('.accordion-group');
-				$btn.button('loading');
-				$timeout(function(){
-					$group.fadeOut('slow', function(){
-						$(this).remove();
-					});
-				}, 3000);
-			};
-
-			multipleImageUpload.init({
-				ajaxurl: 'api/upload.php',
-				// compile upload row
-				// setiap upload row yg ditambahkan(append) ke upload list
-				// harus dicompile ulang, utk inject $scope
-				// @return upload row
-				compile: function($uploadList, $uploadRow){
-					console.log('call callback', $uploadRow[0]);
-					return $compile($uploadRow[0])($scope).appendTo($uploadList);
-				}
-			});
-
-			/* 
-			 * multipleImageUpload, binding uploads button dengan provider
-			 *
-			var insertEditor = function(e, img, title){
-				// ambil textarea element dari markdownmce controller
-				var textarea = $('textarea', markdownmceCtrl.editorEl);
-				var start    = textarea[0].selectionStart;
-				var end      = textarea[0].selectionEnd;
-				// get title n create markdown img syntax
-				var markdownImg = '![alt text]('+ img +' "'+ title +'")';
-				// set value textarea
-				textarea.val(textarea.val().substring(0, start) + '\r\r' + markdownImg + '\r\r' + textarea.val().substring(end));
-				// modal close
-				$('.modal .close').click();
-				// refresh markdown
-				$('#refresh-markdown').click();
-			};
-			var setFeatured = function(e, img){};
-			var deleteImage = function(e, $row){
-				console.log('handleDeleteImage', e);
-				// button Stateful
-				$(e).button('loading');
-				$timeout(function(){
-					$row.fadeOut('slow', function(){
-						$(this).remove();
-					});
-				}, 3000);
-			};
-			// initialize image upload provider thp element
-			// binding untuk button 'insert to editor' n 'delete image'
-			multipleImageUpload.init({
-				ajaxurl: 'api/upload.php',
-				binding: {
-					insertEditor : insertEditor,
-					setFeatured  : setFeatured,
-					deleteImage  : deleteImage
-				}
-			});*/
 		}
 	};
 })
