@@ -208,11 +208,25 @@ textarea:focus::-ms-input-placeholder {
 	display: none;
 }
 
-#feature-image .image ~ a {
+#feature-image .image > a {
+	display: none;
+	position: absolute;
+    top: 19px;
+    right: 22px;
+}
+#feature-image .image > img ~ a {
+	display: block;
+}
+#feature-image .image ~ button {
 	display: none;
 }
-#feature-image .image:hover ~ a {
+#feature-image .image:hover ~ button {
 	display: block;
+}
+#feature-image > button {
+	position: absolute;
+	left: 31%;
+	top: 45%;
 }
 
 /* loading */

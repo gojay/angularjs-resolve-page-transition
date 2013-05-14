@@ -1,6 +1,6 @@
 <?php
-$upload_directory = '../img/uploads';
-$upload_url = 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/img/uploads';
+$upload_directory = 'D:/WampDeveloper/Websites/dev.angularjs/webroot/dummy';
+$upload_url       = 'http://dev.angularjs/dummy/';
 
 $action = $_REQUEST['action'];
 if(!isset($action)) throw new Exception('Action required');
@@ -10,10 +10,23 @@ if( $action == 'get')
 	$images = glob($upload_directory . "/{*.jpg,*.gif,*.png}", GLOB_BRACE);
 	$data = array();
 	foreach($images as $image){
-		$data[] = $image;
+		$pathinfo  = pathinfo($image);
+		$imageInfo = getimagesize($image);
+		$data[] = array(
+			'filename' => $pathinfo['filename'],
+			'url' 	=> $upload_url . $pathinfo['basename'],
+			'image' => array(
+				'dimensions' => array(
+					'width'  => $imageInfo[0], 
+					'height' => $imageInfo[1]
+				), 
+				'size' => filesize($image),
+				'mime' => $imageInfo['mime']
+			)
+		);
 	}
 	header('Content-Type', 'application/json');
-	echo json_encode((object)$data);
+	echo json_encode($data);
 }
 elseif( $action == 'chunk' )
 {
@@ -29,7 +42,7 @@ elseif( $action == 'chunk' )
 	if(!isset($_FILES['file'])) throw new Exception('Upload required');
 	if($_FILES['file']['error'] != 0) throw new Exception('Upload error');
 	
-	$target = $upload_directory . "/" . $name . '-' . $index;
+	$target = $upload_directory . DIRECTORY_SEPARATOR . $name . '-' . $index;
 	
 	move_uploaded_file($_FILES['file']['tmp_name'], $target);
 	
@@ -39,15 +52,17 @@ elseif( $action == 'chunk' )
 }
 elseif( $action == 'merge' ) 
 {
-	if(!isset($_REQUEST['name'])) throw new Exception('Name required');
-	if(!preg_match('/^[-a-z0-9_][-a-z0-9_.]*$/i', $_REQUEST['name'])) throw new Exception('Name error');
+	$image_name = $_REQUEST['name'];
+
+	if(!isset($image_name)) throw new Exception('Name required');
+	if(!preg_match('/^[-a-z0-9_][-a-z0-9_.]*$/i', $image_name)) throw new Exception('Name error');
 	
 	if(!isset($_REQUEST['type'])) throw new Exception('Type required');
 	
 	if(!isset($_REQUEST['index'])) throw new Exception('Index required');
 	if(!preg_match('/^[0-9]+$/', $_REQUEST['index'])) throw new Exception('Index error');
 	
-	$target = $upload_directory . "/" . $_REQUEST['name'];
+	$target = $upload_directory . DIRECTORY_SEPARATOR . $image_name;
 	$dst = fopen($target, 'wb');
 	
 	for($i = 0; $i < $_REQUEST['index']; $i++) 
@@ -62,15 +77,23 @@ elseif( $action == 'merge' )
 	fclose($dst);
 	
 	// $fileType = $_REQUEST['type'];
-	// $fileContent = file_get_contents(dirname(__FILE__) . '/' . $target);
+	// $fileContent = file_get_contents(dirname(__FILE__) . DIRECTORY_SEPARATOR . $target);
 	// $dataUri = 'data:' . $fileType . ';base64,' . base64_encode($fileContent);
 
-	$img_url = $upload_url . '/' . $_REQUEST['name'];
-
-	$pathinfo = pathinfo($target);
-	echo json_encode(array(
-		'image' => $img_url,
-		'name'  => $pathinfo['filename']
-	));
+	$pathinfo  = pathinfo($target);
+	$imageInfo = getimagesize($target);
+	$data = array(
+		'filename' => $pathinfo['filename'],
+		'url' 	=> $upload_url . $pathinfo['basename'],
+		'image' => array(
+			'dimensions' => array(
+				'width'  => $imageInfo[0], 
+				'height' => $imageInfo[1]
+			), 
+			'size' => filesize($target),
+			'mime' => $imageInfo['mime']
+		)
+	);
+	echo json_encode($data);
 }
 else throw new Exception('Access forbidden');

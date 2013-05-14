@@ -16,4 +16,15 @@
 				isArray: true
 			}
 		});
+	}).
+	factory('PhoneImage', function($resource) {
+		return $resource('api/upload.php?action=:action', {}, {
+			query: {
+				method: 'GET',
+				params: {
+					action: 'get'
+				},
+				isArray: true
+			}
+		});
 	});

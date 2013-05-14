@@ -5,11 +5,15 @@ include 'vendor/autoload.php';
 include 'class.upload.php';
 
 // NotORM
-$dsn = "mysql:dbname=db_phonecat;host=localhost";
+$dsn      = "mysql:dbname=db_phonecat;host=localhost";
 $username = "root";
 $password = "";
 $pdo = new PDO($dsn, $username, $password);
-$db = new NotORM($pdo);
+$db  = new NotORM($pdo, new NotORM_Structure_Convention(
+    $primary = "%s_id", // $table_id
+    $foreign = "%s_id", // $table_id
+    $table   = "%ss" 	// {$table}s
+));
 
 // SLIM REST API
 Slim\Slim::registerAutoLoader();

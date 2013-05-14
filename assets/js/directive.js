@@ -538,13 +538,18 @@
 		}, // {} = isolate, true = child, false/undefined = no change
 		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
 		templateUrl: 'partials/components/iupload.html',
+		controller: function($scope, $element, PhoneImage){
+			$scope.phoneImages = PhoneImage.query();
+			console.log($scope.phoneImages);
+		},
 		// replace: true,
 		compile: function(element, attrs) {
 			// ambil attribut element
-			var featureId   = attrs.featureId;
+			var $featureEl  = $('#'+attrs.featureId);
 			var showInModal = attrs.modal;
 			var el          = element.html();
-			return function($scope, iElm, iAttrs, markdownmceCtrl) {
+
+			return function($scope, iElm, iAttrs, markdownmceCtrl, PhoneImage) {
 				// jika attribute modal set true
 				// wrap dengan modal template
 				// letakkan element pd modal body
@@ -553,15 +558,15 @@
 					// buat template modal,
 					// set modal id
 					var modal  = '<div id="{{modalId}}" class="modal modal-large hide fade" tabindex="-1" role="dialog" aria-labelledby="uploadImages" aria-hidden="true">' +
-								'<div class="modal-header">' +
-									'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
-									'<h3 id="uploadImages">{{modalTitle}}</h3>' +
-								'</div>' +
-								'<div class="modal-body" ng-model="phone">' + el+ '</div>' +
-								'<div class="modal-footer">' +
-									'<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>' +
-								'</div>' +
-							'</div>';
+									'<div class="modal-header">' +
+										'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
+										'<h3 id="uploadImages">{{modalTitle}}</h3>' +
+									'</div>' +
+									'<div class="modal-body" ng-model="phone">' + el+ '</div>' +
+									'<div class="modal-footer">' +
+										'<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>' +
+									'</div>' +
+								'</div>';
 					// compile modal
 					el = $compile(modal)($scope);
 					// jika dtampilkan, modal akan berada dibelakang backdrop
@@ -644,13 +649,16 @@
 					markdownmceCtrl.refreshPreview(makeResizable);
 				};
 
-				/* Tab URL inject scope */
+				/* 
+				 * Tab URL inject scope
+				 * ----------------------------- 
+				 */
 				$scope.img = {};
 				$scope.insertImageURL = function(){
 					console.log($scope.img);
 					insertImageHTMLToEditor($scope.img);
 				};
-				// event keypress n blur
+				// event keypress n blur input url
 				$('input[name="url"]', el)
 					.on('keypress', function(){
 						$('.img-preview').addClass('loading');
@@ -663,12 +671,15 @@
 						}
 					});
 
-				/* Tab Uploads inject scope */
+				/* 
+				 * Tab Uploads inject scope
+				 * ----------------------------- 
+				 */
 				// multipleImageUpload
 				// binding uploads button dengan inject $scope
-				$scope.insertEditor = function($event){
+				$scope.insertEditor = function(event){
 					// get button
-					var $button = $($event.currentTarget);
+					var $button = $(event.currentTarget);
 					// get image title
 					var img_title  = $button.siblings('input[name="img_title"]').val();
 					// get image url
@@ -707,17 +718,43 @@
 					// // refresh markdown preview
 					// markdownmceCtrl.refreshPreview();
 				};
-				$scope.setFeatureImage = function($event){
-					var image = $($event.currentTarget).siblings('input[type="hidden"]').val();
-					console.log('setFeatureImage image', image);
+				$scope.setFeatureImage = function(event){
+					var imageURL      = $(event.currentTarget).siblings('input[type="hidden"]').val();
+					var imageEl       = $('<img/>').attr('src', imageURL);
+					var $featureImgEl = $('.image', $featureEl);
+
+					if( $featureImgEl.length ) {
+						$featureImgEl.find('img').remove();
+						$featureImgEl.prepend(imageEl);
+					} else {
+						$featureEl
+							.prepend('<div class="image">'+ imageEl.prop('outerHTML') +'</div>')
+							.find('.image')
+							.append($compile('<a href ng-click="removeFeatured($event)"><i class="icon-remove"></i></a>')($scope));
+					}
+					// change text button
+					$('.btn-primary', $featureEl).text('Change Featured Image');
+					// close modal
+					$('.close', el).click();
 				};
-				$scope.deleteImage = function($event){
+				$scope.removeFeatured = function(event){
+					// remove featured image
+					$(event.currentTarget).parent().remove();
+					// change text button
+					$('.btn-primary', $featureEl).text('Set Featured Image');
+				};
+				$scope.deleteImage = function(event, index){
 					var $btn   = $(event.currentTarget);
 					var $group = $btn.parents('.accordion-group');
+					var $parent = $group.parent();
 					$btn.button('loading');
 					$timeout(function(){
+						$scope.$apply(function(scope){
+							scope.phone.images.splice(index, 1);
+						});
 						$group.fadeOut('slow', function(){
 							$(this).remove();
+							$('.accordion-group:last .accordion-toggle', $parent).click();
 						});
 					}, 3000);
 				};
@@ -727,10 +764,19 @@
 					// compile upload row
 					// setiap upload row yg ditambahkan(append) ke upload list
 					// harus dicompile ulang, utk inject $scope
-					// @return upload row
-					compile: function($uploadList, $uploadRow){
-						console.log('call callback', $uploadRow[0]);
-						return $compile($uploadRow[0])($scope).appendTo($uploadList);
+					compile: {
+						// inject $scope untuk upload row sebelum diupload 
+						// @return upload row element
+						before: function($uploadList, $uploadRow){
+							return $compile($uploadRow[0])($scope).appendTo($uploadList);
+						},
+						// inject $scope setelah diupload
+						// tambah images dari hasil upload
+						after: function(image){
+							$scope.$apply(function(scope){
+								scope.phone.images.push(image);
+							});
+						}
 					}
 				});
 

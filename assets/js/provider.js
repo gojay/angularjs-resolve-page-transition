@@ -288,11 +288,13 @@ angular.module('PhoneProvider', [])
 								if(self.config.compile)
 								{
 									// append to group
-									$uploadRow = self.config.compile($uploadList, $uploadRow);
+									$uploadRow = self.config.compile.before($uploadList, $uploadRow);
 									// progress bar element
 									$progressBar = $('.progress > .bar', $uploadRow);
 									// upload file
 									self.createChunkfile(theFile, $progressBar, function(data) {
+										// compile after uploaded (merge)
+										self.config.compile.after(data.image);
 										// set title ke input hidden
 										$('input[name="img_title"]', $uploadRow).val(data.name);
 										// set image url ke input hidden
