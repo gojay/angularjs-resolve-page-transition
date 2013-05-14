@@ -594,7 +594,8 @@
 					// call callback
 					if(callback) callback();
 				};
-				var insertImageHTMLToEditor = function(image){
+				var insertImageHTMLToEditor = function(image, callback){
+					console.log(image);
 					// ambil textarea element dari markdownmce controller
 					var textarea = $('textarea', markdownmceCtrl.editorEl)[0];
 					var start    = textarea.selectionStart;
@@ -603,7 +604,18 @@
 					var title = image.title === undefined ? '' : image.title;
 					var alt   = image.alt === undefined ? title : image.alt;
 					// create img html
-					var imgHTML = '<img src="'+ image.url +'" alt="'+alt+'" title="'+ title +'" />';
+					var img = $('<img/>').attr({
+						src: image.url,
+						alt: alt
+					});
+					if(image.attrs !== undefined){
+						img.css({
+							width : image.attrs.width,
+							height: image.attrs.height
+						});
+					}
+					// var imgHTML = '<img src="'+ image.url +'" alt="'+alt+'" title="'+ title +'" />';
+					var imgHTML = img.prop('outerHTML');
 					// set value textarea
 					textarea.value = textarea.value.substring(0, start) + imgHTML + textarea.value.substring(end);
 					// close modal
@@ -647,6 +659,8 @@
 					};
 					// refresh markdown preview
 					markdownmceCtrl.refreshPreview(makeResizable);
+					// call callback
+					if(callback) callback();
 				};
 
 				/* 
@@ -681,7 +695,7 @@
 					// get button
 					var $button = $(event.currentTarget);
 					// get image title
-					var img_title  = $button.siblings('input[name="img_title"]').val();
+					var img_title = $button.siblings('input[name="img_title"]').val();
 					// get image url
 					var img_url   = $button.siblings('input[name="img_url"]').val();
 					// create object
@@ -689,8 +703,21 @@
 						url  : img_url,
 						title: img_title
 					};
+
+					if( $('input[name="img_size"]').val() !== null ){
+						image['attrs'] = JSON.parse($('input[name="img_size"]').val());
+					}
+
 					// insert markdown image to editor
-					insertImageMarkdownToEditor(image, function(){
+					/*insertImageMarkdownToEditor(image, function(){
+						// hapus upload rows
+						$button
+							.parents('#upload-list')
+							.find('.accordion-group').not(':first')
+							.remove();
+
+					});*/
+					insertImageHTMLToEditor(image, function(){
 						// hapus upload rows
 						$button
 							.parents('#upload-list')
@@ -819,6 +846,47 @@
 						deleteImage  : deleteImage
 					}
 				});*/
+			};
+		}
+	};
+})
+.directive('calculateImageSize', function(){
+	// Runs during compile
+	return {
+		scope: {
+			img:'=image'
+		}, // {} = isolate, true = child, false/undefined = no change
+		restrict: 'EA', // E = Element, A = Attribute, C = Class, M = Comment
+		templateUrl: 'partials/components/calculate-image-size.html',
+		replace: true,
+		controller: function($scope, $element, $attrs) {
+			this.sizes = [{type:'small',percent: 25},{type:'medium',percent: 50}];
+			this.calculate = function(d, percent){
+				return {
+					width: Math.round(d.width/100 * percent),
+					height: Math.round(d.height/100 * percent)
+				};
+			};
+		},
+		link: function($scope, iElm, iAttrs, ctrl) {
+			var d = $scope.img.image.dimensions;
+			var calcDimensions = [];
+			angular.forEach(ctrl.sizes, function(e){
+				calcDimensions.push({
+					type: e.type,
+					dimension: ctrl.calculate(d, e.percent)
+				});
+			});
+			calcDimensions.push({
+				type:'original',
+				dimension:d
+			});
+			$scope.dimensions = calcDimensions;
+
+			$scope.setSize = function(index){
+				var dimension = calcDimensions[index].dimension;
+				console.log(dimension);
+				$('input[name="img_size"]').val(JSON.stringify(dimension));
 			};
 		}
 	};

@@ -120,7 +120,7 @@ angular.module('PhoneProvider', [])
 	/*
 	 * multipleImageUpload Provider
 	 * 
-	 * multiple image uploads
+	 * multiple images upload
 	 * 
 	 * input file multiple
 	 * drag drop multiple

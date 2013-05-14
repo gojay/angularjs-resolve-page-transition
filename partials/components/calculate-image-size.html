@@ -1,0 +1,5 @@
+<div class="image-size" ng-model="dimensions">
+	<label class="radio inline" ng-repeat="v in dimensions">
+		<input type="radio" name="size" value="{{v.type}}" ng-click="setSize($index)"> {{v.type}} ({{v.dimension.width}} x {{v.dimension.height}})
+	</label>	
+</div>

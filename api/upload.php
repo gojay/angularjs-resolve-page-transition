@@ -1,5 +1,5 @@
 <?php
-$upload_directory = 'D:/WampDeveloper/Websites/dev.angularjs/webroot/dummy';
+$upload_directory = 'D:\Development\AngularJS\dummy';
 $upload_url       = 'http://dev.angularjs/dummy/';
 
 $action = $_REQUEST['action'];

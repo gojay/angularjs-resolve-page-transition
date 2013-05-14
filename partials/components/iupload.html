@@ -6,6 +6,7 @@
     	<li><a href="#tab4" data-toggle="tab">Uploaded ({{phoneImages.length}})</a></li>
   	</ul>
   	<div class="tab-content">
+  		
   		<!-- Tab Computer -->
     	<div class="tab-pane active" id="tab1">
     		<!-- upload -->
@@ -25,9 +26,7 @@
 						<!-- upload row tpl -->
 						<div class="accordion-group">
 							<div class="accordion-heading">
-			                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#upload-accordion" href="#upload-field-0">
-			                     	<!-- file name -->
-			                    </a>
+			                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#upload-accordion" href="#upload-field-0"><!-- file name --></a>
 		                  	</div>
 		                  	<div id="upload-field-0" class="accordion-body collapse">
 			                    <div class="span12 accordion-inner">
@@ -48,7 +47,8 @@
 											  	<!-- binding
 											  	<button class="btn btn-primary insert-editor">Insert to Editor</button>
 											  	<button class="btn btn-info set-featured">Set Featured Image</button>
-											  	<button class="pull-right btn btn-danger delete-image" data-loading-text="Loading..."><i class="icon-remove"></i> Delete</button> -->
+											  	<button class="pull-right btn btn-danger delete-image" data-loading-text="Loading..."><i class="icon-remove"></i> Delete</button> 
+											  	-->
 											  	<input type="hidden" name="img_title" value="" />
 											  	<input type="hidden" name="img_url" value="" />
 										  	</span>
@@ -65,6 +65,8 @@
   			</div>
     		<!-- /upload -->
     	</div>	
+    	<!-- /Tab Computer -->
+
     	<!-- Tab URL -->
     	<div class="tab-pane" id="tab2">
     		<div class="container-fluid">
@@ -107,6 +109,8 @@
 				</div>
     		</div>
     	</div>
+    	<!-- /Tab URL -->
+
     	<!-- Tab Gallery -->
     	<div class="tab-pane" id="tab3">
 			<div class="container-fluid">
@@ -148,20 +152,26 @@
 				</div>
 			</div>
     	</div>
+    	<!-- /Tab Gallery -->
+
     	<!-- Tab Uploaded -->
     	<div class="tab-pane" id="tab4" ng-model="phoneImages">
 			<div class="container-fluid">
 				<div class="row-fluid">
+					<input type="text" name="img_size" />
+
 					<!-- acordion gallery list -->
 					<div class="accordion" id="uploaded-list">
 						<!-- image row -->
 						<div class="accordion-group" ng-repeat="img in phoneImages">
 							<div class="accordion-heading">
-			                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#uploaded-list" href="#upload-field-{{$index+1}}">
+			                    <a href="#gallery-field-{{$index+1}}" class="accordion-toggle" 
+			                    	data-toggle="collapse" 
+			                    	data-parent="#uploaded-list">
 			                     	{{img.filename}}
 			                    </a>
 		                  	</div>
-		                  	<div id="upload-field-{{$index+1}}" class="accordion-body collapse" ng-class="{in:$index == 0}">
+		                  	<div id="gallery-field-{{$index+1}}" class="accordion-body collapse" ng-class="{in:$index == 0}">
 			                    <div class="span12 accordion-inner">
 					          		<div class="span4 upload-img">
 										<img ng-src="{{img.url}}">
@@ -169,60 +179,24 @@
 					                <div class="span8">
 							            <div class="alert alert-success show-buttons" style="padding-right: 14px; margin-bottom: 5px">
 										  	<span class="buttons">
-											  	<button class="btn btn-primary" ng-click="insertEditor($event)">Insert to Editor</button>
+											  	<!-- <button class="btn btn-primary" ng-click="insertEditor($event)">Insert to Editor</button> -->
 											  	<button class="btn btn-info" ng-click="setFeatureImage($event)">Set Featured Image</button>
 											  	<div class="pull-right">
 											  		<button class=" btn btn-danger" ng-click="deleteImage($event, $index)" data-loading-text="Loading..."><i class="icon-remove"></i> Delete</button>
 											  	</div>
-											  	<input type="hidden" name="img_title" value="{{image}}" />
-											  	<input type="hidden" name="img_url" value="{{image}}" />
 										  	</span>
 										</div>
 									  	<!-- file description -->
 										<div class="well" style="padding: 13px;">
 											<div class="text-center">
-												<label class="radio inline">
-													<input type="radio" id="inlineCheckbox1" name="size" value="option1"> Small (100x80)
-												</label>
-												<label class="radio inline">
-													<input type="radio" id="inlineCheckbox2" name="size" value="option2"> Medium (300x150)
-												</label>
-												<label class="radio inline">
-													<input type="radio" id="inlineCheckbox3" name="size" value="option3"> Large (800x600)
-												</label>
+												<!-- directive calculate-image-size -->
+												<div calculate-image-size image="img"></div>	
+												<!-- /directive -->											
 												<button class="btn btn-primary" style="margin-top: 10px;" ng-click="insertEditor($event)">Insert to Editor</button>
+											  	<input type="hidden" name="img_url" value="{{img.url}}" />
+											  	<input type="hidden" name="img_title" value="{{img.filename}}" />
 											</div>
 										</div>
-									  	<!-- <dl style="margin-bottom: 5px;">
-											<dt>File Type</dt>
-											<dd>{{img.image.mime}}</dd>
-											<dt>File Size</dt>
-											<dd>{{img.image.size}}</dd>
-										</dl> -->
-									  	<!-- <div class="container-fluid">
-									  		<div class="row-fluid">
-											  	<div class="span2">
-												  	<dl>
-														<dt>File Type</dt>
-														<dd>{{img.image.mime}}</dd>
-														<dt>File Size</dt>
-														<dd>{{img.image.size}}</dd>
-													</dl>
-											  	</div>
-												<div class="span10 prefix">
-													<label class="radio inline">
-														<input type="radio" id="inlineCheckbox1" value="option1"> Small (100x80)
-													</label>
-													<label class="radio inline">
-														<input type="radio" id="inlineCheckbox2" value="option2"> Medium (300x150)
-													</label>
-													<label class="radio inline">
-														<input type="radio" id="inlineCheckbox3" value="option3"> Large (800x600)
-													</label>
-												</div>
-											</div>
-									  	</div> -->
-									  	<!-- /file description -->
 					            	</div>
 			                    </div>
 		                  	</div>
@@ -233,5 +207,7 @@
 				</div>
 			</div>
     	</div>
+    	<!-- /Tab Uploaded -->
+
   	</div>
 </div>
