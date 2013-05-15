@@ -603,18 +603,19 @@
 					// get title n create markdown img syntax
 					var title = image.title === undefined ? '' : image.title;
 					var alt   = image.alt === undefined ? title : image.alt;
-					// create img html
+					// create img element, dan set attribute src, alt n title
 					var img = $('<img/>').attr({
-						src: image.url,
-						alt: alt
+						src  : image.url,
+						alt  : alt,
+						title: title
 					});
+					// set image width n height
 					if(image.attrs !== undefined){
 						img.css({
 							width : image.attrs.width,
 							height: image.attrs.height
 						});
 					}
-					// var imgHTML = '<img src="'+ image.url +'" alt="'+alt+'" title="'+ title +'" />';
 					var imgHTML = img.prop('outerHTML');
 					// set value textarea
 					textarea.value = textarea.value.substring(0, start) + imgHTML + textarea.value.substring(end);
@@ -704,20 +705,12 @@
 						title: img_title
 					};
 
-					if( $('input[name="img_size"]').val() !== null ){
+					if( $('input[name="img_size"]').val() !== '' ){
 						image['attrs'] = JSON.parse($('input[name="img_size"]').val());
 					}
 
 					// insert markdown image to editor
-					/*insertImageMarkdownToEditor(image, function(){
-						// hapus upload rows
-						$button
-							.parents('#upload-list')
-							.find('.accordion-group').not(':first')
-							.remove();
-
-					});*/
-					insertImageHTMLToEditor(image, function(){
+					insertImageMarkdownToEditor(image, function(){
 						// hapus upload rows
 						$button
 							.parents('#upload-list')
@@ -725,25 +718,14 @@
 							.remove();
 
 					});
-					// // get textarea element dari markdownmce controller
-					// var textarea = $('textarea', markdownmceCtrl.editorEl)[0];
-					// var start    = textarea.selectionStart;
-					// var end      = textarea.selectionEnd;
-					// // get title n create markdown img syntax
-					// var markdownImg = '![alt text]('+ image +' "'+ title +'")';
-					// // set value textarea
-					// textarea.value = textarea.value.substring(0, start) + '\r' + markdownImg + '\r' + textarea.value.substring(end);
+					// insertImageHTMLToEditor(image, function(){
+					// 	// hapus upload rows
+					// 	$button
+					// 		.parents('#upload-list')
+					// 		.find('.accordion-group').not(':first')
+					// 		.remove();
 
-					// // hapus upload rows
-					// $button
-					// 	.parents('#upload-list')
-					// 	.find('.accordion-group').not(':first')
-					// 	.remove();
-
-					// // close modal
-					// $('.close', el).click();
-					// // refresh markdown preview
-					// markdownmceCtrl.refreshPreview();
+					// });
 				};
 				$scope.setFeatureImage = function(event){
 					var imageURL      = $(event.currentTarget).siblings('input[type="hidden"]').val();
@@ -789,7 +771,7 @@
 				multipleImageUpload.init({
 					ajaxurl: 'api/upload.php',
 					// compile upload row
-					// setiap upload row yg ditambahkan(append) ke upload list
+					// setiap upload row yg ditambahkan(append) kedalam upload list
 					// harus dicompile ulang, utk inject $scope
 					compile: {
 						// inject $scope untuk upload row sebelum diupload 
@@ -929,8 +911,7 @@
 			$scope.changeOrder = function(orderBy, searchTitle){
 				var text  = $(this).text();
 				$scope.orderBy = orderBy;
-				if(searchTitle !== null)
-					$scope.searchTitle = searchTitle;
+				$scope.searchTitle = 'Search by ' + searchTitle;
 			};
 
 			$scope.searchVideos = function(){

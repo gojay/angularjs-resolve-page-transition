@@ -294,11 +294,11 @@ angular.module('PhoneProvider', [])
 									// upload file
 									self.createChunkfile(theFile, $progressBar, function(data) {
 										// compile after uploaded (merge)
-										self.config.compile.after(data.image);
+										self.config.compile.after(data.url);
 										// set title ke input hidden
-										$('input[name="img_title"]', $uploadRow).val(data.name);
+										$('input[name="img_title"]', $uploadRow).val(data.filename);
 										// set image url ke input hidden
-										$('input[name="img_url"]', $uploadRow).val(data.image);
+										$('input[name="img_url"]', $uploadRow).val(data.url);
 										// upload is done! so remove class uploading
 										$('.accordion-body', $uploadRow).removeClass('uploading');
 										setTimeout(function(){
@@ -472,7 +472,7 @@ angular.module('PhoneProvider', [])
 					var fd = new FormData();
 					fd.append('action', 'merge');
 					fd.append('name', blob.name);
-					fd.append('type', blob.type);
+					// fd.append('type', blob.type);
 					fd.append('index', _chunkIndex[blob.name]);
 
 					var xhr = new XMLHttpRequest();

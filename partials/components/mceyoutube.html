@@ -7,10 +7,10 @@
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu">
-        <li><a href="javascript:void(0)" ng-click="changeOrder('relevance')">{{searchTitle}}</a></li>
-        <li><a href="javascript:void(0)" ng-click="changeOrder('viewCount', 'Search by most viewed')">Search by most viewed</a></li>
-        <li><a href="javascript:void(0)" ng-click="changeOrder('published', 'Search by most recent')">Search by most recent</a></li>
-        <li><a href="javascript:void(0)" ng-click="changeOrder('rating', 'Search by top rated')">Search by top rated</a></li>
+        <li><a href ng-click="changeOrder('relevance', 'relevance')">Search by relevance</a></li>
+        <li><a href ng-click="changeOrder('viewCount', 'most viewed')">Search by most viewed</a></li>
+        <li><a href ng-click="changeOrder('published', 'most recent')">Search by most recent</a></li>
+        <li><a href ng-click="changeOrder('rating', 'top rated')">Search by top rated</a></li>
       </ul>
     </div>
   </div>

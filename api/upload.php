@@ -1,6 +1,7 @@
 <?php
-$upload_directory = 'D:\Development\AngularJS\dummy';
-$upload_url       = 'http://dev.angularjs/dummy/';
+// $upload_directory = 'D:\Development\AngularJS\dummy';
+$upload_directory = 'D:\WampDeveloper\Websites\dev.angularjs\webroot\_learn_\angularjs-resolve-page-transition\img\uploads';
+$upload_url       = 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/img/uploads/';
 
 $action = $_REQUEST['action'];
 if(!isset($action)) throw new Exception('Action required');
@@ -57,7 +58,7 @@ elseif( $action == 'merge' )
 	if(!isset($image_name)) throw new Exception('Name required');
 	if(!preg_match('/^[-a-z0-9_][-a-z0-9_.]*$/i', $image_name)) throw new Exception('Name error');
 	
-	if(!isset($_REQUEST['type'])) throw new Exception('Type required');
+	// if(!isset($_REQUEST['type'])) throw new Exception('Type required');
 	
 	if(!isset($_REQUEST['index'])) throw new Exception('Index required');
 	if(!preg_match('/^[0-9]+$/', $_REQUEST['index'])) throw new Exception('Index error');
@@ -84,13 +85,12 @@ elseif( $action == 'merge' )
 	$imageInfo = getimagesize($target);
 	$data = array(
 		'filename' => $pathinfo['filename'],
-		'url' 	=> $upload_url . $pathinfo['basename'],
+		'url' => $upload_url . $pathinfo['basename'],
 		'image' => array(
 			'dimensions' => array(
 				'width'  => $imageInfo[0], 
 				'height' => $imageInfo[1]
 			), 
-			'size' => filesize($target),
 			'mime' => $imageInfo['mime']
 		)
 	);

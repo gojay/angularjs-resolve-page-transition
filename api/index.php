@@ -7,7 +7,7 @@ include 'class.upload.php';
 // NotORM
 $dsn      = "mysql:dbname=db_phonecat;host=localhost";
 $username = "root";
-$password = "";
+$password = "root";
 $pdo = new PDO($dsn, $username, $password);
 $db  = new NotORM($pdo, new NotORM_Structure_Convention(
     $primary = "%s_id", // $table_id
@@ -19,21 +19,40 @@ $db  = new NotORM($pdo, new NotORM_Structure_Convention(
 Slim\Slim::registerAutoLoader();
 $app = new Slim\Slim();
 
-/*
- * Image Dimensions
- */
-$imgDimensions = array(
-	'small' => array(
-		'x' => 124,
-		'y' => 98
-	),
-	'medium' => array(
-		'x' => 300,
-		'y' => 200
-	)
-);
-
 $upload_directory = '../img/uploads';
+$app->get('/test', function() use($app, $upload_directory){
+	$handle = new upload('D:/WampDeveloper/Websites/dev.angularjs/webroot/dummy/dummy problem.jpg');
+	// $handle->file_new_name_body = 'image_resized';
+	$handle->file_safe_name   = true;
+	$handle->file_overwrite   = true;
+	$handle->image_resize     = true;
+	$handle->image_ratio_crop = true;
+	$handle->image_x          = 800;
+	$handle->image_y          = 600;
+    $handle->process('D:/WampDeveloper/Websites/dev.angularjs/webroot/dummy/');
+    if ($handle->processed) {
+        echo 'image resized';
+        $image = array(
+        	'filename' => $handle->file_dst_name_body,
+			'url' 	=> 'http://dev.angularjs/dummy/' . $handle->file_dst_name_body . '.' . $handle->file_dst_name_ext,
+			'image' => array(
+				'dimensions' => array(
+					'width'  => $handle->image_x, 
+					'height' => $handle->image_y
+				), 
+				'mime' => $handle->file_src_mime
+			)
+        );
+        echo '<pre>';
+        echo print_r($image, 1);
+        echo '<pre>';
+        $handle->clean();
+    } else {
+        echo 'error : ' . $handle->error;
+    }
+});
+
+
 $app->get("/image", function () use ($app, $db, $upload_directory) {
     $app->response()->header("Content-Type", "application/json");
 
