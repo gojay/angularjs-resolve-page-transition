@@ -1,9 +1,12 @@
-<div id="search-youtube" style="min-height: 100px;">
+<div id="search-youtube" style="min-height: 125px;">
   <div class="input-append">
-    <input class="input-medium" type="text" name="query">
+    <input class="input-xlarge" type="text" name="query">
     <div class="btn-group">
-      <button ng-click="searchVideos()" class="btn btn-search" tabindex="-1" data-loading-text="<i class='icon-spinner'></i> Loading...">{{searchTitle}}</button>
-      <button class="btn dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+      <button ng-click="searchVideos()" class="btn btn-search" tabindex="-1" 
+              data-loading-text="<img src='img/ajax-spin.gif'/> Loading...">Search by {{searchBy}}</button>
+      <button type="button" class="btn dropdown-toggle" tabindex="-1" 
+              data-toggle="dropdown"
+              ng-disabled="disabled">
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu">

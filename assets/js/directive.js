@@ -883,7 +883,7 @@
  * search youtube videos
  */
 
-.directive('mceyoutube', function($compile){
+.directive('mceyoutube', function($compile, $filter){
 	// Runs during compile
 	return {
 		require: ['^markdownmce', '^tbmodal'],
@@ -897,8 +897,8 @@
 			var bootstrapCtrl  = controller[1];
 
 			// set scope dari attributes
-			$scope.orderBy     = iAttrs.order === undefined ? 'relevance' : iAttrs.order;
-			$scope.searchTitle = iAttrs.search === undefined ? 'Search by Relevance' : iAttrs.search;
+			$scope.orderBy  = iAttrs.order === undefined ? 'relevance'  : iAttrs.order;
+			$scope.searchBy = iAttrs.search === undefined ? 'relevance' : iAttrs.search;
 
 			// initialize jquery tube
 			jQTubeUtil.init({
@@ -908,12 +908,12 @@
 				maxResults: 10   // *optional -- defined as 10 results by default
 			});
 
-			$scope.changeOrder = function(orderBy, searchTitle){
-				var text  = $(this).text();
-				$scope.orderBy = orderBy;
-				$scope.searchTitle = 'Search by ' + searchTitle;
+			$scope.changeOrder = function(orderBy, searchBy){
+				$scope.orderBy  = orderBy;
+				$scope.searchBy = searchBy;
 			};
 
+			$scope.disabled = false;
 			$scope.searchVideos = function(){
 				var inputSearch = $('input[name="query"]', iElm);
 				var search = inputSearch.val().trim();
@@ -923,32 +923,41 @@
 				}
 
 				$('.btn-search').button('loading');
+				$scope.disabled = true;
 				var param = {
 					"q": search,
 					"orderby": $scope.orderBy
 				};
 				jQTubeUtil.search(param, function(response){
+					console.log(response);
 					$scope.videos = response.videos;
-					console.log($scope.videos);
-					var html = "";
-					for(v in response.videos){
-						var video = response.videos[v]; // this is a 'friendly' YouTubeVideo object
-						var thumb = video.thumbs[0].url;
-						html += '<div class="media" ng-dblclick="insertVideo('+v+')" ng-click="selectVideo('+v+')" ng-class="{\'alert alert-success\':isSelected('+v+')}">' +
-									'<div class="pull-left span2">' +
-										'<img class="media-object" src="' + thumb + '">' +
+					var html = '<div class="media" ng-repeat="video in videos" ng-dblick="insertVideo($index)" ng-click="selectVideo($index)" ng-class="{well:isSelected($index)}">' +
+									'<div class="pull-left">' +
+										'<img class="media-object" ng-hide="isSelected($index)" ng-src="{{video.thumbs[0].url}}" width="130" height="97">' +
+										'<iframe width="480" height="360" ng-show="isSelected($index)" ng-src="http://www.youtube.com/embed/{{video.videoId}}" frameborder="0" allowfullscreen></iframe>' +
 									'</div>' +
 									'<div class="media-body">' +
-										'<h4 class="media-heading">' + video.title + '</h4>' +
-										'<small>by ' + video.entry.author[0].name.$t + '&nbsp;|&nbsp;' +
-										video.viewCount + ' views</small><br/>' + video.description +
+										'<h4 class="media-heading">{{video.title}}</h4>' +
+										'<small>{{searchBy}} ' +
+											'[{{video.duration|duration}}] ' +
+											'by <em>{{video.entry.author[0].name.$t}}</em> ' +
+											'on {{video.updated|date:\'mediumDate\'}}' +
+										'</small>' +
+										'<p>{{video.description}}</p>'+
+										'<p ng-show="isSelected($index)">'+
+										'<button class="btn btn-primary" ng-click="insertVideo($index)">Insert Video</button>'+
+										'</p>'+
 									'</div>' +
 								'</div>';
-					}
 					// compile ulang
 					html = $compile(html)($scope);
 					$('.youtube-videos', iElm).html(html);
-					$('.btn-search').button('reset');
+
+					var btnSearch = $compile('<span>Search by {{searchBy}}</span>')($scope);
+					$('.btn-search').button('reset').html(btnSearch);
+					$scope.$apply(function(scope){
+						$scope.disabled = false;
+					});
 				});
 			};
 
