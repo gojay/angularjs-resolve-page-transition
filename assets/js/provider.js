@@ -318,7 +318,7 @@ angular.module('PhoneProvider', [])
 									$uploadImg.next().append(desc);
 								});
 
-								// collapse all, if the files just 1
+								// collapse all, jika file hanya satu
 								if(files.length === 1){
 									$('.accordion-group .accordion-toggle').each(function(i,e){
 										$(e).click();
@@ -342,8 +342,10 @@ angular.module('PhoneProvider', [])
 										$('input[name="img_title"]', $uploadRow).val(data.name);
 										// set image url ke input hidden
 										$('input[name="img_url"]', $uploadRow).val(data.url);
-										// upload is done! so remove class uploading
+
+										// remove class uploading
 										$('.accordion-body', $uploadRow).removeClass('uploading');
+										// show buttons in 3 seconds
 										setTimeout(function(){
 											$('.alert', $uploadRow)
 												.removeClass('show-message')
@@ -351,35 +353,38 @@ angular.module('PhoneProvider', [])
 										}, 3000);
 									});
 								}
-								else {
+								else if(self.config.binding) {
 									// append to group
 									$uploadList.append($uploadRow);
 									// progress bar element
 									$progressBar = $('.progress > .bar', $uploadRow);
 									// upload file
 									self.createChunkfile(theFile, $progressBar, function(data) {
-										// upload is done! so remove class uploading
+										// set id ke input hidden
+										$('input[name="img_id"]', $uploadRow).val(data.id);
+										// set title ke input hidden
+										$('input[name="img_title"]', $uploadRow).val(data.name);
+										// set image url ke input hidden
+										$('input[name="img_url"]', $uploadRow).val(data.url);
+
+										// binding
+										var binding = self.config.binding;
+										// binding 'insert to editor' 
+										$('.buttons .insert-editor', $uploadRow).click(function(evt){
+											binding.insertEditor(evt);
+										});
+										// binding 'set featured image' 
+										$('.buttons .set-featured', $uploadRow).click(function(evt){
+											binding.setFeatured(evt);
+										});
+										// binding 'delete image' 
+										$('.buttons .delete-image', $uploadRow).click(function(evt){
+											binding.deleteImage(evt);
+										});
+
+										// remove class uploading
 										$('.accordion-body', $uploadRow).removeClass('uploading');
-
-										// set binding
-										if(self.config.binding)
-										{
-											var binding = self.config.binding;
-											// binding 'insert to editor' 
-											$('.buttons .insert-editor', $uploadRow).click(function(evt){
-												var title = $('.accordion-toggle', $uploadRow).text();
-												binding.insertEditor(this, data.image, data.name);
-											});
-											// binding 'set featured image' 
-											$('.buttons .set-featured', $uploadRow).click(function(evt){
-												binding.setFeatured(this, data.image);
-											});
-											// binding 'delete image' 
-											$('.buttons .delete-image', $uploadRow).click(function(evt){
-												binding.deleteImage(this, $uploadRow);
-											});
-										}
-
+										// show buttons in 3 seconds
 										setTimeout(function(){
 											$('.alert', $uploadRow)
 												.removeClass('show-message')

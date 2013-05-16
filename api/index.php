@@ -1,75 +1,70 @@
 <?php
-// autoload
+// Autoload
 include 'vendor/autoload.php';
-// class upload
-include 'class.upload.php';
+// class Exception
+include 'Exception.php';
+// class DB NotORM
+include 'db/config.php';
+// class API
+include 'RestApiInterface.php';
 
-// NotORM
-$dsn      = "mysql:dbname=db_phonecat;host=localhost";
-$username = "root";
-$password = "root";
-$pdo = new PDO($dsn, $username, $password);
-$db  = new NotORM($pdo, new NotORM_Structure_Convention(
-    $primary = "%s_id", // $table_id
-    $foreign = "%s_id", // $table_id
-    $table   = "%ss" 	// {$table}s
-));
+// upload configuration
+$upload = array(
+	// 'dir' => 'D:/WampDeveloper/Websites/dev.angularjs/webroot/_learn_/angularjs-resolve-page-transition/img/uploads/',
+	'dir' => 'D:/Development/AngularJS/_learn_/angularjs-resolve-page-transition/img/uploads/',
+	'url' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/img/uploads/'
+);
 
 // SLIM REST API
 Slim\Slim::registerAutoLoader();
 $app = new Slim\Slim();
 
-$upload_directory = '../img/uploads';
-$app->get('/test', function() use($app, $db, $upload_directory){
-	$handle = new upload('D:/WampDeveloper/Websites/dev.angularjs/webroot/dummy/dummy problem.jpg');
-	// $handle->file_new_name_body = 'image_resized';
-	$handle->file_safe_name   = true;
-	$handle->file_overwrite   = true;
-	$handle->image_resize     = true;
-	$handle->image_ratio_crop = true;
-	$handle->image_x          = 800;
-	$handle->image_y          = 600;
-    $handle->process('D:/WampDeveloper/Websites/dev.angularjs/webroot/dummy/');
-    if ($handle->processed) {
-        echo 'image resized';
-        $image_name = $handle->file_dst_name_body . '.' . $handle->file_dst_name_ext;
-        // insert
-        $result = $db->images()->insert(array(
-        	'phone_id'   => 1,
-        	'image_name' => $image_name,
-        ));
-        // get last id 
-        // echo $result['image_id'];
-
-        $image = array(
-        	'filename' => $handle->file_dst_name_body,
-			'url' 	=> 'http://dev.angularjs/dummy/' . $image_name,
-			'image' => array(
-				'dimensions' => array(
-					'width'  => $handle->image_x, 
-					'height' => $handle->image_y
-				), 
-				'mime' => $handle->file_src_mime
-			)
-        );
-        echo '<pre>';
-        echo print_r($result['image_id'], 1);
-        echo print_r($image, 1);
-        echo '<pre>';
-        $handle->clean();
-    } else {
-        echo 'error : ' . $handle->error;
+function objectToArray($obj, $serialized = false) 
+{
+    $arrObj = is_object($obj) ? get_object_vars($obj) : $obj;
+    foreach ($arrObj as $key => $val) {
+        $val = (is_array($val) || is_object($val)) ? objectToArray($val) : $val;
+        $arr[$key] = $serialized
+        				? (is_array($val) ? serialize($val) : htmlentities($val, ENT_QUOTES, "utf-8"))
+        				: (is_array($val) ? $val : htmlentities($val, ENT_QUOTES, "utf-8")) ;
     }
+    return $arr;
+}  
+
+function getFileName($url){
+	return basename($url);
+}
+
+// http://nurkiewicz.blogspot.com/2013/03/promises-and-deferred-objects-in-jquery.html
+// http://stackoverflow.com/questions/6538470/jquery-deferred-waiting-for-multiple-ajax-requests-to-finish
+$app->post('/convert/:phone', function($phone) use ($app, $db){
+	$fileJSON = '../phones/' . $phone . '.json';
+	if(!file_exists($fileJSON)) throw new Exception('file not found');
+
+	$json = json_decode(file_get_contents($fileJSON));
+	$json->images = array_map('getFileName', $json->images);
+
+	$data = objectToArray($json, true);
+
+	$phone_columns = array('id','name', 'description');
+	$arr['phones']    = array_intersect_key($data, array_flip($phone_columns));
+	$arr['phonemeta'] = array_diff_key($data, array_flip($phone_columns));
+
+	$phones = $db->phones()->insert(array(
+		'phone_title' 		=> $arr['phones']['id'],
+		'phone_name'  		=> $arr['phones']['name'],
+		'phone_description' => $arr['phones']['description'],
+		'phone_date'  		=> date('Y-m-d H:i:s')
+	));
+	foreach ($arr['phonemeta'] as $key => $value) {
+		$phones->phonemeta()->insert(array(
+			'meta_name'  => $key,
+			'meta_value' => $value
+		));
+	}
 });
 
-$upload = array(
-	'dir' => 'D:/WampDeveloper/Websites/dev.angularjs/webroot/_learn_/angularjs-resolve-page-transition/img/uploads/',
-	'url' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/img/uploads/'
-	// 'dir' => 'D:/WampDeveloper/Websites/dev.angularjs/webroot/dummy/',
-	// 'url' => 'http://dev.angularjs/dummy/'
-);
-
-$app->get('/images/:phone_id', function ($phoneId) use ($app, $db, $upload) {
+$app->get('/phone/images/:phone_id', function ($phoneId) use ($app, $db, $upload) {
     $app->response()->header("Content-Type", "application/json");
 
     $images = $db->images->where('phone_id = ?', $phoneId);
@@ -94,12 +89,12 @@ $app->get('/images/:phone_id', function ($phoneId) use ($app, $db, $upload) {
 	echo json_encode($data);
 });
 
-$app->post('/images/:imageId', function($imageId) use ($app, $db, $upload){
+$app->post('/phone/images/:imageId', function($imageId) use ($app, $db, $upload){
     $app->response()->header("Content-Type", "application/json");
 
 	// check file
-	if(!isset($_FILES['file'])) throw new Exception('File Upload required');
-	if($_FILES['file']['error'] != 0) throw new Exception('File Upload error');
+	if(!isset($_FILES['file'])) throw new ValidationException('File not found');
+	if($_FILES['file']['error'] != 0) throw new ValidationException('File error');
 
 	// define files
 	$fileImg  = $_FILES['file']['tmp_name'];
@@ -145,7 +140,7 @@ $app->post('/images/:imageId', function($imageId) use ($app, $db, $upload){
 	else throw new Exception('Error uploading file');
 });
 
-$app->delete('/images/:imageId', function ($imageId) use ($app, $db, $upload) {
+$app->delete('/phone/images/:imageId', function ($imageId) use ($app, $db, $upload) {
     $app->response()->header("Content-Type", "application/json");
 
 	$image = $db->images[$imageId];
@@ -155,11 +150,7 @@ $app->delete('/images/:imageId', function ($imageId) use ($app, $db, $upload) {
 
 	echo json_encode($image->delete());
 });
-/*
- * REST API UPLOAD
- * 
- * @return JSON
- */
+
 $app->post('/uploads', function() use ($app, $db, $upload) {
 	$app->response()->header('Content-Type', 'application/json');
 	try
@@ -167,23 +158,23 @@ $app->post('/uploads', function() use ($app, $db, $upload) {
 		$action = $_REQUEST['action'];
 		$name   = $_REQUEST['name'];
 
-		if(!isset($action)) throw new Exception('Action required');
+		if(!isset($action)) throw new ForbiddenException('Action required');
 
 		if( $action == 'chunk' )
 		{
 			// file index
 			$index = $_REQUEST['index'];
-			// check file name
-			if(!isset($name)) throw new Exception('Filename required');
-			if(!preg_match('/^[-a-z0-9_][-a-z0-9_.]*$/i', $name)) throw new Exception('Filename invalid');
-			// check file index
-			if(!isset($index)) throw new Exception('File index required');
-			if(!preg_match('/^[0-9]+$/', $index)) throw new Exception('File index invalid');
 			// check file
-			if(!isset($_FILES['file'])) throw new Exception('File Upload required');
-			if($_FILES['file']['error'] != 0) throw new Exception('File Upload error');
+			if(!isset($_FILES['file'])) throw new ValidationException('File not found');
+			if($_FILES['file']['error'] != 0) throw new ValidationException('File error');
+			// check file name
+			if(!isset($name)) throw new ValidationException('Filename required');
+			if(!preg_match('/^[-a-z0-9_][-a-z0-9_.]*$/i', $name)) throw new ValidationException('invalid filename');
+			// check file index
+			if(!isset($index)) throw new ValidationException('File index required');
+			if(!preg_match('/^[0-9]+$/', $index)) throw new ValidationException('invalid file index ');
 			// set upload destination for chunk files (index sufix)
-			$target = $upload['dir'] . DIRECTORY_SEPARATOR . $name . '-' . $index;
+			$target = $upload['dir'] . $name . '-' . $index;
 			// upload file
 			move_uploaded_file($_FILES['file']['tmp_name'], $target);
 			// make emulate
@@ -194,14 +185,14 @@ $app->post('/uploads', function() use ($app, $db, $upload) {
 		elseif( $action == 'merge' ) 
 		{
 			// check file name
-			if(!isset($name)) throw new Exception('Filename required');
-			if(!preg_match('/^[-a-z0-9_][-a-z0-9_.]*$/i', $name)) throw new Exception('Filename invalid');
+			if(!isset($name)) throw new ValidationException('Filename required');
+			if(!preg_match('/^[-a-z0-9_][-a-z0-9_.]*$/i', $name)) throw new ValidationException('invalid filename');
 			// check file index
 			if(!isset($_REQUEST['index'])) throw new Exception('File index required');
-			if(!preg_match('/^[0-9]+$/', $_REQUEST['index'])) throw new Exception('File index invalid');
+			if(!preg_match('/^[0-9]+$/', $_REQUEST['index'])) throw new ValidationException('invalid file index ');
 			// get file image
 			$target = $upload['dir'] . DIRECTORY_SEPARATOR . $name;
-			// merging file
+			// merging files
 			$dst = fopen($target, 'wb');
 			for($i = 0; $i < $_REQUEST['index']; $i++) 
 			{
@@ -213,7 +204,7 @@ $app->post('/uploads', function() use ($app, $db, $upload) {
 			}
 			fclose($dst);
 
-			// image info
+			// get path & image info
 			$pathinfo  = pathinfo($target);
 			$imageInfo = getimagesize($target);
 			// insert db
@@ -236,7 +227,13 @@ $app->post('/uploads', function() use ($app, $db, $upload) {
 			// send output
 			echo json_encode($data);
 		}
-		else throw new Exception('Access forbidden');
+		else throw new ForbiddenException('Unknown action');
+	}
+	catch (ValidationException $e){
+		$app->halt(400, $e->getMessage());
+	}
+	catch (ForbiddenException $e){
+		$app->halt(403, $e->getMessage());
 	}
 	catch(Exception $e){
 		$app->halt(500, $e->getMessage());

@@ -7,7 +7,9 @@
 
  angular.module('PhoneDirectives', [])
 
-/* header component */
+/* 
+ * header component 
+ */
 
 .directive('appheader', function() {
 	// Runs during compile
@@ -21,7 +23,9 @@
 	};
 })
 
-/* footer component */
+/* 
+ * footer component 
+ */
 
 .directive('appfooter', function() {
 	// Runs during compile
@@ -34,7 +38,9 @@
 	};
 })
 
-/* loader component */
+/* 
+ * loader component 
+ */
 
 .directive('loader', function($rootScope, $timeout, $log, pageTransition) {
 	// Runs during compile
@@ -539,17 +545,17 @@
 		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
 		templateUrl: 'partials/components/iupload.html',
 		controller: function($scope, $element, PhoneImage){
-			$scope.phoneImages = PhoneImage.query();
+			$scope.phoneImages = PhoneImage.get({ imageId:1 });
 			console.log($scope.phoneImages);
 
 			$scope.deleteImage = function(event, index){
 				var $btn    = $(event.currentTarget);
 				var $group  = $btn.parents('.accordion-group');
 				var $parent = $group.parent();
-				var imgId   = $('input[name="img_id"]', $group).val();
+				var imageId = $('input[name="img_id"]', $group).val();
 
 				$btn.button('loading');
-				PhoneImage.remove({ imgId:imgId }, function(){
+				PhoneImage.remove({ imageId:imageId }, function(){
 					$scope.phoneImages.splice(index, 1);
 					$group.fadeOut('slow', function(){
 						$(this).remove();
@@ -588,7 +594,7 @@
 				var $img   = e.data.imgEl;
 				var callback = e.data.callback;
 				// url
-				var url    = 'api/images/' + e.data.imgId;
+				var url    = 'api/phone/images/' + e.data.imgId;
 
 				console.log('handleFileReaderUplod', e);
 
@@ -774,10 +780,11 @@
 				/* 
 				 * Tab Uploads inject scope
 				 * ----------------------------- 
+				 * multipleImageUpload
 				 */
-				// multipleImageUpload
-				// binding uploads button dengan inject $scope
-				$scope.insertEditor = function(event){
+
+				// binding/inject $scope uploads button 
+				var insertEditor = $scope.insertEditor = function(event){
 					// get button
 					var $button = $(event.currentTarget);
 					// get image title
@@ -795,7 +802,15 @@
 					}
 
 					// insert markdown image to editor
-					insertImageMarkdownToEditor(image, function(){
+					/*insertImageMarkdownToEditor(image, function(){
+						// hapus upload rows
+						$button
+							.parents('#upload-list')
+							.find('.accordion-group').not(':first')
+							.remove();
+
+					});*/
+					insertImageHTMLToEditor(image, function(){
 						// hapus upload rows
 						$button
 							.parents('#upload-list')
@@ -803,16 +818,8 @@
 							.remove();
 
 					});
-					// insertImageHTMLToEditor(image, function(){
-					// 	// hapus upload rows
-					// 	$button
-					// 		.parents('#upload-list')
-					// 		.find('.accordion-group').not(':first')
-					// 		.remove();
-
-					// });
 				};
-				$scope.setFeatureImage = function(event){
+				var setFeatureImage = $scope.setFeatureImage = function(event){
 					var imageURL      = $(event.currentTarget).siblings('input[type="hidden"]').val();
 					var imageEl       = $('<img/>').attr('src', imageURL);
 					var $featureImgEl = $('.image', $featureEl);
@@ -831,7 +838,7 @@
 					// close modal
 					$('.close', el).click();
 				};
-				$scope.removeFeatured = function(event){
+				var removeFeatured = $scope.removeFeatured = function(event){
 					// remove featured image
 					$(event.currentTarget).parent().remove();
 					// change text button
@@ -842,7 +849,7 @@
 					ajaxurl: 'api/uploads',
 					// compile upload row
 					// setiap upload row yg ditambahkan(append) kedalam upload list
-					// harus dicompile ulang, utk inject $scope
+					// perlu compile ulang, utk inject $scope
 					compile: {
 						// inject $scope untuk upload row sebelum diupload 
 						// @return upload row element
@@ -858,47 +865,17 @@
 							});
 						}
 					}
-				});
-
-				/* 
-				 * multipleImageUpload
-				 * binding uploads button dengan provider
-				 *
-				var insertEditor = function(e, img, title){
-					// ambil textarea element dari markdownmce controller
-					var textarea = $('textarea', markdownmceCtrl.editorEl);
-					var start    = textarea[0].selectionStart;
-					var end      = textarea[0].selectionEnd;
-					// get title n create markdown img syntax
-					var markdownImg = '![alt text]('+ img +' "'+ title +'")';
-					// set value textarea
-					textarea.val(textarea.val().substring(0, start) + '\r\r' + markdownImg + '\r\r' + textarea.val().substring(end));
-					// modal close
-					$('.modal .close').click();
-					// refresh markdown
-					$('#refresh-markdown').click();
-				};
-				var setFeatured = function(e, img){};
-				var deleteImage = function(e, $row){
-					console.log('handleDeleteImage', e);
-					// button Stateful
-					$(e).button('loading');
-					$timeout(function(){
-						$row.fadeOut('slow', function(){
-							$(this).remove();
-						});
-					}, 3000);
-				};
-				// initialize image upload provider thp element
-				// binding untuk button 'insert to editor' n 'delete image'
-				multipleImageUpload.init({
-					ajaxurl: 'api/uploads',
+					/* 
+					 * binding uploads button dengan provider
+					 *
+					,
 					binding: {
 						insertEditor : insertEditor,
-						setFeatured  : setFeatured,
-						deleteImage  : deleteImage
+						setFeatured  : setFeatureImage,
+						deleteImage  : removeFeatured
 					}
-				});*/
+					*/
+				});
 			};
 		}
 	};

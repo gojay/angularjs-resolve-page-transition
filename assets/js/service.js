@@ -18,16 +18,9 @@
 		});
 	}).
 	factory('PhoneImage', function($resource) {
-		return $resource('api/images/:imgId', {}, {
-			query: {
+		return $resource('api/phone/images/:imageId', {}, {
+			get: {
 				method: 'GET',
-				params: {
-					imgId: 1
-				},
-				isArray: true
-			},
-			update: {
-				method: 'PUT',
 				isArray: true
 			},
 			remove: {
