@@ -18,13 +18,20 @@
 		});
 	}).
 	factory('PhoneImage', function($resource) {
-		return $resource('api/upload.php?action=:action', {}, {
+		return $resource('api/images/:imgId', {}, {
 			query: {
 				method: 'GET',
 				params: {
-					action: 'get'
+					imgId: 1
 				},
 				isArray: true
+			},
+			update: {
+				method: 'PUT',
+				isArray: true
+			},
+			remove: {
+				method: 'DELETE'
 			}
 		});
 	});

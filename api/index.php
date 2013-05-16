@@ -20,7 +20,7 @@ Slim\Slim::registerAutoLoader();
 $app = new Slim\Slim();
 
 $upload_directory = '../img/uploads';
-$app->get('/test', function() use($app, $upload_directory){
+$app->get('/test', function() use($app, $db, $upload_directory){
 	$handle = new upload('D:/WampDeveloper/Websites/dev.angularjs/webroot/dummy/dummy problem.jpg');
 	// $handle->file_new_name_body = 'image_resized';
 	$handle->file_safe_name   = true;
@@ -32,9 +32,18 @@ $app->get('/test', function() use($app, $upload_directory){
     $handle->process('D:/WampDeveloper/Websites/dev.angularjs/webroot/dummy/');
     if ($handle->processed) {
         echo 'image resized';
+        $image_name = $handle->file_dst_name_body . '.' . $handle->file_dst_name_ext;
+        // insert
+        $result = $db->images()->insert(array(
+        	'phone_id'   => 1,
+        	'image_name' => $image_name,
+        ));
+        // get last id 
+        // echo $result['image_id'];
+
         $image = array(
         	'filename' => $handle->file_dst_name_body,
-			'url' 	=> 'http://dev.angularjs/dummy/' . $handle->file_dst_name_body . '.' . $handle->file_dst_name_ext,
+			'url' 	=> 'http://dev.angularjs/dummy/' . $image_name,
 			'image' => array(
 				'dimensions' => array(
 					'width'  => $handle->image_x, 
@@ -44,6 +53,7 @@ $app->get('/test', function() use($app, $upload_directory){
 			)
         );
         echo '<pre>';
+        echo print_r($result['image_id'], 1);
         echo print_r($image, 1);
         echo '<pre>';
         $handle->clean();
@@ -52,112 +62,181 @@ $app->get('/test', function() use($app, $upload_directory){
     }
 });
 
+$upload = array(
+	'dir' => 'D:/WampDeveloper/Websites/dev.angularjs/webroot/_learn_/angularjs-resolve-page-transition/img/uploads/',
+	'url' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/img/uploads/'
+	// 'dir' => 'D:/WampDeveloper/Websites/dev.angularjs/webroot/dummy/',
+	// 'url' => 'http://dev.angularjs/dummy/'
+);
 
-$app->get("/image", function () use ($app, $db, $upload_directory) {
+$app->get('/images/:phone_id', function ($phoneId) use ($app, $db, $upload) {
     $app->response()->header("Content-Type", "application/json");
 
-	$images = glob($upload_directory . "/{*.jpg,*.gif,*.png}", GLOB_BRACE);
-	$json   = json_encode($images);
+    $images = $db->images->where('phone_id = ?', $phoneId);
+    $data   = array();
+	foreach($images as $image) {
+		$imageFile = $upload['dir'] . $image['image_name'];
+		$pathinfo  = pathinfo($imageFile);
+		$imageInfo = getimagesize($imageFile);
+		$data[] = array(
+			'id'   => (int) $image['image_id'],
+			'name' => $pathinfo['filename'],
+			'url' 	=> $upload['url'] . $image['image_name'],
+			'image' => array(
+				'dimensions' => array(
+					'width'  => $imageInfo[0], 
+					'height' => $imageInfo[1]
+				)
+			)
+		);
+	}
 
-    $cb = isset($_GET['callback']) ? $_GET['callback'] : false;
-    if($cb) $json = "$cb($json)";
-	
-    echo $json;
+	echo json_encode($data);
 });
-$app->delete("/image/:id", function ($id) use ($app, $db, $upload_directory) {
+
+$app->post('/images/:imageId', function($imageId) use ($app, $db, $upload){
     $app->response()->header("Content-Type", "application/json");
 
-	$images = glob($upload_directory . "/{*.jpg,*.gif,*.png}", GLOB_BRACE);
-	$json   = json_encode($images);
+	// check file
+	if(!isset($_FILES['file'])) throw new Exception('File Upload required');
+	if($_FILES['file']['error'] != 0) throw new Exception('File Upload error');
 
-    $cb = isset($_GET['callback']) ? $_GET['callback'] : false;
-    if($cb) $json = "$cb($json)";
-	
-    echo $json;
+	// define files
+	$fileImg  = $_FILES['file']['tmp_name'];
+	$fileName = $_FILES['file']['name'];
+
+	// unlink image
+    $image = $db->images[$imageId];
+	$imageFile = $upload['dir'] . DIRECTORY_SEPARATOR . $image['image_name'];
+	if(file_exists($imageFile)){
+		unlink($imageFile);
+	}
+
+	// set target
+	$target     = $upload['dir'] . DIRECTORY_SEPARATOR . $fileName;
+	// set url
+	$target_url = $upload['url'] . $fileName;
+
+	// upload file
+	if( move_uploaded_file($fileImg, $target) ){
+		// update db
+		$result = $image->update(array(
+	    	'phone_id'   => $phoneId,
+	    	'image_name' => $fileName,
+	    ));
+		// create output data
+		// image info
+		$imageInfo  = getimagesize($target);
+		$data = array(
+			'name'  => $fileName,
+			'url'   => $target_url,
+			'image' => array(
+				'dimensions' => array(
+					'width'  => $imageInfo[0], 
+					'height' => $imageInfo[1]
+				) 
+			)
+		);
+		// make emulate
+		sleep(3);
+		// send output
+		echo json_encode($data);
+	}
+	else throw new Exception('Error uploading file');
+});
+
+$app->delete('/images/:imageId', function ($imageId) use ($app, $db, $upload) {
+    $app->response()->header("Content-Type", "application/json");
+
+	$image = $db->images[$imageId];
+	$imageFile = $upload['dir'] . $image['image_name'];
+	if( file_exists($imageFile) )
+		unlink($imageFile);
+
+	echo json_encode($image->delete());
 });
 /*
  * REST API UPLOAD
  * 
  * @return JSON
  */
-$app->post('/upload', function() use ($app, $imgDimensions) {
+$app->post('/uploads', function() use ($app, $db, $upload) {
 	$app->response()->header('Content-Type', 'application/json');
-	// for img purchase
-	$showImgNameOnly = false;
 	try
 	{
-		// define files
-		$fileImg  = $_FILES['file']['tmp_name'];
-		$fileName = $_FILES['file']['name'];
-		$fileType = $_FILES['file']['type'];
-		$ext  = pathinfo($fileName, PATHINFO_EXTENSION);
-		
-		// create new picture name
-		$name = str_replace('-', '_', $_REQUEST['name']);
-		// set image size
-		$size = array();
-		if(preg_match('/logo/i', $name))
-			$size = $imgDimensions['logo'];
-		elseif(preg_match('/banner/i', $name))
-			$size = $imgDimensions['banner'];
-		elseif(preg_match('/price/i', $name))
-			$size = $imgDimensions['price'];
-		elseif(preg_match('/quiz/i', $name))
-			$size = $imgDimensions['quiz'];
-		elseif(preg_match('/purchase/i', $name)){
-			$size = $imgDimensions['purchase'];
-			$showImgNameOnly = true;
+		$action = $_REQUEST['action'];
+		$name   = $_REQUEST['name'];
+
+		if(!isset($action)) throw new Exception('Action required');
+
+		if( $action == 'chunk' )
+		{
+			// file index
+			$index = $_REQUEST['index'];
+			// check file name
+			if(!isset($name)) throw new Exception('Filename required');
+			if(!preg_match('/^[-a-z0-9_][-a-z0-9_.]*$/i', $name)) throw new Exception('Filename invalid');
+			// check file index
+			if(!isset($index)) throw new Exception('File index required');
+			if(!preg_match('/^[0-9]+$/', $index)) throw new Exception('File index invalid');
+			// check file
+			if(!isset($_FILES['file'])) throw new Exception('File Upload required');
+			if($_FILES['file']['error'] != 0) throw new Exception('File Upload error');
+			// set upload destination for chunk files (index sufix)
+			$target = $upload['dir'] . DIRECTORY_SEPARATOR . $name . '-' . $index;
+			// upload file
+			move_uploaded_file($_FILES['file']['tmp_name'], $target);
+			// make emulate
+			sleep(3);
+			// send output
+			echo json_encode($_FILES);
 		}
-		else
-			throw new ForbiddenException("Unknown image file");
-		
-		// create a unique prefix name of the image
-		// Add: constest ID 
-		// Update: REQUEST ID
-		if( isset($_REQUEST['id']) ){
-			$ID = $_REQUEST['id'];
-		} 
-		else {
-			$ID = Contests::getInstance()->getNextID();
+		elseif( $action == 'merge' ) 
+		{
+			// check file name
+			if(!isset($name)) throw new Exception('Filename required');
+			if(!preg_match('/^[-a-z0-9_][-a-z0-9_.]*$/i', $name)) throw new Exception('Filename invalid');
+			// check file index
+			if(!isset($_REQUEST['index'])) throw new Exception('File index required');
+			if(!preg_match('/^[0-9]+$/', $_REQUEST['index'])) throw new Exception('File index invalid');
+			// get file image
+			$target = $upload['dir'] . DIRECTORY_SEPARATOR . $name;
+			// merging file
+			$dst = fopen($target, 'wb');
+			for($i = 0; $i < $_REQUEST['index']; $i++) 
+			{
+				$slice = $target . '-' . $i;
+				$src   = fopen($slice, 'rb');
+			    stream_copy_to_stream($src, $dst);
+			    fclose($src);
+			    unlink($slice);
+			}
+			fclose($dst);
+
+			// image info
+			$pathinfo  = pathinfo($target);
+			$imageInfo = getimagesize($target);
+			// insert db
+			$result = $db->images()->insert(array(
+	        	'phone_id'   => 1,
+	        	'image_name' => $pathinfo['basename'],
+	        ));
+			// create output data
+			$data = array(
+				'id'    => $result['image_id'],
+				'name'  => $pathinfo['filename'],
+				'url'   => $upload['url'] . $result['image_name'],
+				'image' => array(
+					'dimensions' => array(
+						'width'  => $imageInfo[0], 
+						'height' => $imageInfo[1]
+					) 
+				)
+			);
+			// send output
+			echo json_encode($data);
 		}
-		
-		// create image name
-		$newName = $ID . '_' . $name;
-		if( $showImgNameOnly ){
-			$uniqueID = Contestants::getInstance()->getNextID();
-			$newName .= '_' . $uniqueID;
-		}
-		$picName = $newName . '.' . $ext;
-		// remove old image
-		$oldPic = CONTEST_UPLOAD_DIR . '/' . $picName;
-		if ( file_exists($oldPic) ) { 
-			unlink($oldPic);
-		}
-		
-		// do upload n resize
-		$imagehand = new upload( $fileImg );
-		$imagehand->file_dst_name_ext = $ext;
-		$imagehand->file_new_name_body = $newName;
-		$imagehand->image_resize = true;
-		$imagehand->image_ratio_crop  = true;
-		$imagehand->image_x = $size['x'];
-		$imagehand->image_y = $size['y'];
-		$imagehand->image_convert = $ext;
-		$imagehand->Process(CONTEST_UPLOAD_DIR);
-		if( !$imagehand->processed ) throw new ForbiddenException("Error upload $fileName");
-		
-		$fileURL = ($showImgNameOnly) ? $picName : CONTEST_UPLOAD_URL . '/' . $picName;
-		$json = json_encode(array(
-			'url'  => $fileURL,
-			'size' => $_FILES['file']['size']
-		));
-        $cb = isset($_GET['callback']) ? $_GET['callback'] : false;
-        if($cb) $json = "$cb($json)";
-		
-		sleep(1);
-		
-        echo $json;
-		
+		else throw new Exception('Access forbidden');
 	}
 	catch(Exception $e){
 		$app->halt(500, $e->getMessage());
@@ -165,4 +244,3 @@ $app->post('/upload', function() use ($app, $imgDimensions) {
 });
 
 $app->run();
-?>

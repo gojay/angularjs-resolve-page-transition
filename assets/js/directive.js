@@ -527,7 +527,7 @@
  * multiple images upload
  */
 
-.directive('iupload', function($timeout, $compile, multipleImageUpload){
+.directive('iupload', function($timeout, $compile, imageUpload, multipleImageUpload){
 	// Runs during compile
 	return {
 		require: '^markdownmce',
@@ -541,6 +541,91 @@
 		controller: function($scope, $element, PhoneImage){
 			$scope.phoneImages = PhoneImage.query();
 			console.log($scope.phoneImages);
+
+			$scope.deleteImage = function(event, index){
+				var $btn    = $(event.currentTarget);
+				var $group  = $btn.parents('.accordion-group');
+				var $parent = $group.parent();
+				var imgId   = $('input[name="img_id"]', $group).val();
+
+				$btn.button('loading');
+				PhoneImage.remove({ imgId:imgId }, function(){
+					$scope.phoneImages.splice(index, 1);
+					$group.fadeOut('slow', function(){
+						$(this).remove();
+						$('.accordion-group:last .accordion-toggle', $parent).click();
+					});
+				});
+			};
+
+			$scope.changeImage = function(event, image){
+				console.log('changeImage', image);
+				var $btn       = $(event.currentTarget);
+				var $group     = $btn.parents('.accordion-group');
+				var imgId      = $('input[name="img_id"]', $group).val();
+
+				var $row       = $btn.parents('.upload-img');
+				var $parent    = $btn.parent();
+				var $inputFile = $('input[type="file"]', $parent);
+				var $img       = $parent.prev();
+
+				var data = {
+					imgId : imgId,
+					rowEl : $row,
+					imgEl : $img,
+					callback : function(response){
+						console.log('callback response', response);
+					}
+				};
+				$inputFile.bind('change', data, handleFileReaderUplod).click();
+			};
+
+			var handleFileReaderUplod = function(e){
+				var target = e.currentTarget;
+				var file   = e.target.files[0];
+				// data
+				var $row   = e.data.rowEl;
+				var $img   = e.data.imgEl;
+				var callback = e.data.callback;
+				// url
+				var url    = 'api/images/' + e.data.imgId;
+
+				console.log('handleFileReaderUplod', e);
+
+				var fr = new FileReader();
+				fr.onerror = function(e){
+					switch (e.target.error.code) {
+						case e.target.error.NOT_FOUND_ERR:
+							alert('File not found!');
+							break;
+						case e.target.error.NOT_READABLE_ERR:
+							alert('File is not readable');
+							break;
+						case e.target.error.ABORT_ERR:
+							break;
+						default:
+							alert('An error occured reading this file');
+					}
+				};
+				fr.onloadstart = function(){
+					$row.addClass('loading');
+				};
+				fr.onloadend = (function(fileImg){
+					return function(evt) {
+						$img[0].src = evt.target.result;
+						imageUpload.upload({
+							file : fileImg,
+							url  : url
+						}, function(response){
+							$img[0].src = response.url;
+							$row.removeClass('loading');
+							if( callback ) callback(response);
+						});
+					};
+				})(file);
+				// read as Data URI
+				fr.readAsDataURL(file);
+			};
 		},
 		// replace: true,
 		compile: function(element, attrs) {
@@ -549,7 +634,7 @@
 			var showInModal = attrs.modal;
 			var el          = element.html();
 
-			return function($scope, iElm, iAttrs, markdownmceCtrl, PhoneImage) {
+			return function($scope, iElm, iAttrs, markdownmceCtrl) {
 				// jika attribute modal set true
 				// wrap dengan modal template
 				// letakkan element pd modal body
@@ -752,24 +837,9 @@
 					// change text button
 					$('.btn-primary', $featureEl).text('Set Featured Image');
 				};
-				$scope.deleteImage = function(event, index){
-					var $btn   = $(event.currentTarget);
-					var $group = $btn.parents('.accordion-group');
-					var $parent = $group.parent();
-					$btn.button('loading');
-					$timeout(function(){
-						$scope.$apply(function(scope){
-							scope.phone.images.splice(index, 1);
-						});
-						$group.fadeOut('slow', function(){
-							$(this).remove();
-							$('.accordion-group:last .accordion-toggle', $parent).click();
-						});
-					}, 3000);
-				};
 
 				multipleImageUpload.init({
-					ajaxurl: 'api/upload.php',
+					ajaxurl: 'api/uploads',
 					// compile upload row
 					// setiap upload row yg ditambahkan(append) kedalam upload list
 					// harus dicompile ulang, utk inject $scope
@@ -783,7 +853,8 @@
 						// tambah images dari hasil upload
 						after: function(image){
 							$scope.$apply(function(scope){
-								scope.phone.images.push(image);
+								scope.phone.images.push(image.url);
+								scope.phoneImages.push(image);
 							});
 						}
 					}
@@ -821,7 +892,7 @@
 				// initialize image upload provider thp element
 				// binding untuk button 'insert to editor' n 'delete image'
 				multipleImageUpload.init({
-					ajaxurl: 'api/upload.php',
+					ajaxurl: 'api/uploads',
 					binding: {
 						insertEditor : insertEditor,
 						setFeatured  : setFeatured,
@@ -894,7 +965,7 @@
 		link: function($scope, iElm, iAttrs, controller) {
 			// set controller dari require controller
 			var markdownmceCtrl = controller[0];
-			var bootstrapCtrl  = controller[1];
+			var bootstrapCtrl   = controller[1];
 
 			// set scope dari attributes
 			$scope.orderBy  = iAttrs.order === undefined ? 'relevance'  : iAttrs.order;
@@ -931,10 +1002,13 @@
 				jQTubeUtil.search(param, function(response){
 					console.log(response);
 					$scope.videos = response.videos;
-					var html = '<div class="media" ng-repeat="video in videos" ng-dblick="insertVideo($index)" ng-click="selectVideo($index)" ng-class="{well:isSelected($index)}">' +
+					// untuk menampilkan smooth result
+					// maka element iframe tidak disertakan pada html template
+					// penambahan iframe akan dihandle 'selectVideo'
+					var html = '<div class="media" ng-repeat="video in videos" ng-dblick="insertVideo($index)" ng-click="selectVideo($event, $index)" ng-class="{well:isSelected($index)}">' +
 									'<div class="pull-left">' +
 										'<img class="media-object" ng-hide="isSelected($index)" ng-src="{{video.thumbs[0].url}}" width="130" height="97">' +
-										'<iframe width="480" height="360" ng-show="isSelected($index)" ng-src="http://www.youtube.com/embed/{{video.videoId}}" frameborder="0" allowfullscreen></iframe>' +
+										// '<iframe width="480" height="360" ng-show="isSelected($index)" ng-src="http://www.youtube.com/embed/{{video.videoId}}" frameborder="0" allowfullscreen></iframe>' +
 									'</div>' +
 									'<div class="media-body">' +
 										'<h4 class="media-heading">{{video.title}}</h4>' +
@@ -955,6 +1029,7 @@
 
 					var btnSearch = $compile('<span>Search by {{searchBy}}</span>')($scope);
 					$('.btn-search').button('reset').html(btnSearch);
+
 					$scope.$apply(function(scope){
 						$scope.disabled = false;
 					});
@@ -962,8 +1037,25 @@
 			};
 
 			var selectedVideo = -1;
-			$scope.selectVideo = function(index){
+			$scope.selectVideo = function(evt, index){
 				selectedVideo = index;
+				// tambahkan youtube iframe saat baris media selected
+				// abaikan(return), jika iframe sudah ada
+				var $media = $(evt.currentTarget);
+				if($media.find('iframe').length) return;
+				// create youtube iframe
+				var iframe = document.createElement('iframe');
+				iframe.src = 'http://www.youtube.com/embed/'+$scope.videos[index].videoId;
+				iframe.width = 480;
+				iframe.height = 360;
+				// set atrribute directive show
+				iframe.setAttribute('ng-show', 'isSelected('+ index +')');
+				iframe.frameborder = 0;
+				iframe.allowfullscreen = true;
+				// compile iframe, karena menggunakan directive ngShow
+				iframe = $compile(iframe)($scope);
+				// tambahkan iframe
+				$media.find('.pull-left').append(iframe);
 			};
 			$scope.isSelected = function(index){
 				return selectedVideo === index;

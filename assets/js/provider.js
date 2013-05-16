@@ -118,6 +118,47 @@ angular.module('PhoneProvider', [])
 		};
 	})
 	/*
+	 * imageUpload Provider
+	 * 
+	 * single image upload
+	 * 
+	 */
+	.provider('imageUpload', function(){
+		this.$get = function(){
+			return {
+				upload: function(data, callback) {
+
+					// object XMLHttpRequest
+					var xhr = new XMLHttpRequest();
+
+					// xhr response
+					xhr.onload = function() {
+
+						console.log('XHR load', this);
+
+						// OK
+						if (this.status == 200) {
+							// parse JSON response
+							var response = JSON.parse(this.response);
+							if (callback) callback(response);
+						}
+						else throw new Error('An error occurred while uploading ' + data.file.name);
+					};
+
+					// xhr open
+					xhr.open('POST', data.url, true);
+
+					// buat form data
+					var formData = new FormData();
+					formData.append('file', data.file);
+
+					// xhr send request
+					xhr.send(formData);
+				}
+			};
+		};
+	})
+	/*
 	 * multipleImageUpload Provider
 	 * 
 	 * multiple images upload
@@ -294,9 +335,11 @@ angular.module('PhoneProvider', [])
 									// upload file
 									self.createChunkfile(theFile, $progressBar, function(data) {
 										// compile after uploaded (merge)
-										self.config.compile.after(data.url);
+										self.config.compile.after(data);
+										// set id ke input hidden
+										$('input[name="img_id"]', $uploadRow).val(data.id);
 										// set title ke input hidden
-										$('input[name="img_title"]', $uploadRow).val(data.filename);
+										$('input[name="img_title"]', $uploadRow).val(data.name);
 										// set image url ke input hidden
 										$('input[name="img_url"]', $uploadRow).val(data.url);
 										// upload is done! so remove class uploading

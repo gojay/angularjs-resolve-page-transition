@@ -42,13 +42,14 @@
 											  	<button class="btn btn-primary" ng-click="insertEditor($event)">Insert to Editor</button>
 											  	<button class="btn btn-info" ng-click="setFeatureImage($event)">Set Featured Image</button>
 											  	<span class="pull-right">
-											  		<button class=" btn btn-danger" ng-click="deleteImage($event)" data-loading-text="Loading..."><i class="icon-remove"></i> Delete</button>
+											  		<button class=" btn btn-danger" ng-click="deleteImage($event)" data-loading-text="<img src='img/ajax-spin.gif'/> Loading..."><i class="icon-remove"></i> Delete</button>
 											  	</span>
 											  	<!-- binding
 											  	<button class="btn btn-primary insert-editor">Insert to Editor</button>
 											  	<button class="btn btn-info set-featured">Set Featured Image</button>
 											  	<button class="pull-right btn btn-danger delete-image" data-loading-text="Loading..."><i class="icon-remove"></i> Delete</button> 
 											  	-->
+											  	<input type="hidden" name="img_id" value="" />
 											  	<input type="hidden" name="img_title" value="" />
 											  	<input type="hidden" name="img_url" value="" />
 										  	</span>
@@ -120,11 +121,11 @@
 						<!-- image row -->
 						<div class="accordion-group" ng-repeat="image in phone.images">
 							<div class="accordion-heading">
-			                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#gallery-list" href="#upload-field-{{$index+1}}">
+			                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#gallery-list" href="#gallery-field-{{$index+1}}">
 			                     	{{image}}
 			                    </a>
 		                  	</div>
-		                  	<div id="upload-field-{{$index+1}}" class="accordion-body collapse" ng-class="{in:$index == 0}">
+		                  	<div id="gallery-field-{{$index+1}}" class="accordion-body collapse" ng-class="{in:$index == 0}">
 			                    <div class="span12 accordion-inner">
 					          		<div class="span4 upload-img">
 										<img ng-src="{{image}}">
@@ -132,16 +133,15 @@
 					                <div class="span8">
 							            <div class="alert alert-success show-buttons">
 										  	<span class="buttons">
-											  	<button class="btn btn-primary" ng-click="insertEditor($event)">Insert to Editor</button>
+											  	<!-- <button class="btn btn-primary" ng-click="insertEditor($event)">Insert to Editor</button> -->
 											  	<button class="btn btn-info" ng-click="setFeatureImage($event)">Set Featured Image</button>
 											  	<span class="pull-right">
-											  		<button class=" btn btn-danger" ng-click="deleteImage($event, $index)" data-loading-text="Loading..."><i class="icon-remove"></i> Delete</button>
+											  		<button class=" btn btn-danger" ng-click="deleteImage($event, $index)" data-loading-text="<img src='img/ajax-spin.gif'/> Loading..."><i class="icon-remove"></i> Delete</button>
 											  	</span>
 											  	<input type="hidden" name="img_title" value="{{image}}" />
 											  	<input type="hidden" name="img_url" value="{{image}}" />
 										  	</span>
 										</div>
-									  	<!-- file description -->
 					            	</div>
 			                    </div>
 		                  	</div>
@@ -158,30 +158,37 @@
     	<div class="tab-pane" id="tab4" ng-model="phoneImages">
 			<div class="container-fluid">
 				<div class="row-fluid">
-					<input type="text" name="img_size" />
+					<!-- input image size -->
+					<input type="hidden" name="img_size" />
+					<!-- /input -->
 
 					<!-- acordion gallery list -->
 					<div class="accordion" id="uploaded-list">
 						<!-- image row -->
 						<div class="accordion-group" ng-repeat="img in phoneImages">
 							<div class="accordion-heading">
-			                    <a href="#gallery-field-{{$index+1}}" class="accordion-toggle" 
+			                    <a href="#uploaded-field-{{$index+1}}" class="accordion-toggle" 
 			                    	data-toggle="collapse" 
 			                    	data-parent="#uploaded-list">
-			                     	{{img.filename}}
+			                     	{{img.name}}
 			                    </a>
 		                  	</div>
-		                  	<div id="gallery-field-{{$index+1}}" class="accordion-body collapse" ng-class="{in:$index == 0}">
+		                  	<div id="uploaded-field-{{$index+1}}" class="accordion-body collapse" ng-class="{in:$index == 0}">
 			                    <div class="span12 accordion-inner">
 					          		<div class="span4 upload-img">
 										<img ng-src="{{img.url}}">
+										<div class="edit-img">
+											<img src="img/ajax-spin.gif" alt="">
+											<button class="btn btn-small" ng-click="changeImage($event, img)">Change Image</button>
+											<input type="file" name="file" class="hide">
+										</div>
 					          		</div>
 					                <div class="span8">
 							            <div class="alert alert-success show-buttons" style="padding-right: 14px; margin-bottom: 5px">
 										  	<span class="buttons">
 											  	<button class="btn btn-info" ng-click="setFeatureImage($event)">Set Featured Image</button>
 											  	<div class="pull-right">
-											  		<button class=" btn btn-danger" ng-click="deleteImage($event, $index)" data-loading-text="Loading..."><i class="icon-remove"></i> Delete</button>
+											  		<button class=" btn btn-danger" ng-click="deleteImage($event, $index)" data-loading-text="<img src='img/ajax-spin.gif'/> Loading..."><i class="icon-remove"></i> Delete</button>
 											  	</div>
 										  	</span>
 										</div>
@@ -192,8 +199,9 @@
 												<div calculate-image-size image="img"></div>	
 												<!-- /directive -->											
 												<button class="btn btn-primary" style="margin-top: 10px;" ng-click="insertEditor($event)">Insert to Editor</button>
+											  	<input type="hidden" name="img_id" value="{{img.id}}" />
 											  	<input type="hidden" name="img_url" value="{{img.url}}" />
-											  	<input type="hidden" name="img_title" value="{{img.filename}}" />
+											  	<input type="hidden" name="img_title" value="{{img.name}}" />
 											</div>
 										</div>
 					            	</div>

@@ -2,8 +2,8 @@
 /* Config */
 
 angular.module('MyApp', ['PhoneProvider', 'PhoneControllers', 'PhoneDirectives', 'PhoneServices', 'PhoneFilters'])
-	.config(['$routeProvider', 'debugProvider','pageTransitionProvider', 'multipleImageUploadProvider',
-		function($routeProvider, debugProvider, pageTransitionProvider, multipleImageUploadProvider) {
+	.config(['$routeProvider', 'debugProvider','pageTransitionProvider', 'imageUploadProvider', 'multipleImageUploadProvider',
+		function($routeProvider, debugProvider, pageTransitionProvider, imageUploadProvider, multipleImageUploadProvider) {
 			// enable/disable debuging
 			debugProvider.setDebug(true);
 

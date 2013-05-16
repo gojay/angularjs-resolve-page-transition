@@ -1,76 +1,5 @@
 @charset "UTF-8";
 
-[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-	display: none;
-}
-
-ng\:form {
-	display: block;
-}
-
-
-/* bootstrap */
-
-.text-center {
-	text-align: center;
-}
-.navbar {
-	margin-bottom: 0;
-}
-
-.modal-large{
-   width:940px;
-   margin-left:-470px;
-}
-
-.youtube-videos > .media {
-	cursor: pointer;
-}
-/*.modal-header .close {
-	margin-top: 2px;
-}
-button.close {
-	padding: 0;
-	cursor: pointer;
-	background: rgba(0, 0, 0, 0);
-	border: 0;
-	-webkit-appearance: none;
-}
-.modal button.close {
-	float: right;
-	font-size: 20px;
-	font-weight: bold;
-	line-height: 20px;
-	color: #000;
-	text-shadow: 0 1px 0 #FFF;
-	opacity: 0.2;
-	filter: alpha(opacity=20);
-}*/
-
-.alert.show-message > .message,
-.alert.show-buttons > .buttons {
-	display: block;
-}
-.alert.show-buttons > .message,
-.alert.show-message > .buttons {
-	display: none;
-}
-
-/* accordion upload */
-
-.accordion-body.uploading > img {
-	opacity: 0.3
-}
-.accordion-body.uploading > .progress {
-	display: block;
-}
-.accordion-body.uploading > .alert {
-	display: none;
-}
-#upload-list .accordion-group:first-child {
-	display: none;
-}
-
 /* Placeholder */
 
 ::-webkit-input-placeholder {
@@ -103,18 +32,18 @@ textarea:focus::-ms-input-placeholder {
 	opacity:0; 
 }
 
-.prefix {
-	margin-left: 0px !important;
+/* angular style */
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+	display: none;
 }
 
-.container-fluid {
-	height: 100%;
-	overflow: auto;
+ng\:form {
+	display: block;
 }
 
-.margin-top-bottom {
-	margin-top: 20px;
-	margin-bottom: 20px;
+#ngView {
+	margin-top: 40px;
 }
 
 .markdown-mce {
@@ -122,8 +51,133 @@ textarea:focus::-ms-input-placeholder {
 	padding: 10px;
 }
 
-#ngView {
-	margin-top: 40px;
+/* angular validation */
+
+input ~ .alert {
+	padding-top: 3px;
+	padding-right: 20px;
+	padding-bottom: 3px;
+}
+
+form.ng-pristine .alert {
+	display: none;
+}
+		
+.ng-dirty .alert-error {
+	color: red;
+	display: inline-block;
+}
+.ng-dirty .alert-error::before {
+	content: 'x';
+	padding: 3px;
+	background: #FFF;
+	position: relative;
+	left: -35px;
+	top: 2px;
+}
+
+.ng-dirty .checkmark {
+	color: green;
+	display: inline-block;;
+}
+.ng-dirty .checkmark::before {
+	content: '\2713';
+	background: #FFF;
+	padding: 3px;
+	position: relative;
+	left: -25px;
+	top: 2px;
+}
+
+
+/* global */
+
+.prefix {
+	margin-left: 0px !important;
+}
+
+.margin-top-bottom {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.youtube-videos > .media {
+	cursor: pointer;
+}
+
+/* bootstrap overriden */
+
+.container-fluid {
+	height: 100%;
+	overflow: auto;
+}
+
+.navbar {
+	margin-bottom: 0;
+}
+
+.modal-large{
+   width:940px;
+   margin-left:-470px;
+}
+
+.text-center {
+	text-align: center;
+}
+
+/* alert upload message */
+
+.alert.show-message > .message,
+.alert.show-buttons > .buttons {
+	display: block;
+}
+.alert.show-buttons > .message,
+.alert.show-message > .buttons {
+	display: none;
+}
+
+/* accordion upload progress */
+
+.accordion-body.uploading > img {
+	opacity: 0.3
+}
+.accordion-body.uploading > .progress {
+	display: block;
+}
+.accordion-body.uploading > .alert {
+	display: none;
+}
+#upload-list .accordion-group:first-child {
+	display: none;
+}
+
+/* accordion edit loading */
+
+.accordion-group .upload-img {
+	position: relative;
+}
+.accordion-group .loading > img {
+	opacity: 0.5;
+}
+
+.accordion-group .edit-img {
+	position: absolute;
+	top: 45%;
+}
+.accordion-group .edit-img img,
+.accordion-group .edit-img button,
+.accordion-group .loading .edit-img button {
+	display: none;
+}
+.accordion-group .loading .edit-img img,
+.accordion-group .upload-img:hover > .edit-img button {
+	display: block;
+}
+.accordion-group .edit-img {
+	left: 33%;
+}
+.accordion-group .loading .edit-img {
+	left: 48%;
 }
 
 /* Loading */
@@ -238,7 +292,7 @@ textarea:focus::-ms-input-placeholder {
 	left: 47%;
 }
 .loading {
-	background-color: whitesmoke;
+	background-color: white;
 	opacity: 0.3;
 	pointer-events: none;
 }
@@ -247,40 +301,3 @@ textarea:focus::-ms-input-placeholder {
 	display: block;
 }
 
-/* validation */
-
-input ~ .alert {
-	padding-top: 3px;
-	padding-right: 20px;
-	padding-bottom: 3px;
-}
-
-form.ng-pristine .alert {
-	display: none;
-}
-		
-.ng-dirty .alert-error {
-	color: red;
-	display: inline-block;
-}
-.ng-dirty .alert-error::before {
-	content: 'x';
-	padding: 3px;
-	background: #FFF;
-	position: relative;
-	left: -35px;
-	top: 2px;
-}
-
-.ng-dirty .checkmark {
-	color: green;
-	display: inline-block;;
-}
-.ng-dirty .checkmark::before {
-	content: '\2713';
-	background: #FFF;
-	padding: 3px;
-	position: relative;
-	left: -25px;
-	top: 2px;
-}
