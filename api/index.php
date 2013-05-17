@@ -35,6 +35,22 @@ function getFileName($url){
 	return basename($url);
 }
 
+$app->get('/promises', function() use($app){
+    $app->response()->header("Content-Type", "application/json");
+	echo json_encode(array(
+		'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/promise/1',
+		'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/promise/2',
+		'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/promise/3',
+		'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/promise/4',
+		'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/promise/5',
+	));
+});
+$app->get('/promise/:value', function($value) use($app){
+    $app->response()->header("Content-Type", "application/json");
+	sleep(3);
+	echo json_encode(array('response' => $value));
+});
+
 // http://nurkiewicz.blogspot.com/2013/03/promises-and-deferred-objects-in-jquery.html
 // http://stackoverflow.com/questions/6538470/jquery-deferred-waiting-for-multiple-ajax-requests-to-finish
 $app->post('/convert/:phone', function($phone) use ($app, $db){
