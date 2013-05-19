@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>jQuery Deferred and Async</title>
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.css"/>
+	<link rel="stylesheet" type="text/css" href="assets/css/bootstrap-responsive.css"/>
+	<link rel="stylesheet" type="text/css" href="libs/google-code-prettify/prettify.css"/>
+
+	<script src="libs/jquery.min.js"></script>
+	<script src="libs/bootstrap.min.js"></script>
+	<script src="libs/google-code-prettify/prettify.js"></script>
+	<script src="libs/async.js"></script>
+	<script src="deferred-async.js"></script>
+</head>
+<body onload="prettyPrint()" bgcolor="white">
+	<div class="navbar">
+		<div class="navbar-inner">
+			<div class="container" style="width: auto;">
+				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</a>
+				<a class="brand" href="#">jQuery Deferred and Async</a>
+			</div>
+		</div><!-- /navbar-inner -->
+	</div>
+	<div class="container-fluid" style="margin-bottom: 20px">
+		<div class="row-fluid">
+			<section id="content">
+				<h2>Deferred</h2>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloribus, tenetur, officiis, animi, fugit reprehenderit at debitis repellendus eum repudiandae alias vel natus eligendi laborum hic assumenda quas incidunt eos fuga delectus aliquam voluptates nobis cum inventore! Inventore, hic, cupiditate, incidunt sit odit excepturi corporis aperiam tenetur magnam a explicabo ipsam temporibus cumque quasi exercitationem quis reprehenderit officia minima mollitia voluptates saepe in necessitatibus ex dolore nostrum ducimus quaerat asperiores iure soluta eaque nobis ab libero dicta porro quidem omnis rem cum impedit aut alias non veniam vero sed dolores velit distinctio. Ab quos doloribus alias est itaque obcaecati modi tenetur quo minus magni. Similique, ab, quas, temporibus, mollitia nesciunt libero ad inventore unde amet quos quam quae animi rem eum adipisci ullam minus dignissimos laudantium esse commodi ut quo enim accusantium vero nulla provident veniam eaque molestias dolore ea quidem consequuntur cupiditate aspernatur repellendus incidunt illo hic! Enim, ad quos nobis quo porro nesciunt veniam hic minus error modi nisi aliquam eius quidem assumenda temporibus numquam ab recusandae repellat at nulla. Est tempore odit aut ab dolorem unde in recusandae autem dolore. Fugit, fugiat necessitatibus odit dolore cupiditate. Qui, quam veniam suscipit esse natus! Incidunt qui laudantium at eius saepe.</p>
+				<h2>Async</h2>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A, fuga veniam quia in quidem laboriosam vel rem ab facilis quibusdam debitis natus unde voluptas dicta pariatur voluptate ex? Numquam sint officia quasi quis eaque non at commodi minima et nemo. Non, eligendi tempore dignissimos illo vel ducimus est nemo maxime enim consequatur. Sint, id, provident, a quidem beatae placeat iure nisi soluta voluptate natus eveniet necessitatibus excepturi totam cumque assumenda culpa itaque minima architecto cum temporibus asperiores est dolore neque. Ex, qui, ad, dolorem earum sequi laudantium aut possimus nisi numquam expedita pariatur eaque dolor magni exercitationem debitis quas in.</p>
+			</section>
+			<section id="example">
+				<h3>Example</h3>
+				<div class="tabbable">
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#1" data-toggle="tab">jQuery Deferred</a></li>
+						<li><a href="#2" data-toggle="tab">Async</a></li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="1">
+							<p>I'm in Section 1.</p>
+						</div>
+						<div class="tab-pane" id="2">
+							<div class="tabbable tabs-left">
+								<ul class="nav nav-tabs">
+									<li class="active"><a href="#series" data-toggle="tab">Series</a></li>
+									<li><a href="#parallel" data-toggle="tab">Parallel</a></li>
+									<li><a href="#whislt" data-toggle="tab">Whislt</a></li>
+									<li><a href="#waterfall" data-toggle="tab">Waterfall</a></li>
+									<li><a href="#queue" data-toggle="tab">Queue</a></li>
+								</ul>
+								<div class="tab-content">
+									<div class="tab-pane active" id="series">
+										<h4>Async Series</h4>
+										<p class="well">
+											If any functions in the series pass an error to its callback, no more functions are run and the callback for the series is immediately called with the value of the error. Once the tasks have completed, the results are passed to the final callback as an array.
+										</p>
+										<div class="tabbable">
+											<ul class="nav nav-tabs">
+												<li class="active"><a href="#series-index" data-toggle="tab">index.html</a></li>
+												<li><a href="#series-script" data-toggle="tab">script.js</a></li>
+											</ul>
+											<div class="tab-content">
+												<div class="tab-pane active" id="series-index">
+<pre class="prettyprint linenums">
+&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+	&lt;meta charset=&quot;UTF-8&quot;&gt;
+	&lt;title&gt;Async Queue&lt;/title&gt;
+	&lt;script src=&quot;scipt.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div id=&quot;logger&quot;&gt;
+		&lt;ol class=&quot;watcher&quot;&gt;&lt;/ol&gt;
+		&lt;div class=&quot;completed&quot;&gt;&lt;/div&gt;
+		&lt;div class=&quot;failed&quot;&gt;&lt;/div&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>														
+												</div>
+												<div class="tab-pane" id="series-script">
+<pre class="prettyprint linenums">
+var logProgress = function(message) {
+	$('#logger .watcher').append('&lt;li&gt;' + message + '&lt;/li&gt;');
+};
+var logCompleted = function(message){
+	$('#logger .completed').addClass('alert alert-success').text(message);
+};
+
+async.series({
+	one: function(callback) {
+		logProgress('call one');
+		callback(null, 1);
+	},
+	two: function(callback) {
+		logProgress('call two');
+		callback(null, 2);
+	},
+	three: function(callback) {
+		logProgress('call three');
+		callback(null, 2);
+	}
+},
+
+function(err, results) {
+	logCompleted('completed, results ' + JSON.stringify(results) + '');
+});
+</pre>
+												</div>
+											</div>
+										</div>
+										<button class="btn" onclick="startAsyncSeries()">Start Series</button>
+										<div class="pull-right">
+											Emulate 1 <input type="number" style="width: 50px;" name="emulate1" value=1000 title="in millisecconds" />
+											Emulate 2 <input type="number" style="width: 50px;" name="emulate2" value=2000 title="in millisecconds" />
+											Emulate 3 <input type="number" style="width: 50px;" name="emulate3" value=3000 title="in millisecconds" />
+										</div>
+									</div>
+									<div class="tab-pane" id="parallel">
+										<h4>Async Parallel</h4>
+										<p class="well">
+											Run an array of functions in parallel, without waiting until the previous function has completed If any of the functions pass an error to its callback, the main callback is immediately called with the value of the error. Once the tasks have completed, the results are passed to the final callback as an array.
+										</p>
+										<div class="tabbable">
+											<ul class="nav nav-tabs">
+												<li class="active"><a href="#parallel-index" data-toggle="tab">index.html</a></li>
+												<li><a href="#parallel-script" data-toggle="tab">script.js</a></li>
+											</ul>
+											<div class="tab-content">
+												<div class="tab-pane active" id="parallel-index">
+<pre class="prettyprint linenums">
+&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+	&lt;meta charset=&quot;UTF-8&quot;&gt;
+	&lt;title&gt;Async Queue&lt;/title&gt;
+	&lt;script src=&quot;scipt.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div id=&quot;logger&quot;&gt;
+		&lt;ol class=&quot;watcher&quot;&gt;&lt;/ol&gt;
+		&lt;div class=&quot;completed&quot;&gt;&lt;/div&gt;
+		&lt;div class=&quot;failed&quot;&gt;&lt;/div&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>														
+												</div>
+												<div class="tab-pane" id="parallel-script">
+<pre class="prettyprint linenums">
+var logProgress = function(message) {
+	$('#logger .watcher').append('&lt;li&gt;' + message + '&lt;/li&gt;');
+};
+var logCompleted = function(message){
+	$('#logger .completed').addClass('alert alert-success').text(message);
+};
+
+async.parallel({
+	one: function(callback) {
+		logProgress('call one');
+		callback(null, 1);
+	},
+	two: function(callback) {
+		logProgress('call two');
+		callback(null, 2);
+	},
+	three: function(callback) {
+		logProgress('call three');
+		callback(null, 2);
+	}
+},
+
+function(err, results) {
+	logCompleted('completed, results ' + JSON.stringify(results) + '');
+});
+</pre>
+												</div>
+											</div>
+										</div>
+										<button class="btn" onclick="startAsyncParallel()">Start Parallel</button>
+										<div class="pull-right">
+											Emulate 1 <input type="number" style="width: 50px;" name="emulate1" value=1000 title="in millisecconds" />
+											Emulate 2 <input type="number" style="width: 50px;" name="emulate2" value=2000 title="in millisecconds" />
+											Emulate 3 <input type="number" style="width: 50px;" name="emulate3" value=3000 title="in millisecconds" />
+										</div>
+									</div>
+									<div class="tab-pane" id="whislt">
+										<h4>Async Whislt</h4>
+										<p class="well">
+											Repeatedly call fn, while test returns true. Calls the callback when stopped, or an error occurs.
+										</p>
+										<div class="tabbable">
+											<ul class="nav nav-tabs">
+												<li class="active"><a href="#whislt-index" data-toggle="tab">index.html</a></li>
+												<li><a href="#whislt-script" data-toggle="tab">script.js</a></li>
+											</ul>
+											<div class="tab-content">
+												<div class="tab-pane active" id="whislt-index">
+<pre class="prettyprint linenums">
+&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+	&lt;meta charset=&quot;UTF-8&quot;&gt;
+	&lt;title&gt;Async Queue&lt;/title&gt;
+	&lt;script src=&quot;scipt.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div id=&quot;logger&quot;&gt;
+		&lt;ol class=&quot;watcher&quot;&gt;&lt;/ol&gt;
+		&lt;div class=&quot;completed&quot;&gt;&lt;/div&gt;
+		&lt;div class=&quot;failed&quot;&gt;&lt;/div&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>														
+												</div>
+												<div class="tab-pane" id="whislt-script">
+<pre class="prettyprint linenums">
+var logProgress = function(message) {
+	$('#logger .watcher').append('&lt;li&gt;' + message + '&lt;/li&gt;');
+};
+var logCompleted = function(message){
+	$('#logger .completed').addClass('alert alert-success').text(message);
+};
+
+async.whilst(
+
+	function() {
+		return count &lt; until;
+	},
+
+	function(callback) {
+		count++;
+		logProgress('call something here at ' + count);
+		setTimeout(callback, timeout);
+	},
+
+	function(err) {
+		logCompleted('completed in ' + count);
+	}
+);
+</pre>
+												</div>
+											</div>
+										</div>
+										<button class="btn" onclick="startAsyncWhilst()">Start Whislt</button>
+										<div class="pull-right">
+											Until <input type="number" style="width: 35px;" name="until" value="5" min="1" max="20" />
+											Emulate <input type="number" style="width: 50px;" name="emulate" value=1000 title="in millisecconds" />
+										</div>
+									</div>
+									<div class="tab-pane" id="waterfall">
+										<h4>Async Waterfall</h4>
+										<p class="well">
+											Runs an array of functions in series, each passing their results to the next in the array. However, if any of the functions pass an error to the callback, the next function is not executed and the main callback is immediately called with the error.
+										</p>
+										<div class="tabbable">
+											<ul class="nav nav-tabs">
+												<li class="active"><a href="#waterfall-index" data-toggle="tab">index.html</a></li>
+												<li><a href="#waterfall-script" data-toggle="tab">script.js</a></li>
+											</ul>
+											<div class="tab-content">
+												<div class="tab-pane active" id="waterfall-index">
+<pre class="prettyprint linenums">
+&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+	&lt;meta charset=&quot;UTF-8&quot;&gt;
+	&lt;title&gt;Async Queue&lt;/title&gt;
+	&lt;script src=&quot;scipt.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div id=&quot;logger&quot;&gt;
+		&lt;ol class=&quot;watcher&quot;&gt;&lt;/ol&gt;
+		&lt;div class=&quot;completed&quot;&gt;&lt;/div&gt;
+		&lt;div class=&quot;failed&quot;&gt;&lt;/div&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>														
+												</div>
+												<div class="tab-pane" id="waterfall-script">
+<pre class="prettyprint linenums">
+var logProgress = function(message) {
+	$('#logger .watcher').append('&lt;li&gt;' + message + '&lt;/li&gt;');
+};
+var logCompleted = function(message){
+	$('#logger .completed').addClass('alert alert-success').text(message);
+};
+
+async.waterfall([
+	function(callback) {
+		logProgress('Start calling second, send arguments &lt;pre&gt;' + JSON.stringify(['one', 'two']) + '&lt;/pre&gt;');
+		callback(null, 'one', 'two');
+	},
+
+	function(arg1, arg2, callback) {
+		logProgress('get arguments from first &lt;pre&gt;' + JSON.stringify(arguments) + '&lt;/pre&gt;');
+		logProgress('Start calling third, send arguments &lt;pre&gt;' + JSON.stringify(['three']) + '&lt;/pre&gt;');
+		callback(null, 'three');
+	},
+
+	function(arg1, callback) {
+		logProgress('get arguments from second &lt;pre&gt;' + JSON.stringify(arguments) + '&lt;/pre&gt;');
+		logProgress('Start calling completed, send arguments &lt;pre&gt;done&lt;/pre&gt;');
+		callback(null, 'done');
+	}
+], function(err, result) {
+	logCompleted('completed, results ' + JSON.stringify(arguments));
+});
+</pre>
+												</div>
+											</div>
+										</div>
+										<button class="btn" onclick="startAsyncWaterfall()">Start Waterfall</button>
+										<div class="pull-right">
+											Emulate <input type="number" style="width: 50px;" name="emulate" value=1000 title="in millisecconds" />
+										</div>
+									</div>
+									<div class="tab-pane" id="queue">
+										<h4>Async Queue (applyEachSeries)</h4>
+										<p class="well">Creates a queue object with the specified concurrency. Tasks added to the queue will be processed in parallel (up to the concurrency limit). If all workers are in progress, the task is queued until one is available. Once a worker has completed a task, the task's callback is called.</p>
+										<div class="tabbable">
+											<ul class="nav nav-tabs">
+												<li class="active"><a href="#queue-index" data-toggle="tab">index.html</a></li>
+												<li><a href="#queue-script" data-toggle="tab">script.js</a></li>
+											</ul>
+											<div class="tab-content">
+												<div class="tab-pane active" id="queue-index">
+<pre class="prettyprint linenums">
+&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+	&lt;meta charset=&quot;UTF-8&quot;&gt;
+	&lt;title&gt;Async Queue&lt;/title&gt;
+	&lt;script src=&quot;scipt.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;div id=&quot;logger&quot;&gt;
+		&lt;ol class=&quot;watcher&quot;&gt;&lt;/ol&gt;
+		&lt;div class=&quot;completed&quot;&gt;&lt;/div&gt;
+		&lt;div class=&quot;failed&quot;&gt;&lt;/div&gt;
+	&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>														
+												</div>
+												<div class="tab-pane" id="queue-script">
+<pre class="prettyprint linenums">
+var logProgressStart = function(index, message){
+	$('#logger .watcher').append('&lt;li id="'+index+'"&gt;'+message+'&lt;/li&gt;');
+}
+var logProgressEnd = function(index, message){
+	$('#logger .watcher #'+index).text(message);
+}
+var logCompleted = function(message){
+	$('#logger .completed').addClass('alert alert-success').text(message);
+}
+
+var q = async.queue(function (task, callback) {
+	logProgressStart(task.id, 'Requesting ' + task.name + ' ...');
+	callback();
+}, 2);
+
+
+// assign a callback
+q.drain = function() {
+	logCompleted('all items have been processed');
+}
+
+// add some items to the queue
+q.push({id: 'foo', name: 'foo'}, function (err) {
+	logProgressEnd('foo', 'Finished processing foo');
+});
+q.push({id: 'bar2', name: 'bar2'}, function (err) {
+	logProgressEnd('bar2', 'Finished processing bar2');
+});
+
+// add some items to the queue (batch-wise)
+q.push([{id: 'bar3', name: 'baz'},{id: 'bar3', name: 'bay'},{id: 'bar3', name: 'bax'}], function (err) {
+	logProgressEnd('bar3', 'Finished processing bar3');
+});
+
+// add some items to the front of the queue
+q.unshift({id: 'bar1', name: 'bar1'}, function (err) {
+	logProgressEnd('bar1', 'Finished processing bar1');
+});
+</pre>
+												</div>
+											</div>
+										</div>
+										<button class="btn" onclick="startAsyncQueue()">Start Queue</button>
+										<div class="pull-right">
+											Concurrency <input type="number" style="width: 35px;" name="concurrency" value="1" min="1" max="5" />
+											Emulate <input type="number" style="width: 50px;" name="emulate" value=1000 title="in millisecconds" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section id="logger">
+				<h3>Logger</h3>
+				<div class="well" style="min-height:200px">
+					<h5 class="info"></h5>
+
+					<ol class="watcher"></ol>
+					<div class="completed"></div>
+					<div class="failed"></div>
+				</div>
+				<button class="btn pull-right" onclick="clearLogger()">Clear Logger</button>
+			</section>
+		</div>	
+	</div>
+</body>
+</html>

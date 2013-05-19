@@ -19,6 +19,76 @@ $upload = array(
 Slim\Slim::registerAutoLoader();
 $app = new Slim\Slim();
 
+$app->get('/superheroes', function() use($app){
+    $app->response()->header("Content-Type", "application/json");
+	echo json_encode(array(
+			'marvel' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/marvel',
+			'dc' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/dc',
+			'manga' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/manga'
+	));
+});
+$app->get('/dc', function() use($app){
+    $app->response()->header("Content-Type", "application/json");
+	echo json_encode(array(
+		'Batman' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/character/batman',
+		'Superman' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/character/superman',
+		'Justice League' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/character/justice-league'
+	));
+});
+$app->get('/marvel', function() use($app){
+    $app->response()->header("Content-Type", "application/json");
+	echo json_encode(array(
+		'X-Men' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/character/x-men',
+		'The Avengers' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/character/avengers',
+		'Fantastic Four' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/character/f4',
+		'Spiderman' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/character/spiderman',
+	));
+});
+$app->get('/manga', function() use($app){
+    $app->response()->header("Content-Type", "application/json");
+	echo json_encode(array(
+		'Dragon Ball' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/character/dragon-ball',
+		'Naruto' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/api/character/naruto'
+	));
+});
+$app->get('/character/:value', function($value) use($app){
+    $app->response()->header("Content-Type", "application/json");
+    $characters = array();
+    switch($value){
+    	case 'x-men':
+    		$characters = array('Wolverine', 'Storm', 'Cyclops', 'Jane');
+    		break;
+    	case 'avengers':
+    		$characters = array('Thor', 'Captain America', 'Iron Man', 'Hulk');
+    		break;
+    	case 'f4':
+    		$characters = array('Richards', 'Sue', 'Johnny', 'Ben');
+    		break;
+    	case 'spiderman':
+    		$characters = array('Spiderman', 'Venom', 'Lizard', 'Doctor Octopus');
+    		break;
+    	case 'batman':
+    		$characters = array('Bruce Wayne', 'Robin', 'Joker', 'Bane');
+    		break;
+    	case 'superman':
+    		$characters = array('Clark Kent', 'Lex Luthor', 'Kryptonite Man');
+    		break;
+    	case 'flash':
+    		$characters = array('Richards', 'Sue', 'Johnny', 'Ben');
+    		break;
+    	case 'justice-league':
+    		$characters = array('superman', 'Batman', 'Wonder Woman', 'Flash');
+    		break;
+    	case 'dragon-ball':
+    		$characters = array('Songoku', 'Bezita', 'Ceil', 'Buu');
+    		break;
+    	case 'naruto':
+    		$characters = array('Naruto', 'Kakashi', 'Sasuke', 'Flash');
+    		break;
+    }
+	echo json_encode($characters);
+});
+
 function objectToArray($obj, $serialized = false) 
 {
     $arrObj = is_object($obj) ? get_object_vars($obj) : $obj;
@@ -51,8 +121,6 @@ $app->get('/promise/:value', function($value) use($app){
 	echo json_encode(array('response' => $value));
 });
 
-// http://nurkiewicz.blogspot.com/2013/03/promises-and-deferred-objects-in-jquery.html
-// http://stackoverflow.com/questions/6538470/jquery-deferred-waiting-for-multiple-ajax-requests-to-finish
 $app->post('/convert/:phone', function($phone) use ($app, $db){
 	$fileJSON = '../phones/' . $phone . '.json';
 	if(!file_exists($fileJSON)) throw new Exception('file not found');
