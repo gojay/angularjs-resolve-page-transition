@@ -9,7 +9,7 @@ CREATE TABLE `phones` (
   UNIQUE KEY `phone_id` (`phone_id`)
 );
 
-CREATE TABLE `phonemeta` (
+CREATE TABLE `metas` (
   `meta_id` int(11) unsigned NOT NULL auto_increment,
   `phone_id` int(11) unsigned NOT NULL,
   `meta_name` varchar(255) NOT NULL,

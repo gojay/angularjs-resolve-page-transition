@@ -91,16 +91,17 @@ angular.module('PhoneProvider', [])
 					$('body').addClass(startTransition);
 					setTimeout(function(){
 						console.log('change html, body css');
-						$('html').css({'height':'auto', 'overflow':'auto', 'background':'#fff'});
-						$('body').css({'height':'auto', 'overflow':'auto'}).removeClass(startTransition);
-					}, 1200);
+						// $('html').css({'height':'auto', 'overflow':'auto', 'background':'#fff'});
+						$('html').css({'background':'#fff'});
+						$('body').removeClass(startTransition);
+					}, 2200);
 				},
 				change: function(){
 					var self  = this;
 					var $page = this.getElement();
 					// http://api.jquery.com/delay/
 					// http://api.jquery.com/queue/
-					$page.addClass(classOut).delay(1000).queue(function(next) {
+					$page.addClass(classOut).delay(2200).queue(function(next) {
 
 						$(this).removeClass(classOut);
 						$(this).addClass(classIn);

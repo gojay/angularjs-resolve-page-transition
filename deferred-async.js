@@ -28,7 +28,7 @@ var logProgressStart = function(index, message) {
 	$('#logger .watcher').append('<li id="' + index + '">' + message + '</li>');
 };
 var logProgressEnd = function(index, message) {
-	$('#logger .watcher #' + index).text(message);
+	$('#logger .watcher #' + index).addClass('text-success').text(message);
 };
 var logCompleted = function(message) {
 	$('#logger .completed').addClass('alert alert-success').text(message);
@@ -40,18 +40,19 @@ var logFailed = function(message) {
 // http://nurkiewicz.blogspot.com/2013/03/promises-and-deferred-objects-in-jquery.html
 // http://stackoverflow.com/questions/6538470/jquery-deferred-waiting-for-multiple-ajax-requests-to-finish
 
-// 	var promises = [
-// 	    $.getJSON(url + '/promise/1'),
-// 	    $.getJSON(url + '/promise/2'),
-// 	    $.getJSON(url + '/promise/3'),
-// 	    $.getJSON(url + '/promise/4'),
-// 	    $.getJSON(url + '/promise/5')
-// 	];
-
-// 	/*$.when.apply($, promises).done(function(e) {
-// 	    console.debug('debug',e);
-// 	    console.info(arguments);
-// 	});*/
+var promises = [
+	$.getJSON(url + '/promise/1'),
+	$.getJSON(url + '/promise/2'),
+	$.getJSON(url + '/promise/3'),
+	$.getJSON(url + '/promise/4'),
+	$.getJSON(url + '/promise/5')
+];
+/*
+$.when.apply($, promises).done(function(e) {
+	console.debug('debug', e);
+	console.info(arguments);
+});
+*/
 
 // 	function intervalPromise(millis, count) {
 // 	    var deferred = $.Deferred();
@@ -207,61 +208,36 @@ function getSuperheroes2(hero, timeout){
 	return d.promise();
 }
 
-// $.when(getSuperheroes2('dc'), getSuperheroes2('marvel'))
-// 	.then(function(dc, marvel){
-// 		logProgress('DC heroes : ' + dc.join(', '));
-// 		logProgress('Marvel heroes : ' + marvel.join(', '));
-// 		return dc.concat(marvel);
-// 	})
-// 	.done(function(res){
-// 		logProgress('American heroes : ' + res.join(', '));
-// 	});
+$.when(getSuperheroes2('dc'), getSuperheroes2('marvel'))
+	.pipe(function(dc, marvel){
+		logProgress('DC heroes : ' + dc.join(', '));
+		logProgress('Marvel heroes : ' + marvel.join(', '));
+		return dc.concat(marvel);
+	})
+	.done(function(res){
+		logProgress('American heroes : ' + res.join(', '));
+	});
 
-function doTask(i){
-    var defer = $.Deferred();
-    setTimeout(function(){
-        logProgress("Step " + (i+1) + " finished.");
-        defer.resolve(i);
-    }, Math.random()*1000);
-    return defer.promise();
-}
-
-var promises = [
-    url + '/promise/1',
-    url + '/promise/2',
-    url + '/promise/3',
-    url + '/promise/4',
-    url + '/promise/5'
-];
-function doPromise(index){
-    var defer = $.Deferred();
-    $.getJSON(promises[index]).done(function(res){
-        logProgress("Step " + (index + 1) + " finished." + JSON.stringify(res));
-    	defer.resolve(index);
-    })
-    return defer.promise();
-}
-function doPromise2(index, url){
+function doPromise(url){
     var defer = $.Deferred();
     $.getJSON(url).done(function(res){
-        logProgress("Step " + (index + 1) + " finished." + JSON.stringify(res));
-    	defer.resolve(index);
+        logProgress("Step " + res.response + " finished." + JSON.stringify(res));
+    	defer.resolve(parseInt(res.response));
     })
     return defer.promise();
 }
-
-$.getJSON(url+'/promises').then(function(promises){
-	var currentStep = doPromise2(0, promises[0]);
-    for(var i = 1; i < promises.length; i++){
-        currentStep = currentStep.pipe(function(j){
-            return doPromise(j+1, promises[i]);
-        });
-    }
-    $.when(currentStep).done(function(res){
-        console.log("All steps done.", res);
-        logCompleted("All steps done.");
-    });
-})
+// $.getJSON(url+'/promises').then(function(urls){
+// 	var currentStep = doPromise(urls[0]);
+//     for(var i = 1; i < urls.length; i++){
+//         currentStep = currentStep.pipe(function(j){
+//             return doPromise(urls[j]);
+//         });
+//     }
+//     $.when(currentStep).done(function(res){
+//         console.log("All steps done.", res);
+//         logCompleted("All steps done.");
+//     });
+// })
 
 // $(function(){
 //     var currentStep = doPromise(0);
@@ -418,8 +394,8 @@ function main() {
 	// });
 
 
-	// http://stackoverflow.com/questions/8049041/chaining-ajax-requests-with-jquerys-deferred
-	// http://spin.atomicobject.com/2011/08/24/chaining-jquery-ajax-calls/
+// http://stackoverflow.com/questions/8049041/chaining-ajax-requests-with-jquerys-deferred
+// http://spin.atomicobject.com/2011/08/24/chaining-jquery-ajax-calls/
 var chainedGetJSON2 = function(requests) {
 	var seed = $.Deferred();
 
@@ -446,11 +422,49 @@ var chainedGetJSON2 = function(requests) {
 	return finalPromise;
 };
 
+var chainedGetJSON3 = function(requests) {
+	var seed = $.Deferred();
+
+	console.log('requests', requests);
+
+	var finalPromise = requests.reduce(function(promise, request, index) {
+		console.log('<<<<<<<<<<<<<<<<<<');
+		console.log('request', request);
+		console.log('index', index);
+		console.log('>>>>>>>>>>>>>>>>>>>');
+		return promise.pipe(function() {
+			var liIndex = 'item-' + index;
+			logProgressStart(liIndex, 'requesting ' + request);
+			return $.post(url + '/convert/' + request).pipe(function(res) {
+				var response = JSON.parse(res);
+				console.log(response);
+				logProgressEnd(liIndex, response.message);
+				return res;
+			});
+		});
+	}, seed.promise());
+
+	// Start the chain 
+	seed.resolve();
+
+	return finalPromise;
+};
+
 // $.getJSON(url +'/promises').then(function(urls) {
 //   	chainedGetJSON2(urls).done(function(res) {
-// 	  		$('#complete').text('All completed');
-// 		})
+//   		logCompleted("All completed.");
+// 	})
 // });
+
+function convertPhones(){
+	startLogger('Phones converting...', function(){
+		$.getJSON(url +'/phones').then(function(phones){
+			chainedGetJSON3(phones).done(function(res) {
+		  		logCompleted("All completed.");
+			})
+		});
+	});
+}
 
 // https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/Reduce
 

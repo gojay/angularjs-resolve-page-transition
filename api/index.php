@@ -121,31 +121,59 @@ $app->get('/promise/:value', function($value) use($app){
 	echo json_encode(array('response' => $value));
 });
 
+$app->get('/phones', function() use ($app){
+	$phones = array();
+	$dir = dirname(dirname(__FILE__)) . '/phones';
+	foreach (glob($dir.'/*.json') as $key => $filename) {
+		array_push($phones, basename($filename));
+	}
+	sleep(3);
+	echo json_encode($phones);
+});
+
 $app->post('/convert/:phone', function($phone) use ($app, $db){
-	$fileJSON = '../phones/' . $phone . '.json';
-	if(!file_exists($fileJSON)) throw new Exception('file not found');
+	$fileJSON = '../phones/' . $phone;
+	try{
+		if(!file_exists($fileJSON)) throw new Exception('file not found');
 
-	$json = json_decode(file_get_contents($fileJSON));
-	$json->images = array_map('getFileName', $json->images);
+		$json = json_decode(file_get_contents($fileJSON));
+		$json->images = array_map('getFileName', $json->images);
 
-	$data = objectToArray($json, true);
+		$data = objectToArray($json, true);
 
-	$phone_columns = array('id','name', 'description');
-	$arr['phones']    = array_intersect_key($data, array_flip($phone_columns));
-	$arr['phonemeta'] = array_diff_key($data, array_flip($phone_columns));
+		$phone_columns = array('id','name', 'description');
+		$arr['phones']    = array_intersect_key($data, array_flip($phone_columns));
+		$arr['phonemeta'] = array_diff_key($data, array_flip($phone_columns));
 
-	$phones = $db->phones()->insert(array(
-		'phone_title' 		=> $arr['phones']['id'],
-		'phone_name'  		=> $arr['phones']['name'],
-		'phone_description' => $arr['phones']['description'],
-		'phone_date'  		=> date('Y-m-d H:i:s')
-	));
-	foreach ($arr['phonemeta'] as $key => $value) {
-		$phones->phonemeta()->insert(array(
-			'meta_name'  => $key,
-			'meta_value' => $value
+		$phone = $db->phones()->insert(array(
+			'phone_title' 		=> $arr['phones']['id'],
+			'phone_name'  		=> $arr['phones']['name'],
+			'phone_description' => $arr['phones']['description'],
+			'phone_date'  		=> date('Y-m-d H:i:s')
+		));
+		foreach ($arr['phonemeta'] as $key => $value) {
+			$db->metas()->insert(array(
+				'phone_id'	 => $phone['phone_id'],
+				'meta_name'  => $key,
+				'meta_value' => $value
+			));
+		}
+
+		sleep(3);
+
+		echo json_encode(array(
+			'status' => true,
+			'phone_id' => $phone['phone_id'],
+			'message' => 'Success ' . $arr['phones']['name']
 		));
 	}
+	catch(Exception $e){
+		echo json_encode(array(
+			'status' => false,
+			'message' => 'Error  ' . $arr['phones']['name']
+		));
+	}
+	
 });
 
 $app->get('/phone/images/:phone_id', function ($phoneId) use ($app, $db, $upload) {
