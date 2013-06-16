@@ -25,7 +25,7 @@ var logProgress = function(message) {
 	$('#logger .watcher').append('<li>' + message + '</li>');
 };
 var logProgressStart = function(index, message) {
-	$('#logger .watcher').append('<li id="' + index + '">' + message + '</li>');
+	$('#logger .watcher').append('<li id="' + index + '"><i class="icon-spinner icon-spin"></i> ' + message + '</li>');
 };
 var logProgressEnd = function(index, message) {
 	$('#logger .watcher #' + index).addClass('text-success').text(message);
@@ -434,7 +434,7 @@ var chainedGetJSON3 = function(requests) {
 		console.log('>>>>>>>>>>>>>>>>>>>');
 		return promise.pipe(function() {
 			var liIndex = 'item-' + index;
-			logProgressStart(liIndex, 'requesting ' + request);
+			logProgressStart(liIndex, 'requesting ' + request.replace('.json', '...'));
 			return $.post(url + '/convert/' + request).pipe(function(res) {
 				var response = JSON.parse(res);
 				console.log(response);

@@ -125,7 +125,9 @@ $app->get('/phones', function() use ($app){
 	$phones = array();
 	$dir = dirname(dirname(__FILE__)) . '/phones';
 	foreach (glob($dir.'/*.json') as $key => $filename) {
-		array_push($phones, basename($filename));
+		$file = basename($filename);
+		if(preg_match('/phones/', $file)) continue;
+		array_push($phones, basename($file));
 	}
 	sleep(3);
 	echo json_encode($phones);
@@ -142,8 +144,11 @@ $app->post('/convert/:phone', function($phone) use ($app, $db){
 		$data = objectToArray($json, true);
 
 		$phone_columns = array('id','name', 'description');
+		$phone_meta    = array_diff_key($data, array_flip($phone_columns));
+		$phone_images  = array('images');
 		$arr['phones']    = array_intersect_key($data, array_flip($phone_columns));
-		$arr['phonemeta'] = array_diff_key($data, array_flip($phone_columns));
+		$arr['phonemeta'] = array_diff_key($phone_meta, array_flip($phone_images));
+		$arr['images']    = array_intersect_key($phone_meta, array_flip($phone_images));
 
 		$phone = $db->phones()->insert(array(
 			'phone_title' 		=> $arr['phones']['id'],
@@ -151,12 +156,22 @@ $app->post('/convert/:phone', function($phone) use ($app, $db){
 			'phone_description' => $arr['phones']['description'],
 			'phone_date'  		=> date('Y-m-d H:i:s')
 		));
-		foreach ($arr['phonemeta'] as $key => $value) {
-			$db->metas()->insert(array(
-				'phone_id'	 => $phone['phone_id'],
-				'meta_name'  => $key,
-				'meta_value' => $value
-			));
+		if($arr['phonemeta']){
+			foreach ($arr['phonemeta'] as $key => $value) {
+				$phone->phonemeta()->insert(array(
+					'phone_id'	 => $phone['phone_id'],
+					'meta_name'  => $key,
+					'meta_value' => $value
+				));
+			}
+		}
+		if($arr['images']){
+			foreach ($arr['images'] as $value) {
+				$phone->images()->insert(array(
+					'phone_id'	 => $phone['phone_id'],
+					'image_name' => $value
+				));
+			}
 		}
 
 		sleep(3);
@@ -170,11 +185,13 @@ $app->post('/convert/:phone', function($phone) use ($app, $db){
 	catch(Exception $e){
 		echo json_encode(array(
 			'status' => false,
-			'message' => 'Error  ' . $arr['phones']['name']
+			'message' => 'Error  ' . $e->getMessage()
 		));
 	}
 	
 });
+
+/* images */
 
 $app->get('/phone/images/:phone_id', function ($phoneId) use ($app, $db, $upload) {
     $app->response()->header("Content-Type", "application/json");

@@ -91,9 +91,8 @@ angular.module('PhoneProvider', [])
 					$('body').addClass(startTransition);
 					setTimeout(function(){
 						console.log('change html, body css');
-						// $('html').css({'height':'auto', 'overflow':'auto', 'background':'#fff'});
-						$('html').css({'background':'#fff'});
-						$('body').removeClass(startTransition);
+						$('html').css({'height':'auto', 'overflow-y':'auto', 'background':'#fff'});
+						$('body').css({'height':'auto', 'overflow-y':'auto'}).removeClass(startTransition);
 					}, 2200);
 				},
 				change: function(){

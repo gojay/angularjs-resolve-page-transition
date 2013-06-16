@@ -1,8 +1,13 @@
 <div id="loading" ng-class="loaderClass">
-	<div ng-show="isShow" ng-class="alertClass" class="span12">
+	<img ng-show="isShow" src="img/ajax-loader.gif" alt="loading" style="
+	    position: fixed;
+	    left: 50%;
+	    top: 360px;
+	"/>
+	<!-- <div ng-show="isShow" ng-class="alertClass" class="span12">
 		<div class="progress progress-warning  progress-striped active">
 			<span>{{textInfo}}</span>
 			<div class="bar" style="width: 100%;"></div>
 		</div>
-	</div>
+	</div> -->
 </div>

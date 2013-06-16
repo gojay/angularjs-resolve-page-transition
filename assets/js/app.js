@@ -29,7 +29,7 @@ angular.module('MyApp', ['PhoneProvider', 'PhoneControllers', 'PhoneDirectives',
 						},
 						delay: function($q, $timeout) {
 							var delay = $q.defer();
-							$timeout(delay.resolve, 2000);
+							$timeout(delay.resolve, 1000);
 							return delay.promise;
 						}
 					}

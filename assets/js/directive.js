@@ -46,17 +46,18 @@
 	// Runs during compile
 	return {
 		restrict: 'EAC', // E = Element, A = Attribute, C = Class, M = Comment
-		// templateUrl: 'partials/components/loader.html',
+		templateUrl: 'partials/components/loader.html',
 		replace: true,
 		link: function($scope, iElm, iAttrs, controller) {
 
+			$scope.isShow = true;
 			// start page transition untuk pertama kali
 			pageTransition.start();
 
 			$rootScope.$on('$routeChangeStart', function(event, next, current) {
 				$log.info('route starting...');
 
-				$.blockUI({
+				/*$.blockUI({
 					timeout: 2000,
 					showOverlay: false,
 					message:'<i class="icon-spinner icon-spin icon-4x"></i>',
@@ -65,9 +66,9 @@
 						background : 'none',
 						border : 'none'
 					}
-				});
+				});*/
 
-				// $scope.isShow      = true;
+				$scope.isShow      = true;
 				// $scope.loaderClass = 'load';
 				// $scope.alertClass  = '';
 				// $scope.textInfo    = 'Loading';
@@ -78,10 +79,9 @@
 			});
 			$rootScope.$on('$routeChangeSuccess', function(event, current, previous) {
 				$log.info('route success');
-				// $scope.isShow   = false;
-				// $scope.textInfo = 'Loaded';
 
-				// $.unblockUI();
+				$scope.isShow   = false;
+				// $scope.textInfo = 'Loaded';
 
 				/*
 				 * tampilkan 'message' saat page sudah tampil
@@ -92,6 +92,8 @@
 					$scope.isShow = false;
 				}, 3000);
 				*/
+
+				// $.unblockUI();
 			});
 			$rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
 				$log.error('route error', rejection);
