@@ -18,6 +18,11 @@
 				(Math.round(size * 100 / 1024) / 100).toString() + 'KB';
 		};
 	})
+	.filter('getFilename', function(){
+		return function(path){
+			return path.substr(0, path.lastIndexOf('.')).replace(/^.*[\\\/]/, '');
+		};
+	})
 	.filter('duration', function(){
 		return function(sec){
 			var toHHMMSS = function(sec) {

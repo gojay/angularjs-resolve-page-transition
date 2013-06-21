@@ -18,9 +18,9 @@ angular.module('MyApp', ['PhoneProvider', 'PhoneControllers', 'PhoneDirectives',
 					templateUrl: 'partials/phoneList.html',
 					controller: 'PhoneListController',
 					resolve: {
-						phones: function($q, Phone) {
+						phones: function($q, Phones) {
 							var deffered = $q.defer();
-							Phone.query(function(data) {
+							Phones.get(function(data) {
 								deffered.resolve(data);
 							}, function(err) {
 								deffered.reject(err);

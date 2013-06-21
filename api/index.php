@@ -10,10 +10,21 @@ include 'RestApiInterface.php';
 
 // upload configuration
 $upload = array(
-	// 'dir' => 'D:/WampDeveloper/Websites/dev.angularjs/webroot/_learn_/angularjs-resolve-page-transition/img/uploads/',
-	'dir' => 'D:/Development/AngularJS/_learn_/angularjs-resolve-page-transition/img/uploads/',
+	'dir' => 'D:/WampDeveloper/Websites/dev.angularjs/webroot/_learn_/angularjs-resolve-page-transition/img/uploads/',
+	// 'dir' => 'D:/Development/AngularJS/_learn_/angularjs-resolve-page-transition/img/uploads/',
 	'url' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/img/uploads/'
 );
+
+/* functions */
+
+function truncate_words($text, $limit, $ellipsis = '...') {
+    if( strlen($text) > $limit ) {
+        $endpos = strpos(str_replace(array("\r\n", "\r", "\n", "\t"), ' ', $text), ' ', $limit);
+        if($endpos !== FALSE)
+            $text = trim(substr($text, 0, $endpos)) . $ellipsis;
+    }
+    return $text;
+}
 
 // SLIM REST API
 Slim\Slim::registerAutoLoader();
@@ -121,7 +132,7 @@ $app->get('/promise/:value', function($value) use($app){
 	echo json_encode(array('response' => $value));
 });
 
-$app->get('/phones', function() use ($app){
+$app->get('/sources', function() use ($app){
 	$phones = array();
 	$dir = dirname(dirname(__FILE__)) . '/phones';
 	foreach (glob($dir.'/*.json') as $key => $filename) {
@@ -136,20 +147,31 @@ $app->get('/phones', function() use ($app){
 $app->post('/convert/:phone', function($phone) use ($app, $db){
 	$fileJSON = '../phones/' . $phone;
 	try{
+		// throw error, if file not exists
 		if(!file_exists($fileJSON)) throw new Exception('file not found');
 
+		// json descode
 		$json = json_decode(file_get_contents($fileJSON));
+		// mapping get image filename only
 		$json->images = array_map('getFileName', $json->images);
 
+		// convert object to array
 		$data = objectToArray($json, true);
 
-		$phone_columns = array('id','name', 'description');
-		$phone_meta    = array_diff_key($data, array_flip($phone_columns));
-		$phone_images  = array('images');
-		$arr['phones']    = array_intersect_key($data, array_flip($phone_columns));
-		$arr['phonemeta'] = array_diff_key($phone_meta, array_flip($phone_images));
-		$arr['images']    = array_intersect_key($phone_meta, array_flip($phone_images));
+		// array manipulation
+		$phone_main_columns = array('id','name', 'description');
+		$phone_image_column = array('images');
+		$phone_meta       = array_diff_key($data, array_flip($phone_main_columns));
+		$images           = array_intersect_key($phone_meta, array_flip($phone_image_column));
 
+		// store to array key value
+		$arr = array(
+			'phones' => array_intersect_key($data, array_flip($phone_main_columns)),
+			'phonemeta' => array_diff_key($phone_meta, array_flip($phone_image_column)),
+			'images' => unserialize(array_pop($images))
+		);
+
+		// insert data
 		$phone = $db->phones()->insert(array(
 			'phone_title' 		=> $arr['phones']['id'],
 			'phone_name'  		=> $arr['phones']['name'],
@@ -188,7 +210,64 @@ $app->post('/convert/:phone', function($phone) use ($app, $db){
 			'message' => 'Error  ' . $e->getMessage()
 		));
 	}
-	
+});
+
+$app->get('/phones', function() use ($app, $db){
+	$app->response()->header("Content-Type", "application/json");
+	try {
+		$response = array();
+		foreach ($db->phones() as $index => $phone) {
+			$images = array();
+			foreach ($phone->images() as $image) {
+				array_push($images, $image['image_name']);
+			} 
+			$data = array(
+				'age'      => (int) $phone['phone_id'],
+				'id'       => $phone['phone_title'],
+				'name'     => html_entity_decode($phone['phone_name'], ENT_COMPAT, 'UTF-8'),
+				'imageUrl' => 'img/phones/' . (($phone['phone_image']) ? $phone['phone_image'] : $images[0]),
+				'snippet'  => html_entity_decode(
+								// preg_replace('/\s+?(\S+)?$/', '', substr($phone['phone_description'], 0, 100)),
+								truncate_words($phone['phone_description'], 155),
+								ENT_COMPAT, 'UTF-8'
+							)
+			);
+			array_push($response, $data);
+		}
+		echo json_encode($response);
+	}
+	catch(Exception $e){
+		$app->halt(500, $e->getMessage());
+	}
+});
+$app->get('/phone/:phone_id', function($phone_id) use ($app, $db){
+	$app->response()->header("Content-Type", "application/json");
+	try {
+		if(preg_match('/^[1-9][0-9]*$/', $phone_id))
+			$phone = $db->phones[$phone_id];
+		else
+			$phone = $db->phones('phone_title = ?', $phone_id)->fetch();
+
+		$data = array(
+			'id'          => $phone['phone_id'],
+			'name'        => $phone['phone_name'],
+			'description' => html_entity_decode($phone['phone_description'], ENT_COMPAT, 'UTF-8')
+		);
+		foreach ($phone->images() as $image) {
+			$data['images'][] = 'img/phones/' . $image['image_name'];
+		}
+		$metas = array();
+		foreach ($phone->phonemeta() as $meta) {
+			$value = unserialize($meta['meta_value']);
+			$metas[$meta['meta_name']] = ($value === false) ? $meta['meta_value'] : $value ;
+		}
+		$data = array_merge($data, $metas);
+
+		echo json_encode($data);
+	}
+	catch(Exception $e){
+		$app->halt(500, $e->getMessage());
+	}
 });
 
 /* images */

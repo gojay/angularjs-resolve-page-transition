@@ -122,7 +122,7 @@
 						<div class="accordion-group" ng-repeat="image in phone.images">
 							<div class="accordion-heading">
 			                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#gallery-list" href="#gallery-field-{{$index+1}}">
-			                     	{{image}}
+			                     	{{image | getFilename}}
 			                    </a>
 		                  	</div>
 		                  	<div id="gallery-field-{{$index+1}}" class="accordion-body collapse" ng-class="{in:$index == 0}">
@@ -133,7 +133,7 @@
 					                <div class="span8">
 							            <div class="alert alert-success show-buttons">
 										  	<span class="buttons">
-											  	<!-- <button class="btn btn-primary" ng-click="insertEditor($event)">Insert to Editor</button> -->
+											  	<button class="btn btn-primary" ng-click="insertEditor($event)">Insert to Editor</button>
 											  	<button class="btn btn-info" ng-click="setFeatureImage($event)">Set Featured Image</button>
 											  	<span class="pull-right">
 											  		<button class=" btn btn-danger" ng-click="deleteImage($event, $index)" data-loading-text="<img src='img/ajax-spin.gif'/> Loading..."><i class="icon-remove"></i> Delete</button>

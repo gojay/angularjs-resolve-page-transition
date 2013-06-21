@@ -458,7 +458,7 @@ var chainedGetJSON3 = function(requests) {
 
 function convertPhones(){
 	startLogger('Phones converting...', function(){
-		$.getJSON(url +'/phones').then(function(phones){
+		$.getJSON(url +'/sources').then(function(phones){
 			chainedGetJSON3(phones).done(function(res) {
 		  		logCompleted("All completed.");
 			})

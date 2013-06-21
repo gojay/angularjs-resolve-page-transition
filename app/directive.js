@@ -561,8 +561,9 @@
 		restrict: 'E', // E = Element, A = Attribute, C = Class, M = Comment
 		templateUrl: 'partials/components/iupload.html',
 		controller: function($scope, $element, PhoneImage){
-			$scope.phoneImages = PhoneImage.get({ imageId:1 });
-			console.log($scope.phoneImages);
+			$scope.phoneImages = PhoneImage.get({ imageId:$scope.phone.id });
+			
+			console.log('phoneImages', $scope.phoneImages);
 
 			$scope.deleteImage = function(event, index){
 				var $btn    = $(event.currentTarget);
