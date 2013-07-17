@@ -606,12 +606,12 @@
 			var handleFileReaderUplod = function(e){
 				var target = e.currentTarget;
 				var file   = e.target.files[0];
-				// data
-				var $row   = e.data.rowEl;
-				var $img   = e.data.imgEl;
-				var callback = e.data.callback;
-				// url
-				var url    = 'api/phone/images/' + e.data.imgId;
+				// get elements
+				var $row = e.data.rowEl;
+				var $img = e.data.imgEl;
+				// callback & url
+				var cb   = e.data.cb;
+				var url  = 'api/phone/images/' + e.data.imgId;
 
 				console.log('handleFileReaderUplod', e);
 
@@ -642,7 +642,7 @@
 						}, function(response){
 							$img[0].src = response.url;
 							$row.removeClass('loading');
-							if( callback ) callback(response);
+							if( cb ) cb(response);
 						});
 					};
 				})(file);
@@ -901,6 +901,7 @@
 	// Runs during compile
 	return {
 		scope: {
+			index:'=',
 			img:'=image'
 		}, // {} = isolate, true = child, false/undefined = no change
 		restrict: 'EA', // E = Element, A = Attribute, C = Class, M = Comment
@@ -917,21 +918,27 @@
 		},
 		link: function($scope, iElm, iAttrs, ctrl) {
 			var d = $scope.img.image.dimensions;
-			var calcDimensions = [];
-			angular.forEach(ctrl.sizes, function(e){
-				calcDimensions.push({
+			var dimensions = {
+				index: $scope.index,
+				list: []
+			};
+			angular.forEach(ctrl.sizes, function(e,i){
+				dimensions.list.push({
 					type: e.type,
 					dimension: ctrl.calculate(d, e.percent)
 				});
 			});
-			calcDimensions.push({
+			dimensions.list.push({
 				type:'original',
 				dimension:d
 			});
-			$scope.dimensions = calcDimensions;
+
+			console.log('dimensions', dimensions);
+
+			$scope.dimensions = dimensions;
 
 			$scope.setSize = function(index){
-				var dimension = calcDimensions[index].dimension;
+				var dimension = dimensions.list[index].dimension;
 				console.log(dimension);
 				$('input[name="img_size"]').val(JSON.stringify(dimension));
 			};

@@ -151,7 +151,6 @@ function nested() {
 	});
 }
  
- 
 function nested_a() {
 	return $.Deferred(function(d) {
 		setTimeout(d.resolve, Math.random() * 1000);

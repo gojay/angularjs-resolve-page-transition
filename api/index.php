@@ -8,14 +8,30 @@ include 'db/config.php';
 // class API
 include 'RestApiInterface.php';
 
-// upload configuration
-$upload = array(
-	'dir' => 'D:/WampDeveloper/Websites/dev.angularjs/webroot/_learn_/angularjs-resolve-page-transition/img/uploads/',
-	// 'dir' => 'D:/Development/AngularJS/_learn_/angularjs-resolve-page-transition/img/uploads/',
-	'url' => 'http://dev.angularjs/_learn_/angularjs-resolve-page-transition/img/uploads/'
-);
+/* UPLOAD CONFIG */
 
-/* functions */
+define('UPLOAD_DIR', dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'img'. DIRECTORY_SEPARATOR . 'phones');
+$protocol = ($_SERVER['HTTPS'] && $_SERVER['HTTPS'] != "off") ? "https" : "http";
+$base_url = $protocol . "://" . $_SERVER['HTTP_HOST'];
+define('UPLOAD_URL', $base_url . '/_learn_/angularjs-resolve-page-transition/img/phones');
+
+/* FUNCTIONS */
+
+function objectToArray($obj, $serialized = false) 
+{
+    $arrObj = is_object($obj) ? get_object_vars($obj) : $obj;
+    foreach ($arrObj as $key => $val) {
+        $val = (is_array($val) || is_object($val)) ? objectToArray($val) : $val;
+        $arr[$key] = $serialized
+        				? (is_array($val) ? serialize($val) : htmlentities($val, ENT_QUOTES, "utf-8"))
+        				: (is_array($val) ? $val : htmlentities($val, ENT_QUOTES, "utf-8")) ;
+    }
+    return $arr;
+}  
+
+function getFileName($url){
+	return basename($url);
+}
 
 function truncate_words($text, $limit, $ellipsis = '...') {
     if( strlen($text) > $limit ) {
@@ -26,9 +42,20 @@ function truncate_words($text, $limit, $ellipsis = '...') {
     return $text;
 }
 
-// SLIM REST API
+/* API */
+
 Slim\Slim::registerAutoLoader();
 $app = new Slim\Slim();
+
+$app->get('/config', function() use($app) {
+    $app->response()->header("Content-Type", "application/json");
+	echo json_encode(array(
+		'upload' => array(
+			'upload_dir'  => UPLOAD_DIR,
+			'upload_url'  => UPLOAD_URL
+		)
+	));
+});
 
 $app->get('/superheroes', function() use($app){
     $app->response()->header("Content-Type", "application/json");
@@ -99,22 +126,6 @@ $app->get('/character/:value', function($value) use($app){
     }
 	echo json_encode($characters);
 });
-
-function objectToArray($obj, $serialized = false) 
-{
-    $arrObj = is_object($obj) ? get_object_vars($obj) : $obj;
-    foreach ($arrObj as $key => $val) {
-        $val = (is_array($val) || is_object($val)) ? objectToArray($val) : $val;
-        $arr[$key] = $serialized
-        				? (is_array($val) ? serialize($val) : htmlentities($val, ENT_QUOTES, "utf-8"))
-        				: (is_array($val) ? $val : htmlentities($val, ENT_QUOTES, "utf-8")) ;
-    }
-    return $arr;
-}  
-
-function getFileName($url){
-	return basename($url);
-}
 
 $app->get('/promises', function() use($app){
     $app->response()->header("Content-Type", "application/json");
@@ -270,21 +281,39 @@ $app->get('/phone/:phone_id', function($phone_id) use ($app, $db){
 	}
 });
 
+$app->post('/phones', function() use ($app, $db){
+	$app->response()->header("Content-Type", "application/json");
+	$body = $app->request()->getBody();
+	$data = json_decode($body);
+	$data->type = 'post';
+	echo json_encode($data);
+});
+
+$app->put('/phones/:phone_id', function($id) use ($app, $db){
+	$app->response()->header("Content-Type", "application/json");
+	$body = $app->request()->getBody();
+	$data = json_decode($body);
+	$data->type = 'put';
+	echo json_encode($data);
+});
+
 /* images */
 
-$app->get('/phone/images/:phone_id', function ($phoneId) use ($app, $db, $upload) {
+$app->get('/phone/images/:phone_id', function ($phoneId) use ($app, $db) {
     $app->response()->header("Content-Type", "application/json");
 
     $images = $db->images->where('phone_id = ?', $phoneId);
     $data   = array();
 	foreach($images as $image) {
-		$imageFile = $upload['dir'] . $image['image_name'];
+		$imageFile = UPLOAD_DIR . DIRECTORY_SEPARATOR . $image['image_name'];
+		if(!file_exists($imageFile)) continue;
+		
 		$pathinfo  = pathinfo($imageFile);
 		$imageInfo = getimagesize($imageFile);
 		$data[] = array(
 			'id'   => (int) $image['image_id'],
 			'name' => $pathinfo['filename'],
-			'url' 	=> $upload['url'] . $image['image_name'],
+			'url' 	=> UPLOAD_URL . '/' . $image['image_name'],
 			'image' => array(
 				'dimensions' => array(
 					'width'  => $imageInfo[0], 
@@ -297,7 +326,7 @@ $app->get('/phone/images/:phone_id', function ($phoneId) use ($app, $db, $upload
 	echo json_encode($data);
 });
 
-$app->post('/phone/images/:imageId', function($imageId) use ($app, $db, $upload){
+$app->post('/phone/images/:imageId', function($imageId) use ($app, $db){
     $app->response()->header("Content-Type", "application/json");
 
 	// check file
@@ -310,15 +339,15 @@ $app->post('/phone/images/:imageId', function($imageId) use ($app, $db, $upload)
 
 	// unlink image
     $image = $db->images[$imageId];
-	$imageFile = $upload['dir'] . DIRECTORY_SEPARATOR . $image['image_name'];
+	$imageFile = UPLOAD_DIR . DIRECTORY_SEPARATOR . $image['image_name'];
 	if(file_exists($imageFile)){
 		unlink($imageFile);
 	}
 
 	// set target
-	$target     = $upload['dir'] . DIRECTORY_SEPARATOR . $fileName;
+	$target     = UPLOAD_DIR . DIRECTORY_SEPARATOR . $fileName;
 	// set url
-	$target_url = $upload['url'] . $fileName;
+	$target_url = UPLOAD_URL . '/' . $fileName;
 
 	// upload file
 	if( move_uploaded_file($fileImg, $target) ){
@@ -348,18 +377,18 @@ $app->post('/phone/images/:imageId', function($imageId) use ($app, $db, $upload)
 	else throw new Exception('Error uploading file');
 });
 
-$app->delete('/phone/images/:imageId', function ($imageId) use ($app, $db, $upload) {
+$app->delete('/phone/images/:imageId', function ($imageId) use ($app, $db) {
     $app->response()->header("Content-Type", "application/json");
 
 	$image = $db->images[$imageId];
-	$imageFile = $upload['dir'] . $image['image_name'];
+	$imageFile = UPLOAD_DIR . DIRECTORY_SEPARATOR . $image['image_name'];
 	if( file_exists($imageFile) )
 		unlink($imageFile);
 
 	echo json_encode($image->delete());
 });
 
-$app->post('/uploads', function() use ($app, $db, $upload) {
+$app->post('/uploads', function() use ($app, $db) {
 	$app->response()->header('Content-Type', 'application/json');
 	try
 	{
@@ -382,7 +411,7 @@ $app->post('/uploads', function() use ($app, $db, $upload) {
 			if(!isset($index)) throw new ValidationException('File index required');
 			if(!preg_match('/^[0-9]+$/', $index)) throw new ValidationException('invalid file index ');
 			// set upload destination for chunk files (index sufix)
-			$target = $upload['dir'] . $name . '-' . $index;
+			$target = UPLOAD_DIR . DIRECTORY_SEPARATOR . $name . '-' . $index;
 			// upload file
 			move_uploaded_file($_FILES['file']['tmp_name'], $target);
 			// make emulate
@@ -399,7 +428,7 @@ $app->post('/uploads', function() use ($app, $db, $upload) {
 			if(!isset($_REQUEST['index'])) throw new Exception('File index required');
 			if(!preg_match('/^[0-9]+$/', $_REQUEST['index'])) throw new ValidationException('invalid file index ');
 			// get file image
-			$target = $upload['dir'] . DIRECTORY_SEPARATOR . $name;
+			$target = UPLOAD_DIR . DIRECTORY_SEPARATOR . $name;
 			// merging files
 			$dst = fopen($target, 'wb');
 			for($i = 0; $i < $_REQUEST['index']; $i++) 
@@ -424,7 +453,7 @@ $app->post('/uploads', function() use ($app, $db, $upload) {
 			$data = array(
 				'id'    => $result['image_id'],
 				'name'  => $pathinfo['filename'],
-				'url'   => $upload['url'] . $result['image_name'],
+				'url'   => UPLOAD_URL . '/' . $result['image_name'],
 				'image' => array(
 					'dimensions' => array(
 						'width'  => $imageInfo[0], 

@@ -3,13 +3,14 @@
 	<input type="text" ng-model="query" class="span12">
 	<label>Sort by</label>
 	<select ng-model="orderProp" class="span12">
-		<option value="name">
+		<option value="name" checked>
 			Alphabetical
 		</option>
 		<option value="age">
 			Newest
 		</option>
 	</select>
+	<a href class="span12 btn btn-primary" ng-click="save()">Save</a>
 </div>
 <div class="span9">
 	<ul class="phones">

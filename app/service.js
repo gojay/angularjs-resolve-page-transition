@@ -7,10 +7,13 @@
 
  angular.module('PhoneServices', ['ngResource']).
 	factory('Phones', function($resource) {
-		return $resource('api/phones', {}, {
+		return $resource('api/phones/:phoneId', {}, {
 			get: {
 				method: 'GET',
 				isArray: true
+			},
+			update : {
+				method: 'PUT'
 			}
 		});
 	}).
@@ -28,6 +31,9 @@
 			query: {
 				method: 'GET',
 				isArray: true
+			},
+			update : {
+				method: 'PUT'
 			}
 		});
 	}).

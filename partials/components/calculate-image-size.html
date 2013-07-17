@@ -1,5 +1,24 @@
-<div class="image-size" ng-model="dimensions">
-	<label class="radio inline" ng-repeat="v in dimensions">
-		<input type="radio" name="size" value="{{v.type}}" ng-click="setSize($index)"> {{v.type}} ({{v.dimension.width}} x {{v.dimension.height}})
-	</label>	
+<div class="calculate-image-size span12" ng-model="dimensions">
+	<div class="control-group">
+		<label class="span2">Dimension</label>
+		<div class="span10">
+			<label class="radio inline" ng-repeat="v in dimensions.list">
+				<input type="radio" name="size-{{dimensions.index}}" value="{{v.type}}" ng-click="setSize($index)" ng-checked="$index == 0"> {{v.type}} ({{v.dimension.width}} x {{v.dimension.height}})
+			</label>
+		</div>
+	</div>
+	<div class="control-group" style="clear:both;">
+		<label class="span2">Align</label>
+		<div class="span10">
+			<label class="radio inline">
+				<input type="radio" name="align-{{dimensions.index}}" value="left" checked /> Left
+			</label>
+			<label class="radio inline">
+				<input type="radio" name="align-{{dimensions.index}}" value="center"/> Center
+			</label>
+			<label class="radio inline">
+				<input type="radio" name="align-{{dimensions.index}}" value="right"/> Right
+			</label>
+		</div>	
+	</div>
 </div>

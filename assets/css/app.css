@@ -99,3 +99,24 @@ ul.specs dt {
 #content hgroup {
   border-bottom: 1px solid gray;
 }
+
+.the-icons > .span3:nth-child(4n+1){
+  margin-left: 0;
+}
+.the-icons > .span3{
+  text-align: left;
+}
+.the-icons > .span3 > a{
+  color: #000;
+}
+.the-icons > .span3 > a:hover{
+  text-decoration: none;
+}
+
+.calculate-image-size label {
+  font-size: 12px;
+}
+.calculate-image-size label:first-child {
+  padding-top: 5px;
+  font-size: 14px;
+}

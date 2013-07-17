@@ -30,6 +30,7 @@
 						<button class="btn" title="Insert image" data-toggle="modal" data-target="#modal-image-uploads"><i class="icon-picture"></i></button>
 					  	<button class="btn" title="Insert youtube video" tb-modal-open="insert-youtube-mce" backdrop="false"><i class="icon-facetime-video"></i></button>
 					  	<button class="btn" title="Insert link" tb-modal-open="insert-anchor-mce" backdrop="false"><i class="icon-link"></i></button>
+						<button class="btn" title="Insert icon" tb-modal-open="insert-icon-mce" backdrop="false">icon</button>
 					</div>
 					<div class="pull-right">
 						<div class="input-prepend input-append">
@@ -57,29 +58,13 @@
 
 	<!-- directive tbmodal -->
 	<tbmodal modal-id="insert-anchor-mce" modal-title="Insert Link" modal-btn-ok="Insert Link">
-		<form class="form-horizontal">
-			<div class="control-group">
-				<label class="control-label" for="input01">Title</label>
-				<div class="controls">
-					<input type="text" class="input-xlarge" id="input01">
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="input02">Alt Text</label>
-				<div class="controls">
-					<input type="text" class="input-xlarge" id="input02">
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="input03">URL</label>
-				<div class="controls">
-					<input type="url" class="input-xlarge" id="input03">
-				</div>
-			</div>
-		</form>
+		<div ng-include src="'partials/components/mce/link.html'"></div>
   	</tbmodal>
 	<tbmodal class="modal-large" modal-id="insert-youtube-mce" modal-title="Insert Youtube Video" modal-btn-ok="Insert Video">
 		<mceyoutube></mceyoutube>
+  	</tbmodal>
+	<tbmodal class="modal-medium" modal-id="insert-icon-mce" modal-title="Insert Icon" modal-btn-ok="Insert Icon">
+		<div ng-include src="'partials/components/mce/icons.html'"></div>
   	</tbmodal>
 	<!-- /directive -->
 

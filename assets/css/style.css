@@ -116,6 +116,11 @@ form.ng-pristine .alert {
 	margin-bottom: 0;
 }
 
+.modal-medium{
+   width:640px;
+   margin-left:-320px;
+}
+
 .modal-large{
    width:940px;
    margin-left:-470px;
