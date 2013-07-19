@@ -7,6 +7,22 @@
 
  angular.module('PhoneDirectives', [])
 
+
+.directive('focus',
+    function() {
+  return {
+    link: function(scope, element, attrs) {
+      element[0].focus();
+    }
+  };
+})
+
+/**
+ * An AngularJS directive to work around bug where radio inputs with boolean value 'false' are incorrectly flagged 'invalid' when using ng-required.
+ * https://github.com/michaelmoussa/ng-boolean-radio/
+ */
+.directive("ngBooleanRadio", ngBooleanRadio)
+
 /* 
  * header component 
  */
@@ -407,12 +423,12 @@
 				$('legend > span').html(input);
 			});
 			// inject markdown dr phone description
-			$scope.markdown = $scope.phone.description;
+			// $scope.markdown = $scope.phone.description;
 			// default is preview mode
 			$scope.isPreviewMode = true;
 
 			// update preview setiap perubahan pd editor
-			$scope.$watch('markdown', function(desc) {
+			$scope.$watch('phone.description', function(desc) {
 				ctrl.refreshPreview();
 			});
 		}
@@ -719,10 +735,17 @@
 					});
 					// set image width n height
 					if(image.attrs !== undefined){
-						img.css({
+						var styles = {
 							width : image.attrs.width,
 							height: image.attrs.height
-						});
+						};
+						if(image.attrs.align == 'center'){
+							styles.display = 'block';
+							styles.margin = '0 auto';
+						} else {
+							styles.float = image.attrs.align;
+						}
+						img.css(styles);
 					}
 					var imgHTML = img.prop('outerHTML');
 					// set value textarea
@@ -814,8 +837,8 @@
 						title: img_title
 					};
 
-					if( $('input[name="img_size"]').val() !== '' ){
-						image['attrs'] = JSON.parse($('input[name="img_size"]').val());
+					if( $('input[name="img_attrs"]').val() !== '' ){
+						image['attrs'] = JSON.parse($('input[name="img_attrs"]').val());
 					}
 
 					// insert markdown image to editor
@@ -920,6 +943,7 @@
 			var d = $scope.img.image.dimensions;
 			var dimensions = {
 				index: $scope.index,
+				align: 'left',
 				list: []
 			};
 			angular.forEach(ctrl.sizes, function(e,i){
@@ -937,10 +961,12 @@
 
 			$scope.dimensions = dimensions;
 
-			$scope.setSize = function(index){
+			$scope.setSize = function(index, dIndex){
 				var dimension = dimensions.list[index].dimension;
-				console.log(dimension);
-				$('input[name="img_size"]').val(JSON.stringify(dimension));
+				var align = $('input[name="align-'+ dIndex +'"]:checked').val();
+				dimension.align = align ? align : 'left' ;
+				console.log('dimension', dimension);
+				$('input[name="img_attrs"]').val(JSON.stringify(dimension));
 			};
 		}
 	};

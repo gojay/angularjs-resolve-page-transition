@@ -21,34 +21,171 @@
 			<pane title="Details">
 				<tabs class="tabs-left">
 					<pane title="Availability and Networks">
-						Avaibility
+						<div class="span12 prefix" ng-repeat="availability in phone.availability">
+							<input type="text" ng-model="phone.availability[$index]" class="input-medium" focus>
+							<a href class="btn" style="vertical-align:top;" ng-click="remove(phone.availability, $index)"><i class="icon-remove"></i> Delete</a>
+						</div>
+						<a href class="btn btn-primary" ng-click="add(phone.availability)"><i class="icon-plus"></i> Add</a>
 					</pane>
 					<pane title="Battery">
-						Battery
+						<div class="span12 prefix">
+							<label class="span3">Stand by Time</label>
+							<input type="text" ng-model="phone.battery.standbyTime" class="span9 input-large" />
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">Talk Time</label>
+							<input type="text" ng-model="phone.battery.talkTime" class="span9 input-large" />
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">Type</label>
+							<input type="text" ng-model="phone.battery.type" class="span9 input-large" />
+						</div>
 					</pane>
 					<pane title="Storage and Memory">
-						Storage and Memory
+						<div class="span12 prefix">
+							<label class="span3">Flash</label>
+							<input type="text" ng-model="phone.storage.flash" class="span9 input-large" />
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">RAM</label>
+							<input type="text" ng-model="phone.storage.ram" class="span9 input-large" />
+						</div>
 					</pane>
 					<pane title="Connectivity">
-						Connectivity
+						<div class="span12 prefix">
+							<label class="span3">Bluetooth</label>
+							<input type="text" ng-model="phone.connectivity.bluetooth" class="span9 input-large" />
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">Cell</label>
+							<input type="text" ng-model="phone.connectivity.cell" class="span9 input-large" />
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">GPS</label>
+							<label class="radio inline">
+								<input type="radio" ng-model="phone.connectivity.gps" value="true" ng-boolean-radio /> Yes
+							</label>
+							<label class="radio inline">
+								<input type="radio" ng-model="phone.connectivity.gps" value="false" ng-boolean-radio/> No
+							</label>
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">infrared</label>
+							<label class="radio inline">
+								<input type="radio" ng-model="phone.connectivity.infrared" value=true ng-boolean-radio /> Yes
+							</label>
+							<label class="radio inline">
+								<input type="radio" ng-model="phone.connectivity.infrared" value=false ng-boolean-radio /> No
+							</label>
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">Wifi</label>
+							<input type="text" ng-model="phone.connectivity.wifi" class="span9 input-large" />
+						</div>
 					</pane>
 					<pane title="Android">
-						Android
+						<div class="span12 prefix">
+							<label class="span3">OS</label>
+							<input type="text" ng-model="phone.android.os" class="span9 input-small" />
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">UI</label>
+							<input type="text" ng-model="phone.android.ui" class="span9 input-small" />
+						</div>
 					</pane>
 					<pane title="Size and Weigth">
-						Size and Weigth
+						<div class="span12 prefix">
+							<label class="span3">Dimension</label>
+							<input type="text" ng-model="phone.sizeAndWeight.dimensions[0]" class="span3 input-small" />
+							<input type="text" ng-model="phone.sizeAndWeight.dimensions[1]" class="span3 input-small" />
+							<input type="text" ng-model="phone.sizeAndWeight.dimensions[2]" class="span3 input-small" />
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">weight</label>
+							<input type="text" ng-model="phone.sizeAndWeight.weight" class="span9 input-small" />
+						</div>
 					</pane>
 					<pane title="Display">
-						Display
+						<div class="span12 prefix">
+							<label class="span3">Screen Resolution</label>
+							<input type="text" ng-model="phone.display.screenResolution" class="span9 input-small" />
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">Screen Size</label>
+							<input type="text" ng-model="phone.display.screenSize" class="span9 input-small" />
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">Touch Screen</label>
+							<label class="radio inline">
+								<input type="radio" ng-model="phone.display.touchScreen" value=true ng-boolean-radio /> Yes
+							</label>
+							<label class="radio inline">
+								<input type="radio" ng-model="phone.display.touchScreen" value=false ng-boolean-radio /> No
+							</label>
+						</div>
 					</pane>
 					<pane title="Hardware">
-						Hardware
+						<div class="span12 prefix">
+							<label class="span3">Accelerometer</label>
+							<label class="radio inline">
+								<input type="radio" ng-model="phone.hardware.accelerometer" value=true ng-boolean-radio /> Yes
+							</label>
+							<label class="radio inline">
+								<input type="radio" ng-model="phone.hardware.accelerometer" value=false ng-boolean-radio /> No
+							</label>
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">Audio Jack</label>
+							<input type="text" ng-model="phone.hardware.audioJack" class="span9 input-small" />
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">CPU</label>
+							<input type="text" ng-model="phone.hardware.cpu" class="span9 input-small" />
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">FM Radio</label>
+							<label class="radio inline">
+								<input type="radio" ng-model="phone.hardware.fmRadio" value=true ng-boolean-radio /> Yes
+							</label>
+							<label class="radio inline">
+								<input type="radio" ng-model="phone.hardware.fmRadio" value=false ng-boolean-radio /> No
+							</label>
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">Physical Keyboard</label>
+							<label class="radio inline">
+								<input type="radio" ng-model="phone.hardware.physicalKeyboard" value=true ng-boolean-radio /> Yes
+							</label>
+							<label class="radio inline">
+								<input type="radio" ng-model="phone.hardware.physicalKeyboard" value=false ng-boolean-radio /> No
+							</label>
+						</div>
+						<div class="span12 prefix">
+							<label class="span3">USB</label>
+							<input type="text" ng-model="phone.hardware.usb" class="span9 input-small" />
+						</div>
 					</pane>
 					<pane title="Camera">
-						Camera
+						<div class="span12 prefix">
+							<label class="span3">Features</label>
+							<div class="span9">
+								<div ng-repeat="feature in phone.camera.features">
+									<input type="text" ng-model="phone.camera.features[$index]" class="input-medium" focus>
+									<a href class="btn" style="vertical-align:top;" ng-click="remove(phone.camera.features, $index)"><i class="icon-remove"></i></a>
+								</div>
+								<a href class="btn btn-primary" ng-click="add(phone.camera.features)"><i class="icon-plus"></i> Add</a>
+							</div>
+						</div>
+						<div class="span12 prefix margin-top">
+							<label class="span3">Primary</label>
+							<input type="text" ng-model="phone.camera.primary" class="span9 input-small" />
+						</div>
 					</pane>
 					<pane title="Additional Features">
-						Additional Features
+						<div class="span12 prefix">
+							<label class="span3">Additional Features</label>
+							<textarea ng-model="phone.additionalFeatures" class="span9 input-small" /></textarea>
+						</div>
 					</pane>
 				</tabs>
 			</pane>
@@ -63,7 +200,7 @@
 		</div>
 	</fieldset>
 	<div class="form-actions">
-		<button type="submit" class="btn btn-primary">Save changes</button>
+		<button ng-click="save()" class="btn btn-primary">Save changes</button>
 		<button class="btn">Cancel</button>
 	</div>
 <!-- </form>

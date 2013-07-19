@@ -17,16 +17,49 @@ define('UPLOAD_URL', $base_url . '/_learn_/angularjs-resolve-page-transition/img
 
 /* FUNCTIONS */
 
+function _objectToArray($d) {
+	if (is_object($d)) {
+		// Gets the properties of the given object
+		// with get_object_vars function
+		$d = get_object_vars($d);
+	}
+
+	if (is_array($d)) {
+		/*
+		* Return array converted to object
+		* Using __FUNCTION__ (Magic constant)
+		* for recursive call
+		*/
+		return array_map(__FUNCTION__, $d);
+	}
+	else {
+		// Return array
+		return $d;
+	}
+}
+
 function objectToArray($obj, $serialized = false) 
 {
-    $arrObj = is_object($obj) ? get_object_vars($obj) : $obj;
-    foreach ($arrObj as $key => $val) {
-        $val = (is_array($val) || is_object($val)) ? objectToArray($val) : $val;
-        $arr[$key] = $serialized
-        				? (is_array($val) ? serialize($val) : htmlentities($val, ENT_QUOTES, "utf-8"))
-        				: (is_array($val) ? $val : htmlentities($val, ENT_QUOTES, "utf-8")) ;
-    }
-    return $arr;
+	// $array = json_decode(json_encode($json), true);
+	$array = _objectToArray($obj);
+
+	$data = array();
+	foreach ($array as $key => $value) {
+		$data[$key] = $serialized
+        				? (is_array($value) ? serialize($value) : htmlentities($value, ENT_QUOTES, "utf-8"))
+        				: (is_array($value) ? $value : htmlentities($value, ENT_QUOTES, "utf-8")) ;
+	}
+
+	return $data;
+
+    // $arrObj = is_object($obj) ? get_object_vars($obj) : $obj;
+    // foreach ($arrObj as $key => $val) {
+    //     $val = (is_array($val) || is_object($val)) ? objectToArray($val) : $val;
+    //     $arr[$key] = $serialized
+    //     				? (is_array($val) ? serialize($val) : htmlentities($val, ENT_QUOTES, "utf-8"))
+    //     				: (is_array($val) ? $val : htmlentities($val, ENT_QUOTES, "utf-8")) ;
+    // }
+    // return $arr;
 }  
 
 function getFileName($url){
@@ -53,7 +86,13 @@ $app->get('/config', function() use($app) {
 		'upload' => array(
 			'upload_dir'  => UPLOAD_DIR,
 			'upload_url'  => UPLOAD_URL
-		)
+		),
+		'base' => array(
+			$url = trim("http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"),
+			trim($_SERVER['HTTP_REFERER'], '/')
+		),
+		'wifi' => false,
+		'test' => true
 	));
 });
 
@@ -270,6 +309,7 @@ $app->get('/phone/:phone_id', function($phone_id) use ($app, $db){
 		$metas = array();
 		foreach ($phone->phonemeta() as $meta) {
 			$value = unserialize($meta['meta_value']);
+			if($meta['meta_name'] == 'availability') $value = array_map('_html_entity_decode', $value);
 			$metas[$meta['meta_name']] = ($value === false) ? $meta['meta_value'] : $value ;
 		}
 		$data = array_merge($data, $metas);
@@ -280,6 +320,17 @@ $app->get('/phone/:phone_id', function($phone_id) use ($app, $db){
 		$app->halt(500, $e->getMessage());
 	}
 });
+$app->put('/phone/:phone_id', function($id) use ($app, $db){
+	$app->response()->header("Content-Type", "application/json");
+	$body = $app->request()->getBody();
+	$data = json_decode($body);
+	$data->type = 'put';
+	echo json_encode($data);
+});
+
+function _html_entity_decode($string){
+	return html_entity_decode(rtrim($string, ','), ENT_QUOTES );
+}
 
 $app->post('/phones', function() use ($app, $db){
 	$app->response()->header("Content-Type", "application/json");

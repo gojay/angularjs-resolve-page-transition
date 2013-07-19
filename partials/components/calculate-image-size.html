@@ -3,7 +3,7 @@
 		<label class="span2">Dimension</label>
 		<div class="span10">
 			<label class="radio inline" ng-repeat="v in dimensions.list">
-				<input type="radio" name="size-{{dimensions.index}}" value="{{v.type}}" ng-click="setSize($index)" ng-checked="$index == 0"> {{v.type}} ({{v.dimension.width}} x {{v.dimension.height}})
+				<input type="radio" name="size-{{dimensions.index}}" value="{{v.type}}" ng-click="setSize($index, dimensions.index)" ng-checked="$index == 0"> {{v.type}} ({{v.dimension.width}} x {{v.dimension.height}})
 			</label>
 		</div>
 	</div>
@@ -11,7 +11,7 @@
 		<label class="span2">Align</label>
 		<div class="span10">
 			<label class="radio inline">
-				<input type="radio" name="align-{{dimensions.index}}" value="left" checked /> Left
+				<input type="radio" name="align-{{dimensions.index}}" value="left" /> Left
 			</label>
 			<label class="radio inline">
 				<input type="radio" name="align-{{dimensions.index}}" value="center"/> Center

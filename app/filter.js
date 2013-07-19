@@ -11,6 +11,12 @@
 			return input ? '\u2713' : '\u2718';
 		};
 	})
+	.filter('camelCaseToUcWords', function() {
+		return function(input) {
+			var result = input.replace( /([A-Z])/g, " $1" );
+			return result.charAt(0).toUpperCase() + result.slice(1);
+		};
+	})
 	.filter('fileSize', function(){
 		return function(size){
 			return (size > 1024 * 1024) ?

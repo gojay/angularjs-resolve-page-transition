@@ -69,4 +69,20 @@
 	})
 	.controller('PhoneEditController', function($scope, phone){
 		$scope.phone = phone;
+
+		$scope.add = function(model){
+			model.push('');
+		};
+
+		$scope.remove = function(model, index){
+			model.splice(index, 1);
+		};
+
+		$scope.save = function(){
+			$scope.phone.$update({phoneId: $scope.phone.id}, function(data){
+				console.log('update', data);
+			});
+		};
+
+		console.log('phone', phone);
 	});
