@@ -207,15 +207,15 @@ function getSuperheroes2(hero, timeout){
 	return d.promise();
 }
 
-$.when(getSuperheroes2('dc'), getSuperheroes2('marvel'))
-	.pipe(function(dc, marvel){
-		logProgress('DC heroes : ' + dc.join(', '));
-		logProgress('Marvel heroes : ' + marvel.join(', '));
-		return dc.concat(marvel);
-	})
-	.done(function(res){
-		logProgress('American heroes : ' + res.join(', '));
-	});
+// $.when(getSuperheroes2('dc'), getSuperheroes2('marvel'))
+// 	.pipe(function(dc, marvel){
+// 		logProgress('DC heroes : ' + dc.join(', '));
+// 		logProgress('Marvel heroes : ' + marvel.join(', '));
+// 		return dc.concat(marvel);
+// 	})
+// 	.done(function(res){
+// 		logProgress('American heroes : ' + res.join(', '));
+// 	});
 
 function doPromise(url){
     var defer = $.Deferred();
@@ -225,18 +225,18 @@ function doPromise(url){
     })
     return defer.promise();
 }
-// $.getJSON(url+'/promises').then(function(urls){
-// 	var currentStep = doPromise(urls[0]);
-//     for(var i = 1; i < urls.length; i++){
-//         currentStep = currentStep.pipe(function(j){
-//             return doPromise(urls[j]);
-//         });
-//     }
-//     $.when(currentStep).done(function(res){
-//         console.log("All steps done.", res);
-//         logCompleted("All steps done.");
-//     });
-// })
+$.getJSON(url+'/promises').then(function(urls){
+	var currentStep = doPromise(urls[0]);
+    for(var i = 1; i < urls.length; i++){
+        currentStep = currentStep.pipe(function(j){
+            return doPromise(urls[j]);
+        });
+    }
+    $.when(currentStep).done(function(res){
+        console.log("All steps done.", res);
+        logCompleted("All steps done.");
+    });
+})
 
 // $(function(){
 //     var currentStep = doPromise(0);

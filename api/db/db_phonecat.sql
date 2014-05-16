@@ -1,0 +1,388 @@
+-- phpMyAdmin SQL Dump
+-- version 3.4.10.1
+-- http://www.phpmyadmin.net
+--
+-- Host: 127.0.0.1
+-- Generation Time: May 16, 2014 at 03:58 AM
+-- Server version: 5.5.31
+-- PHP Version: 5.3.10
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+--
+-- Database: `db_phonecat`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `images`
+--
+
+CREATE TABLE IF NOT EXISTS `images` (
+  `image_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `phone_id` int(11) unsigned NOT NULL,
+  `image_name` varchar(255) NOT NULL,
+  PRIMARY KEY (`image_id`),
+  UNIQUE KEY `image_id` (`image_id`),
+  KEY `phone_id` (`phone_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=80 ;
+
+--
+-- Dumping data for table `images`
+--
+
+INSERT INTO `images` (`image_id`, `phone_id`, `image_name`) VALUES
+(1, 1, 'dell-streak-7.0.jpg'),
+(2, 1, 'dell-streak-7.1.jpg'),
+(3, 1, 'dell-streak-7.2.jpg'),
+(4, 1, 'dell-streak-7.3.jpg'),
+(5, 1, 'dell-streak-7.4.jpg'),
+(6, 2, 'dell-venue.0.jpg'),
+(7, 2, 'dell-venue.1.jpg'),
+(8, 2, 'dell-venue.2.jpg'),
+(9, 2, 'dell-venue.3.jpg'),
+(10, 2, 'dell-venue.4.jpg'),
+(11, 2, 'dell-venue.5.jpg'),
+(12, 3, 'droid-2-global-by-motorola.0.jpg'),
+(13, 3, 'droid-2-global-by-motorola.1.jpg'),
+(14, 3, 'droid-2-global-by-motorola.2.jpg'),
+(15, 4, 'droid-pro-by-motorola.0.jpg'),
+(16, 4, 'droid-pro-by-motorola.1.jpg'),
+(17, 5, 'lg-axis.0.jpg'),
+(18, 5, 'lg-axis.1.jpg'),
+(19, 5, 'lg-axis.2.jpg'),
+(20, 6, 'motorola-atrix-4g.0.jpg'),
+(21, 6, 'motorola-atrix-4g.1.jpg'),
+(22, 6, 'motorola-atrix-4g.2.jpg'),
+(23, 6, 'motorola-atrix-4g.3.jpg'),
+(24, 7, 'motorola-bravo-with-motoblur.0.jpg'),
+(25, 7, 'motorola-bravo-with-motoblur.1.jpg'),
+(26, 7, 'motorola-bravo-with-motoblur.2.jpg'),
+(27, 8, 'motorola-charm-with-motoblur.0.jpg'),
+(28, 8, 'motorola-charm-with-motoblur.1.jpg'),
+(29, 8, 'motorola-charm-with-motoblur.2.jpg'),
+(30, 9, 'motorola-defy-with-motoblur.0.jpg'),
+(31, 9, 'motorola-defy-with-motoblur.1.jpg'),
+(32, 9, 'motorola-defy-with-motoblur.2.jpg'),
+(33, 10, 'motorola-xoom-with-wi-fi.0.jpg'),
+(34, 10, 'motorola-xoom-with-wi-fi.1.jpg'),
+(35, 10, 'motorola-xoom-with-wi-fi.2.jpg'),
+(36, 10, 'motorola-xoom-with-wi-fi.3.jpg'),
+(37, 10, 'motorola-xoom-with-wi-fi.4.jpg'),
+(38, 10, 'motorola-xoom-with-wi-fi.5.jpg'),
+(39, 11, 'motorola-xoom.0.jpg'),
+(40, 11, 'motorola-xoom.1.jpg'),
+(41, 11, 'motorola-xoom.2.jpg'),
+(42, 12, 'nexus-s.0.jpg'),
+(43, 12, 'nexus-s.1.jpg'),
+(44, 12, 'nexus-s.2.jpg'),
+(45, 12, 'nexus-s.3.jpg'),
+(46, 13, 'samsung-galaxy-tab.0.jpg'),
+(47, 13, 'samsung-galaxy-tab.1.jpg'),
+(48, 13, 'samsung-galaxy-tab.2.jpg'),
+(49, 13, 'samsung-galaxy-tab.3.jpg'),
+(50, 13, 'samsung-galaxy-tab.4.jpg'),
+(51, 13, 'samsung-galaxy-tab.5.jpg'),
+(52, 13, 'samsung-galaxy-tab.6.jpg'),
+(53, 14, 'samsung-gem.0.jpg'),
+(54, 14, 'samsung-gem.1.jpg'),
+(55, 14, 'samsung-gem.2.jpg'),
+(56, 15, 'samsung-mesmerize-a-galaxy-s-phone.0.jpg'),
+(57, 15, 'samsung-mesmerize-a-galaxy-s-phone.1.jpg'),
+(58, 15, 'samsung-mesmerize-a-galaxy-s-phone.2.jpg'),
+(59, 15, 'samsung-mesmerize-a-galaxy-s-phone.3.jpg'),
+(60, 16, 'samsung-showcase-a-galaxy-s-phone.0.jpg'),
+(61, 16, 'samsung-showcase-a-galaxy-s-phone.1.jpg'),
+(62, 16, 'samsung-showcase-a-galaxy-s-phone.2.jpg'),
+(63, 17, 'samsung-transform.0.jpg'),
+(64, 17, 'samsung-transform.1.jpg'),
+(65, 17, 'samsung-transform.2.jpg'),
+(66, 17, 'samsung-transform.3.jpg'),
+(67, 17, 'samsung-transform.4.jpg'),
+(68, 18, 'sanyo-zio.0.jpg'),
+(69, 18, 'sanyo-zio.1.jpg'),
+(70, 18, 'sanyo-zio.2.jpg'),
+(71, 19, 't-mobile-g2.0.jpg'),
+(72, 19, 't-mobile-g2.1.jpg'),
+(73, 19, 't-mobile-g2.2.jpg'),
+(74, 20, 't-mobile-mytouch-4g.0.jpg'),
+(75, 20, 't-mobile-mytouch-4g.1.jpg'),
+(76, 20, 't-mobile-mytouch-4g.2.jpg'),
+(77, 20, 't-mobile-mytouch-4g.3.jpg'),
+(78, 20, 't-mobile-mytouch-4g.4.jpg'),
+(79, 20, 't-mobile-mytouch-4g.5.jpg');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `phonemeta`
+--
+
+CREATE TABLE IF NOT EXISTS `phonemeta` (
+  `meta_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `phone_id` int(11) unsigned NOT NULL,
+  `meta_name` varchar(255) NOT NULL,
+  `meta_value` text NOT NULL,
+  PRIMARY KEY (`meta_id`,`meta_name`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=201 ;
+
+--
+-- Dumping data for table `phonemeta`
+--
+
+INSERT INTO `phonemeta` (`meta_id`, `phone_id`, `meta_name`, `meta_value`) VALUES
+(1, 1, 'additionalFeatures', 'Front Facing 1.3MP Camera'),
+(2, 1, 'android', 'a:2:{s:2:"os";s:11:"Android 2.2";s:2:"ui";s:10:"Dell Stage";}'),
+(3, 1, 'availability', 'a:1:{i:0;s:8:"T-Mobile";}'),
+(4, 1, 'battery', 'a:3:{s:11:"standbyTime";s:0:"";s:8:"talkTime";s:0:"";s:4:"type";s:31:"Lithium Ion (Li-Ion) (2780 mAH)";}'),
+(5, 1, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"5.0 megapixels";}'),
+(6, 1, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:38:"T-mobile HSPA+ @ 2100/1900/AWS/850 MHz";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:10:"802.11 b/g";}'),
+(7, 1, 'display', 'a:3:{s:16:"screenResolution";s:16:"WVGA (800 x 480)";s:10:"screenSize";s:10:"7.0 inches";s:11:"touchScreen";b:1;}'),
+(8, 1, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:16:"nVidia Tegra T20";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(9, 1, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:12:"199.9 mm (w)";i:1;s:12:"119.8 mm (h)";i:2;s:11:"12.4 mm (d)";}s:6:"weight";s:11:"450.0 grams";}'),
+(10, 1, 'storage', 'a:2:{s:5:"flash";s:7:"16000MB";s:3:"ram";s:5:"512MB";}'),
+(11, 2, 'additionalFeatures', 'Gorilla Glass display, Dedicated Camera Key, Ring Silence Switch, Swype keyboard.'),
+(12, 2, 'android', 'a:2:{s:2:"os";s:11:"Android 2.2";s:2:"ui";s:10:"Dell Stage";}'),
+(13, 2, 'availability', 'a:3:{i:0;s:9:"AT&amp;T,";i:1;s:3:"KT,";i:2;s:8:"T-Mobile";}'),
+(14, 2, 'battery', 'a:3:{s:11:"standbyTime";s:9:"400 hours";s:8:"talkTime";s:7:"7 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1400 mAH)";}'),
+(15, 2, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"8.0 megapixels";}'),
+(16, 2, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:99:"850/1900/2100 3G; 850/900/1800/1900 GSM/GPRS/EDGE\n900/1700/2100 3G; 850/900/1800/1900 GSM/GPRS/EDGE";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:12:"802.11 b/g/n";}'),
+(17, 2, 'display', 'a:3:{s:16:"screenResolution";s:16:"WVGA (800 x 480)";s:10:"screenSize";s:10:"4.1 inches";s:11:"touchScreen";b:1;}'),
+(18, 2, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:15:"1 Ghz processor";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(19, 2, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"64.0 mm (w)";i:1;s:12:"121.0 mm (h)";i:2;s:11:"12.9 mm (d)";}s:6:"weight";s:11:"164.0 grams";}'),
+(20, 2, 'storage', 'a:2:{s:5:"flash";s:6:"1000MB";s:3:"ram";s:5:"512MB";}'),
+(21, 3, 'additionalFeatures', 'Adobe Flash Player 10, Quadband GSM Worldphone, Advance Business Security, Complex Password Secure, Review &amp; Edit Documents with Quick Office, Personal 3G Mobile Hotspot for up to 5 WiFi enabled Devices, Advanced Social Networking brings all social content into a single homescreen widget'),
+(22, 3, 'android', 'a:2:{s:2:"os";s:11:"Android 2.2";s:2:"ui";s:0:"";}'),
+(23, 3, 'availability', 'a:1:{i:0;s:7:"Verizon";}'),
+(24, 3, 'battery', 'a:3:{s:11:"standbyTime";s:9:"230 hours";s:8:"talkTime";s:7:"8 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1400 mAH)";}'),
+(25, 3, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"5.0 megapixels";}'),
+(26, 3, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:158:"WCDMA 850/1900/2100, CDMA 800/1900, GSM 850/900/1800/1900, HSDPA 10.2 Mbps (Category 9/10), CDMA EV-DO Release A, EDGE Class 12, GPRS Class 12, HSUPA 1.8 Mbps";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:12:"802.11 b/g/n";}'),
+(27, 3, 'display', 'a:3:{s:16:"screenResolution";s:17:"FWVGA (854 x 480)";s:10:"screenSize";s:10:"3.7 inches";s:11:"touchScreen";b:1;}'),
+(28, 3, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:15:"1.2 GHz TI OMAP";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:1;s:3:"usb";s:7:"USB 2.0";}'),
+(29, 3, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"60.5 mm (w)";i:1;s:12:"116.3 mm (h)";i:2;s:11:"13.7 mm (d)";}s:6:"weight";s:11:"169.0 grams";}'),
+(30, 3, 'storage', 'a:2:{s:5:"flash";s:6:"8192MB";s:3:"ram";s:5:"512MB";}'),
+(31, 4, 'additionalFeatures', 'Adobe Flash Player 10, Quadband GSM Worldphone, Advance Business Security, Complex Password Secure, Review &amp; Edit Documents with Quick Office, Personal 3G Mobile Hotspot for up to 5 WiFi enabled Devices, Advanced Social Networking brings all social content into a single homescreen widget'),
+(32, 4, 'android', 'a:2:{s:2:"os";s:11:"Android 2.2";s:2:"ui";s:0:"";}'),
+(33, 4, 'availability', 'a:1:{i:0;s:7:"Verizon";}'),
+(34, 4, 'battery', 'a:3:{s:11:"standbyTime";s:9:"330 hours";s:8:"talkTime";s:7:"7 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1400 mAH)";}'),
+(35, 4, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"5.0 megapixels";}'),
+(36, 4, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:178:"800/1900 CDMA EVDO Rev. A with dual diversity antenna, 850/900/1800/1900MHz GSM, GPRS Class 12, EDGE Class 12, 850/1900/2100 WCDMA (category 9/10), HSDPA 10.2mbps, HSUPA 1.8 mbps";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:12:"802.11 b/g/n";}'),
+(37, 4, 'display', 'a:3:{s:16:"screenResolution";s:16:"HVGA (480 x 320)";s:10:"screenSize";s:10:"3.1 inches";s:11:"touchScreen";b:1;}'),
+(38, 4, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:13:"1 GHz TI OMAP";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:1;s:3:"usb";s:7:"USB 2.0";}'),
+(39, 4, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"61.0 mm (w)";i:1;s:12:"119.0 mm (h)";i:2;s:11:"11.7 mm (d)";}s:6:"weight";s:11:"134.0 grams";}'),
+(40, 4, 'storage', 'a:2:{s:5:"flash";s:6:"2048MB";s:3:"ram";s:5:"512MB";}'),
+(41, 5, 'additionalFeatures', 'Accessibility features: Tactile QWERTY keyboard, four-direction keypad, start and end call buttons, dedicated number keys, camera button, TalkBack screen reader'),
+(42, 5, 'android', 'a:2:{s:2:"os";s:11:"Android 2.1";s:2:"ui";s:7:"LG Home";}'),
+(43, 5, 'availability', 'a:1:{i:0;s:14:"Cellular South";}'),
+(44, 5, 'battery', 'a:3:{s:11:"standbyTime";s:9:"500 hours";s:8:"talkTime";s:7:"8 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1500 mAH)";}'),
+(45, 5, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"3.0 megapixels";}'),
+(46, 5, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:50:"1.9 GHz CDMA PCS, 800 MHz CDMA, EVDO Rev. A, 1xRTT";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:10:"802.11 b/g";}'),
+(47, 5, 'display', 'a:3:{s:16:"screenResolution";s:16:"WVGA (800 x 480)";s:10:"screenSize";s:10:"3.2 inches";s:11:"touchScreen";b:1;}'),
+(48, 5, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:0:"";s:3:"cpu";s:24:"600 MHz Qualcomm MSM7627";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:1;s:3:"usb";s:7:"USB 2.0";}'),
+(49, 5, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"56.0 mm (w)";i:1;s:12:"116.0 mm (h)";i:2;s:11:"16.0 mm (d)";}s:6:"weight";s:11:"158.0 grams";}'),
+(50, 5, 'storage', 'a:2:{s:5:"flash";s:5:"126MB";s:3:"ram";s:5:"256MB";}'),
+(51, 6, 'additionalFeatures', ''),
+(52, 6, 'android', 'a:2:{s:2:"os";s:11:"Android 2.2";s:2:"ui";s:8:"MOTOBLUR";}'),
+(53, 6, 'availability', 'a:1:{i:0;s:8:"AT&amp;T";}'),
+(54, 6, 'battery', 'a:3:{s:11:"standbyTime";s:9:"400 hours";s:8:"talkTime";s:7:"5 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1930 mAH)";}'),
+(55, 6, 'camera', 'a:2:{s:8:"features";a:1:{i:0;s:0:"";}s:7:"primary";s:0:"";}'),
+(56, 6, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:115:"WCDMA 850/1900/2100, GSM 850/900/1800/1900, HSDPA 14Mbps (Category 10) Edge Class 12, GPRS Class 12, eCompass, AGPS";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:14:"802.11 a/b/g/n";}'),
+(57, 6, 'display', 'a:3:{s:16:"screenResolution";s:15:"QHD (960 x 540)";s:10:"screenSize";s:10:"4.0 inches";s:11:"touchScreen";b:1;}'),
+(58, 6, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:15:"1 GHz Dual Core";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(59, 6, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"63.5 mm (w)";i:1;s:13:"117.75 mm (h)";i:2;s:12:"10.95 mm (d)";}s:6:"weight";s:11:"135.0 grams";}'),
+(60, 6, 'storage', 'a:2:{s:5:"flash";s:0:"";s:3:"ram";s:0:"";}'),
+(61, 7, 'additionalFeatures', 'Adobe&reg; Flash&reg; Lite&reg; 3, DNLA, CrystalTalk&trade; PLUS technology'),
+(62, 7, 'android', 'a:2:{s:2:"os";s:11:"Android 2.1";s:2:"ui";s:11:"MOTOBLURâ„¢";}'),
+(63, 7, 'availability', 'a:1:{i:0;s:8:"AT&amp;T";}'),
+(64, 7, 'battery', 'a:3:{s:11:"standbyTime";s:9:"216 hours";s:8:"talkTime";s:7:"6 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1540 mAH)";}'),
+(65, 7, 'camera', 'a:2:{s:8:"features";a:1:{i:0;s:5:"Video";}s:7:"primary";s:14:"3.0 megapixels";}'),
+(66, 7, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:114:"WCDMA 850/1900, GSM 850/900/1800/1900, HSDPA 7.2 Mbps (Category 7/8), EDGE Class 12, GPRS Class 12, HSUPA 2.0 Mbps";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:12:"802.11 b/g/n";}'),
+(67, 7, 'display', 'a:3:{s:16:"screenResolution";s:16:"WVGA (800 x 480)";s:10:"screenSize";s:10:"3.7 inches";s:11:"touchScreen";b:1;}'),
+(68, 7, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:7:"800 Mhz";s:7:"fmRadio";b:1;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(69, 7, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"63.0 mm (w)";i:1;s:12:"109.0 mm (h)";i:2;s:11:"13.3 mm (d)";}s:6:"weight";s:11:"130.0 grams";}'),
+(70, 7, 'storage', 'a:2:{s:5:"flash";s:0:"";s:3:"ram";s:0:"";}'),
+(71, 8, 'additionalFeatures', 'MOTOBLUR-enabled; battery manager; seven home screens; customize by moving or resizing widgets; Android HTML WebKit w/Flash Lite; BACKTRACK&trade; navigation pad behind screen'),
+(72, 8, 'android', 'a:2:{s:2:"os";s:11:"Android 2.1";s:2:"ui";s:8:"MOTOBLUR";}'),
+(73, 8, 'availability', 'a:2:{i:0;s:9:"T-Mobile,";i:1;s:5:"Telus";}'),
+(74, 8, 'battery', 'a:3:{s:11:"standbyTime";s:9:"267 hours";s:8:"talkTime";s:7:"5 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1170 mAH)";}'),
+(75, 8, 'camera', 'a:2:{s:8:"features";a:1:{i:0;s:5:"Video";}s:7:"primary";s:14:"3.0 megapixels";}'),
+(76, 8, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.0";s:4:"cell";s:99:"WCDMA 1700/2100, GSM 850/900/1800/1900, HSDPA 3.6 Mbps (Category 5/6), EDGE Class 12, GPRS Class 12";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:10:"802.11 b/g";}'),
+(77, 8, 'display', 'a:3:{s:16:"screenResolution";s:16:"QVGA (320 x 240)";s:10:"screenSize";s:10:"2.8 inches";s:11:"touchScreen";b:1;}'),
+(78, 8, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:7:"600 MHz";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:1;s:3:"usb";s:7:"USB 2.0";}'),
+(79, 8, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"67.2 mm (w)";i:1;s:11:"98.4 mm (h)";i:2;s:11:"11.4 mm (d)";}s:6:"weight";s:11:"110.0 grams";}'),
+(80, 8, 'storage', 'a:2:{s:5:"flash";s:5:"150MB";s:3:"ram";s:5:"512MB";}'),
+(81, 9, 'additionalFeatures', 'Blockbuster On Demand&reg; movies and music downloads with connected music player\nWater-resistant and dustproof'),
+(82, 9, 'android', 'a:2:{s:2:"os";s:11:"Android 2.1";s:2:"ui";s:8:"MOTOBLUR";}'),
+(83, 9, 'availability', 'a:3:{i:0;s:4:"SFR,";i:1;s:9:"T-Mobile,";i:2;s:8:"Vodafone";}'),
+(84, 9, 'battery', 'a:3:{s:11:"standbyTime";s:9:"400 hours";s:8:"talkTime";s:7:"6 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1540 mAH)";}'),
+(85, 9, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"5.0 megapixels";}'),
+(86, 9, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:119:"WCDMA 850/1700/2100, GSM 850/900/1800/1900, HSDPA 7.2 Mbps (Category 7/8), EDGE Class 12, GPRS Class 12, HSUPA 2.0 Mbps";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:12:"802.11 b/g/n";}'),
+(87, 9, 'display', 'a:3:{s:16:"screenResolution";s:17:"FWVGA (854 x 480)";s:10:"screenSize";s:10:"3.7 inches";s:11:"touchScreen";b:1;}'),
+(88, 9, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:19:"800 MHz TI OMAP3610";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(89, 9, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"59.0 mm (w)";i:1;s:12:"107.0 mm (h)";i:2;s:11:"13.4 mm (d)";}s:6:"weight";s:11:"118.0 grams";}'),
+(90, 9, 'storage', 'a:2:{s:5:"flash";s:6:"2000MB";s:3:"ram";s:5:"512MB";}'),
+(91, 10, 'additionalFeatures', 'Sensors: proximity, ambient light, barometer, gyroscope'),
+(92, 10, 'android', 'a:2:{s:2:"os";s:11:"Android 3.0";s:2:"ui";s:9:"Honeycomb";}'),
+(93, 10, 'availability', 'a:1:{i:0;s:0:"";}'),
+(94, 10, 'battery', 'a:3:{s:11:"standbyTime";s:9:"336 hours";s:8:"talkTime";s:8:"24 hours";s:4:"type";s:12:"Other ( mAH)";}'),
+(95, 10, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"5.0 megapixels";}'),
+(96, 10, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:0:"";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:12:"802.11 b/g/n";}'),
+(97, 10, 'display', 'a:3:{s:16:"screenResolution";s:17:"WXGA (1200 x 800)";s:10:"screenSize";s:11:"10.1 inches";s:11:"touchScreen";b:1;}'),
+(98, 10, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:23:"1 GHz Dual Core Tegra 2";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(99, 10, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:12:"249.1 mm (w)";i:1;s:12:"167.8 mm (h)";i:2;s:11:"12.9 mm (d)";}s:6:"weight";s:11:"708.0 grams";}'),
+(100, 10, 'storage', 'a:2:{s:5:"flash";s:7:"32000MB";s:3:"ram";s:6:"1000MB";}'),
+(101, 11, 'additionalFeatures', 'Front-facing camera. Sensors: proximity, ambient light, barometer, gyroscope.'),
+(102, 11, 'android', 'a:2:{s:2:"os";s:11:"Android 3.0";s:2:"ui";s:7:"Android";}'),
+(103, 11, 'availability', 'a:1:{i:0;s:7:"Verizon";}'),
+(104, 11, 'battery', 'a:3:{s:11:"standbyTime";s:9:"336 hours";s:8:"talkTime";s:8:"24 hours";s:4:"type";s:16:"Other (3250 mAH)";}'),
+(105, 11, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"5.0 megapixels";}'),
+(106, 11, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:49:"CDMA 800 /1900 LTE 700, Rx diversity in all bands";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:14:"802.11 a/b/g/n";}'),
+(107, 11, 'display', 'a:3:{s:16:"screenResolution";s:17:"WXGA (1200 x 800)";s:10:"screenSize";s:11:"10.1 inches";s:11:"touchScreen";b:1;}'),
+(108, 11, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:23:"1 GHz Dual Core Tegra 2";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(109, 11, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:12:"249.0 mm (w)";i:1;s:12:"168.0 mm (h)";i:2;s:11:"12.7 mm (d)";}s:6:"weight";s:11:"726.0 grams";}'),
+(110, 11, 'storage', 'a:2:{s:5:"flash";s:7:"32000MB";s:3:"ram";s:6:"1000MB";}'),
+(111, 12, 'additionalFeatures', 'Contour Display, Near Field Communications (NFC), Three-axis gyroscope, Anti-fingerprint display coating, Internet Calling support (VoIP/SIP)'),
+(112, 12, 'android', 'a:2:{s:2:"os";s:11:"Android 2.3";s:2:"ui";s:7:"Android";}'),
+(113, 12, 'availability', 'a:7:{i:0;s:3:"M1,";i:1;s:3:"O2,";i:2;s:7:"Orange,";i:3;s:8:"Singtel,";i:4;s:8:"StarHub,";i:5;s:9:"T-Mobile,";i:6;s:8:"Vodafone";}'),
+(114, 12, 'battery', 'a:3:{s:11:"standbyTime";s:9:"428 hours";s:8:"talkTime";s:7:"6 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1500 mAH)";}'),
+(115, 12, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"5.0 megapixels";}'),
+(116, 12, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:112:"Quad-band GSM: 850, 900, 1800, 1900\r\nTri-band HSPA: 900, 2100, 1700\r\nHSPA type: HSDPA (7.2Mbps) HSUPA (5.76Mbps)";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:12:"802.11 b/g/n";}'),
+(117, 12, 'display', 'a:3:{s:16:"screenResolution";s:16:"WVGA (800 x 480)";s:10:"screenSize";s:10:"4.0 inches";s:11:"touchScreen";b:1;}'),
+(118, 12, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:38:"1GHz Cortex A8 (Hummingbird) processor";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(119, 12, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"63.0 mm (w)";i:1;s:12:"123.9 mm (h)";i:2;s:12:"10.88 mm (d)";}s:6:"weight";s:11:"129.0 grams";}'),
+(120, 12, 'storage', 'a:2:{s:5:"flash";s:7:"16384MB";s:3:"ram";s:5:"512MB";}'),
+(121, 13, 'additionalFeatures', 'Adobe&reg; Flash&reg; Player compatible; 1.3MP front-facing camera for video chat; eReader pre-loaded; Swype text input technology\r\n'),
+(122, 13, 'android', 'a:2:{s:2:"os";s:11:"Android 2.2";s:2:"ui";s:8:"TouchWiz";}'),
+(123, 13, 'availability', 'a:4:{i:0;s:9:"AT&amp;T,";i:1;s:7:"Sprint,";i:2;s:9:"T-Mobile,";i:3;s:7:"Verizon";}'),
+(124, 13, 'battery', 'a:3:{s:11:"standbyTime";s:9:"780 hours";s:8:"talkTime";s:0:"";s:4:"type";s:31:"Lithium Ion (Li-Ion) (4000 mAH)";}'),
+(125, 13, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"3.0 megapixels";}'),
+(126, 13, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 3.0";s:4:"cell";s:207:"AT&amp;T: GSM/EDGE : 850/900/1800/1900; 3G : 850/1900/2100&lt;p&gt;\r\n\r\nSprint: CDMA : 850/1900MHz&lt;p&gt;\r\n\r\nT-Mobile: GSM/EDGE : 850/900/1800/1900; 3G : 1700/1900&lt;p&gt;\r\n\r\nVerizon: CDMA : 800MHz/1900MHz";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:12:"802.11 b/g/n";}'),
+(127, 13, 'display', 'a:3:{s:16:"screenResolution";s:18:"WSVGA (1024 x 600)";s:10:"screenSize";s:10:"7.0 inches";s:11:"touchScreen";b:1;}'),
+(128, 13, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:4:"1GHz";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(129, 13, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:13:"120.39 mm (w)";i:1;s:13:"189.99 mm (h)";i:2;s:11:"11.9 mm (d)";}s:6:"weight";s:12:"379.88 grams";}'),
+(130, 13, 'storage', 'a:2:{s:5:"flash";s:7:"16384MB";s:3:"ram";s:5:"640MB";}'),
+(131, 14, 'additionalFeatures', '3.2&rdquo; Full touch screen with Advanced anti smudge, anti reflective and anti scratch glass; Swype text input for easy and fast message creation; multiple messaging options, including text with threaded messaging for organized, easy-to-follow text; Social Community support, including Facebook and MySpace; Next generation Address book; Visual Voice Mail\n'),
+(132, 14, 'android', 'a:2:{s:2:"os";s:11:"Android 2.1";s:2:"ui";s:8:"TouchWiz";}'),
+(133, 14, 'availability', 'a:1:{i:0;s:14:"Cellular South";}'),
+(134, 14, 'battery', 'a:3:{s:11:"standbyTime";s:9:"800 hours";s:8:"talkTime";s:7:"7 hours";s:4:"type";s:32:"Nickel Cadmium (NiCd) (1500 mAH)";}'),
+(135, 14, 'camera', 'a:2:{s:8:"features";a:1:{i:0;s:0:"";}s:7:"primary";s:14:"3.0 megapixels";}'),
+(136, 14, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 3.0";s:4:"cell";s:25:"3G/CDMA : 850MHz/1900MHz\n";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:10:"802.11 b/g";}'),
+(137, 14, 'display', 'a:3:{s:16:"screenResolution";s:17:"WQVGA (400 x 240)";s:10:"screenSize";s:10:"3.2 inches";s:11:"touchScreen";b:1;}'),
+(138, 14, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:7:"800 MHz";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(139, 14, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"55.5 mm (w)";i:1;s:12:"113.0 mm (h)";i:2;s:11:"12.4 mm (d)";}s:6:"weight";s:11:"110.0 grams";}'),
+(140, 14, 'storage', 'a:2:{s:5:"flash";s:5:"220MB";s:3:"ram";s:5:"256MB";}'),
+(141, 15, 'additionalFeatures', 'Swype'),
+(142, 15, 'android', 'a:2:{s:2:"os";s:11:"Android 2.1";s:2:"ui";s:8:"TouchWiz";}'),
+(143, 15, 'availability', 'a:1:{i:0;s:11:"US Cellular";}'),
+(144, 15, 'battery', 'a:3:{s:11:"standbyTime";s:10:"1000 hours";s:8:"talkTime";s:7:"7 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1500 mAH)";}'),
+(145, 15, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"5.0 megapixels";}'),
+(146, 15, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 3.0";s:4:"cell";s:39:"3G :800MHz/1900MHz\nCDMA :800MHz/1900MHz";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:12:"802.11 b/g/n";}'),
+(147, 15, 'display', 'a:3:{s:16:"screenResolution";s:16:"WVGA (800 x 480)";s:10:"screenSize";s:10:"4.0 inches";s:11:"touchScreen";b:1;}'),
+(148, 15, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:0:"";s:3:"cpu";s:4:"1GHz";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(149, 15, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"64.2 mm (w)";i:1;s:12:"125.0 mm (h)";i:2;s:11:"9.97 mm (d)";}s:6:"weight";s:11:"118.0 grams";}'),
+(150, 15, 'storage', 'a:2:{s:5:"flash";s:6:"2048MB";s:3:"ram";s:5:"512MB";}'),
+(151, 16, 'additionalFeatures', 'Swype'),
+(152, 16, 'android', 'a:2:{s:2:"os";s:11:"Android 2.1";s:2:"ui";s:8:"TouchWiz";}'),
+(153, 16, 'availability', 'a:1:{i:0;s:14:"Cellular South";}'),
+(154, 16, 'battery', 'a:3:{s:11:"standbyTime";s:9:"800 hours";s:8:"talkTime";s:7:"7 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1500 mAH)";}'),
+(155, 16, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"5.0 megapixels";}'),
+(156, 16, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 3.0";s:4:"cell";s:41:"3G : 900MHz/1900MHz\nCDMA : 800MHz/1900MHz";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:12:"802.11 b/g/n";}'),
+(157, 16, 'display', 'a:3:{s:16:"screenResolution";s:16:"WVGA (800 x 480)";s:10:"screenSize";s:10:"4.0 inches";s:11:"touchScreen";b:1;}'),
+(158, 16, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:5:"1 GHz";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(159, 16, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"64.2 mm (w)";i:1;s:12:"125.0 mm (h)";i:2;s:11:"9.97 mm (d)";}s:6:"weight";s:11:"118.0 grams";}'),
+(160, 16, 'storage', 'a:2:{s:5:"flash";s:6:"2048MB";s:3:"ram";s:5:"512MB";}'),
+(161, 17, 'additionalFeatures', 'Access to Sprint ID Service Packs, front and rear facing cameras\n'),
+(162, 17, 'android', 'a:2:{s:2:"os";s:11:"Android 2.1";s:2:"ui";s:30:"Stock Android + Sprint ID Pack";}'),
+(163, 17, 'availability', 'a:1:{i:0;s:6:"Sprint";}'),
+(164, 17, 'battery', 'a:3:{s:11:"standbyTime";s:9:"930 hours";s:8:"talkTime";s:7:"9 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1500 mAH)";}'),
+(165, 17, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"3.0 megapixels";}'),
+(166, 17, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:15:"800Mhz, 1900MHz";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:12:"802.11 b/g/n";}'),
+(167, 17, 'display', 'a:3:{s:16:"screenResolution";s:16:"HVGA (480 x 320)";s:10:"screenSize";s:10:"3.5 inches";s:11:"touchScreen";b:1;}'),
+(168, 17, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:7:"800 MHz";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:1;s:3:"usb";s:7:"USB 2.0";}'),
+(169, 17, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"61.5 mm (w)";i:1;s:12:"117.0 mm (h)";i:2;s:11:"15.3 mm (d)";}s:6:"weight";s:11:"148.0 grams";}'),
+(170, 17, 'storage', 'a:2:{s:5:"flash";s:5:"180MB";s:3:"ram";s:5:"384MB";}'),
+(171, 18, 'additionalFeatures', 'Trackball Navigation Control'),
+(172, 18, 'android', 'a:2:{s:2:"os";s:11:"Android 2.2";s:2:"ui";s:0:"";}'),
+(173, 18, 'availability', 'a:1:{i:0;s:6:"Sprint";}'),
+(174, 18, 'battery', 'a:3:{s:11:"standbyTime";s:0:"";s:8:"talkTime";s:7:"4 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1130 mAH)";}'),
+(175, 18, 'camera', 'a:2:{s:8:"features";a:1:{i:0;s:5:"Video";}s:7:"primary";s:14:"3.2 megapixels";}'),
+(176, 18, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:22:"CDMA2000 1xEV-DO Rev.A";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:10:"802.11 b/g";}'),
+(177, 18, 'display', 'a:3:{s:16:"screenResolution";s:16:"WVGA (800 x 480)";s:10:"screenSize";s:10:"3.5 inches";s:11:"touchScreen";b:1;}'),
+(178, 18, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:23:"600MHz Qualcomm MSM7627";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(179, 18, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"58.6 mm (w)";i:1;s:12:"116.0 mm (h)";i:2;s:11:"12.2 mm (d)";}s:6:"weight";s:11:"105.0 grams";}'),
+(180, 18, 'storage', 'a:2:{s:5:"flash";s:5:"130MB";s:3:"ram";s:5:"256MB";}'),
+(181, 19, 'additionalFeatures', 'Accessibility features: tactile QWERTY keyboard, trackpad, three programmable keys, camera button'),
+(182, 19, 'android', 'a:2:{s:2:"os";s:11:"Android 2.2";s:2:"ui";s:7:"Android";}'),
+(183, 19, 'availability', 'a:1:{i:0;s:8:"T-Mobile";}'),
+(184, 19, 'battery', 'a:3:{s:11:"standbyTime";s:9:"420 hours";s:8:"talkTime";s:7:"7 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1300 mAH)";}'),
+(185, 19, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"5.0 megapixels";}'),
+(186, 19, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.1";s:4:"cell";s:36:"GSM: 850, 900, 1800, 1900  UMTS: Yes";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:12:"802.11 b/g/n";}'),
+(187, 19, 'display', 'a:3:{s:16:"screenResolution";s:16:"WVGA (800 x 480)";s:10:"screenSize";s:10:"3.7 inches";s:11:"touchScreen";b:1;}'),
+(188, 19, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:40:"800 MHz QualcommÂ® Snapdragonâ„¢ MSM7230";s:7:"fmRadio";b:0;s:16:"physicalKeyboard";b:1;s:3:"usb";s:7:"USB 2.0";}'),
+(189, 19, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"60.4 mm (w)";i:1;s:12:"119.0 mm (h)";i:2;s:11:"14.2 mm (d)";}s:6:"weight";s:11:"180.0 grams";}'),
+(190, 19, 'storage', 'a:2:{s:5:"flash";s:6:"4000MB";s:3:"ram";s:5:"512MB";}'),
+(191, 20, 'additionalFeatures', 'Mobile Video Chat, HD Camcorder, Screen Share (DLNA), Genius Button, Wi-Fi Calling, Wi-Fi HotSpot, T-Mobile TV, Slacker Radio, Rock Band, Monopoly, Asphalt 5, myModes, Faves Gallery'),
+(192, 20, 'android', 'a:2:{s:2:"os";s:11:"Android 2.2";s:2:"ui";s:12:"HTC Senseâ„¢";}'),
+(193, 20, 'availability', 'a:1:{i:0;s:8:"T-Mobile";}'),
+(194, 20, 'battery', 'a:3:{s:11:"standbyTime";s:9:"285 hours";s:8:"talkTime";s:7:"7 hours";s:4:"type";s:31:"Lithium Ion (Li-Ion) (1400 mAH)";}'),
+(195, 20, 'camera', 'a:2:{s:8:"features";a:2:{i:0;s:5:"Flash";i:1;s:5:"Video";}s:7:"primary";s:14:"5.0 megapixels";}'),
+(196, 20, 'connectivity', 'a:5:{s:9:"bluetooth";s:13:"Bluetooth 2.0";s:4:"cell";s:42:"GSM: 850, 900, 1800, 1900; UMTS: Band I/IV";s:3:"gps";b:1;s:8:"infrared";b:0;s:4:"wifi";s:12:"802.11 b/g/n";}'),
+(197, 20, 'display', 'a:3:{s:16:"screenResolution";s:16:"WVGA (800 x 480)";s:10:"screenSize";s:10:"3.8 inches";s:11:"touchScreen";b:1;}'),
+(198, 20, 'hardware', 'a:6:{s:13:"accelerometer";b:1;s:9:"audioJack";s:5:"3.5mm";s:3:"cpu";s:47:"2nd Generation 1GHz Qualcomm Snapdragon MSM8255";s:7:"fmRadio";b:1;s:16:"physicalKeyboard";b:0;s:3:"usb";s:7:"USB 2.0";}'),
+(199, 20, 'sizeAndWeight', 'a:2:{s:10:"dimensions";a:3:{i:0;s:11:"62.5 mm (w)";i:1;s:12:"122.0 mm (h)";i:2;s:11:"11.0 mm (d)";}s:6:"weight";s:11:"156.0 grams";}'),
+(200, 20, 'storage', 'a:2:{s:5:"flash";s:6:"1100MB";s:3:"ram";s:5:"768MB";}');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `phones`
+--
+
+CREATE TABLE IF NOT EXISTS `phones` (
+  `phone_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `phone_name` varchar(255) NOT NULL,
+  `phone_title` varchar(255) NOT NULL,
+  `phone_image` varchar(255) DEFAULT NULL,
+  `phone_description` text NOT NULL,
+  `phone_date` datetime NOT NULL,
+  PRIMARY KEY (`phone_id`),
+  UNIQUE KEY `phone_id` (`phone_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=21 ;
+
+--
+-- Dumping data for table `phones`
+--
+
+INSERT INTO `phones` (`phone_id`, `phone_name`, `phone_title`, `phone_image`, `phone_description`, `phone_date`) VALUES
+(1, 'Dell Streak 7', 'dell-streak-7', NULL, 'Introducing Dell&trade; Streak 7. Share photos, videos and movies together. It&rsquo;s small enough to carry around, big enough to gather around. Android&trade; 2.2-based tablet with over-the-air upgrade capability for future OS releases.  A vibrant 7-inch, multitouch display with full Adobe&reg; Flash 10.1 pre-installed.  Includes a 1.3 MP front-facing camera for face-to-face chats on popular services such as Qik or Skype.  16 GB of internal storage, plus Wi-Fi, Bluetooth and built-in GPS keeps you in touch with the world around you.  Connect on your terms. Save with 2-year contract or flexibility with prepaid pay-as-you-go plans', '2013-07-19 03:11:00'),
+(2, 'Dell Venue', 'dell-venue', NULL, 'The Venue is the perfect one-touch, Smart Phone providing instant access to everything you love. All of Venue&#039;s features make it perfect for on-the-go students, mobile professionals, and active social communicators who love style and performance.\n\nElegantly designed, the Venue offers a vibrant, curved glass display that&rsquo;s perfect for viewing all types of content. The Venue&rsquo;s slender form factor feels great in your hand and also slips easily into your pocket.  A mobile entertainment powerhouse that lets you download the latest tunes from Amazon MP3 or books from Kindle, watch video, or stream your favorite radio stations.  All on the go, anytime, anywhere.', '2013-07-19 03:11:04'),
+(3, 'DROID&trade; 2 Global by Motorola', 'droid-2-global-by-motorola', NULL, 'With Quad Band GSM, the DROID 2 Global can send email and make and receive calls from more than 200 countries. It features an improved QWERTY keyboard, super-fast 1.2 GHz processor and enhanced security for all your business needs.', '2013-07-19 03:11:07'),
+(4, 'DROID&trade; Pro by Motorola', 'droid-pro-by-motorola', NULL, 'Access your work directory, email or calendar with DROID Pro by Motorola., an Android-for-business smartphone with corporate-level security. It features both a QWERTY keyboard and touchscreen, a speedy 1 GHz processor and Adobe&reg; Flash&reg; Player 10.', '2013-07-19 03:11:11'),
+(5, 'LG Axis', 'lg-axis', NULL, 'Android plus QWERTY is a powerful duo. LG Axis melds a speedy UI with the limitless micro-entertainment of 80,000+ apps including voice-activated Google. Feel the tactile vibration on its tempered glass touchscreen. Take the fuzziness out of your fun with a 3.2MP camera that does 360&deg; panoramics. And customize your home screens with shortcuts to your apps, favorites, and widgets. It&#039;s the centerpiece of your life.', '2013-07-19 03:11:14'),
+(6, 'MOTOROLA ATRIX&trade; 4G', 'motorola-atrix-4g', NULL, 'MOTOROLA ATRIX 4G gives you dual-core processing power and the revolutionary webtop application. With webtop and a compatible Motorola docking station, sold separately, you can surf the Internet with a full Firefox browser, create and edit docs, or access multimedia on a large screen almost anywhere.', '2013-07-19 03:11:18'),
+(7, 'MOTOROLA BRAVO&trade; with MOTOBLUR&trade;', 'motorola-bravo-with-motoblur', NULL, 'MOTOROLA BRAVO&trade; with MOTOBLUR&trade; with its large 3.7-inch touchscreen and web-browsing capabilities is sure to make an impression.  And it keeps your life updated and secure through MOTOBLUR.', '2013-07-19 03:11:21'),
+(8, 'Motorola CHARM&trade; with MOTOBLUR&trade;', 'motorola-charm-with-motoblur', NULL, 'Motorola CHARM fits easily in your pocket or palm. Includes MOTOBLUR so you can sync and merge your contacts, emails, messages and posts with continuous updates and back-ups.', '2013-07-19 03:11:25'),
+(9, 'Motorola DEFY&trade; with MOTOBLUR&trade;', 'motorola-defy-with-motoblur', NULL, 'DEFY with MOTOBLUR is ready for everything life throws your way. It&#039;s water-resistant and dustproof, with plenty of entertainment options; and, with MOTOBLUR, it automatically delivers messages and status updates right to your home screen.', '2013-07-19 03:11:28'),
+(10, 'Motorola XOOM&trade; with Wi-Fi', 'motorola-xoom-with-wi-fi', NULL, 'Motorola XOOM with Wi-Fi has a super-powerful dual-core processor and Android&trade; 3.0 (Honeycomb) &mdash; the Android platform designed specifically for tablets. With its 10.1-inch HD widescreen display, you&rsquo;ll enjoy HD video in a thin, light, powerful and upgradeable tablet.', '2013-07-19 03:11:32'),
+(11, 'MOTOROLA XOOM&trade;', 'motorola-xoom', NULL, 'MOTOROLA XOOM has a super-powerful dual-core processor and Android&trade; 3.0 (Honeycomb) &mdash; the Android platform designed specifically for tablets. With its 10.1-inch HD widescreen display, you&rsquo;ll enjoy HD video in a thin, light, powerful and upgradeable tablet.', '2013-07-19 03:11:35'),
+(12, 'Nexus S', 'nexus-s', NULL, 'Nexus S is the next generation of Nexus devices, co-developed by Google and Samsung. The latest Android platform (Gingerbread), paired with a 1 GHz Hummingbird processor and 16GB of memory, makes Nexus S one of the fastest phones on the market. It comes pre-installed with the best of Google apps and enabled with new and popular features like true multi-tasking, Wi-Fi hotspot, Internet Calling, NFC support, and full web browsing. With this device, users will also be the first to receive software upgrades and new Google mobile apps as soon as they become available. For more details, visit http://www.google.com/nexus.', '2013-07-19 03:11:39'),
+(13, 'Samsung Galaxy Tab&trade;', 'samsung-galaxy-tab', NULL, 'Feel Free to Tab&trade;. The Samsung Galaxy Tab&trade;, the tablet device that delivers enhanced capabilities with advanced mobility, has a large, perfectly sized, 7.0&quot; screen that offers plenty of room for the thousands of interactive games and apps available for the Android&trade; platform, and its slim design makes it perfect for travel and one-handed grip. Use the Galaxy Tab to relax and enjoy an e-book, watch rich video or full web content with its Adobe&reg; Flash&reg; Player compatibility, video chat using the front-facing camera, or send user-generated content wirelessly to other devices like your TV via AllShare&trade;.  With so many options for customization and interactivity, the Galaxy Tab gives you everything you want, anywhere you go&hellip;Feel Free to Tab&trade;.', '2013-07-19 03:11:42'),
+(14, 'Samsung Gem&trade;', 'samsung-gem', NULL, 'The Samsung Gem&trade; maps a route to a smarter mobile experience. By pairing one of the fastest processors in the category with the Android&trade; platform, the Gem delivers maximum multitasking speed and social networking capabilities to let you explore new territory online. A smart phone at an even smarter price is a real find, so uncover the Gem and discover what&rsquo;s next.', '2013-07-19 03:11:46'),
+(15, 'Samsung Mesmerize&trade; a Galaxy S&trade; phone', 'samsung-mesmerize-a-galaxy-s-phone', NULL, 'Experience entertainment in a whole new light. The stylish and slim Samsung Mesmerize&trade;, with its vivid 4-inch Super AMOLED&trade; display, makes everything from Hollywood blockbusters to music videos to Amazon&rsquo;s bestsellers look absolutely brilliant &ndash; even outside in the sun. Android&trade; Market rockets you into a universe filled with equally brilliant apps; download them at blistering speeds thanks to the powerful 1GHz Hummingbird processor. Keep your social life organized and continuously updated with the pre-loaded social networking apps, while uploading all the 5.0MP pics you&rsquo;ve snapped and 720p HD videos you&rsquo;ve recorded.', '2013-07-19 03:11:49'),
+(16, 'Samsung Showcase&trade; a Galaxy S&trade; phone', 'samsung-showcase-a-galaxy-s-phone', NULL, 'Experience entertainment in a whole new light. The stylish and slim Samsung Showcase&trade;, with its vivid 4-inch Super AMOLED&trade; display, makes everything from Hollywood blockbusters to music videos to Amazon&rsquo;s bestsellers look absolutely brilliant &ndash; even outside in the sun. Android&trade; Market rockets you into a universe filled with equally brilliant apps; download them at blistering speeds thanks to the powerful 1GHz Hummingbird processor. Keep your social life organized and continuously updated with the pre-loaded social networking apps, while uploading all the 5.0MP pics you&rsquo;ve snapped and 720p HD videos you&rsquo;ve recorded', '2013-07-19 03:11:53'),
+(17, 'Samsung Transform&trade;', 'samsung-transform', NULL, 'Change your perspective.  The Samsung Transform&trade; is an Android powered device that delivers the truly customizable experience you want your phone to provide.  Enjoy a new and easy way to personalize your device for business or for entertainment, showcasing your own favorite theme and more through the new open software platform and the ability to download individual &lsquo;Sprint ID Service Packs&rsquo; that combine and deliver multiple content items and applications specifically for the features you want.  Combine this with the 3.5&rdquo; touch display, QWERTY keyboard, high-speed processor, and both a front and rear facing camera to bring your unique mobile experience to life.', '2013-07-19 03:11:56'),
+(18, 'SANYO ZIO', 'sanyo-zio', NULL, 'Zio uses CDMA2000 1xEV-DO rev. A and Wi-Fi technologies and features a 3.5-inch WVGA touch-screen display as a backdrop for a fully customizable mobile multimedia experience.  Along with the touch-screen, a trackball helps users navigate features such as the 3.2 MP camera with video record/playback, media player and full HTML Web browser.  Zio supports up to 32GB through its external microSD memory slot.', '2013-07-19 03:12:00'),
+(19, 'T-Mobile G2', 't-mobile-g2', NULL, 'The T-Mobile G1 was the world&#039;s first Android-powered phone. Launched nearly two years ago, it created an entirely new class of mobile phones and apps. Its successor, the T-Mobile G2 with Google, will continue the revolution.\n\nThe T-Mobile G2 will deliver tight integration with Google services and break new ground as the first smartphone designed to run at 4G speeds on our new HSPA+ network.', '2013-07-19 03:12:03'),
+(20, 'T-Mobile myTouch 4G', 't-mobile-mytouch-4g', NULL, 'The myTouch 4G lets you connect fast, communicate easily, and share&mdash;all on America&rsquo;s largest 4G network.\n\nBuilt with families in mind, the newest T-Mobile myTouch 4G helps solve the challenges of staying physically and emotionally connected by sharing photos and video with the HD Camcorder, spontaneous face-to-face conversations through Video Chat, and the ability to reach 4G speeds on T-Mobile&rsquo;s HSPA+ network.', '2013-07-19 03:12:07');
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
